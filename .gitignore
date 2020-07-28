@@ -1,0 +1,6 @@
+
+*.xml
+addon/Settings/ui.ini
+*.dll
+*.exe
+*.zip
