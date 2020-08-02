@@ -220,7 +220,9 @@ local abilities = {
 		end
 	end,
 	["EarthlivingWeapon"]  = function ()
+		local enchant = GetWeaponEnchantInfo()
 		if ni.spell.available(spells.EarthlivingWeapon.id)
+		and enchant ~= 1
 		and not ni.player.buff(spells.EarthlivingWeapon.id) then
 			ni.spell.cast(spells.EarthlivingWeapon.name)
 			return  true;
