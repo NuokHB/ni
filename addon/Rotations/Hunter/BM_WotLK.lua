@@ -1,11 +1,17 @@
 local queue = {
 	"Pause",
 	"AspectoftheHawk",
+--	"AspectoftheViper",
 	"HuntersMark",
+	"PetControl",
+	"KillShot",
 	"SerpentSting",
 	"ConcussiveShot",
 	"ArcaneShot",
+	"MultiShot",
+	"SteadyShot",
 	"RaptorStrike",
+	"MongooseBite",
 	"AutoAttack",
 }
 local enables = {
@@ -59,27 +65,41 @@ local function OnUnload()
 end
 
 local spells = {
+--General
+Berserking = {id = 26297, name = GetSpellInfo(26297)},
+AutoAttack = {id = 6603, name = GetSpellInfo(6603)},
 --Beast Mastery
-AspectoftheHawkRank1 = {id = 13165, name = GetSpellInfo(13165)},
+MendPet = {id = 3111, name = GetSpellInfo(3111)},
 AspectoftheMonkey = {id = 13163, name = GetSpellInfo(13163)},
 CallPet = {id = 883, name = GetSpellInfo(883)},
 DismissPet = {id = 2641, name = GetSpellInfo(2641)},
+AspectoftheViper = {id = 34074, name = GetSpellInfo(34074)},
+EyesoftheBeast = {id = 1002, name = GetSpellInfo(1002)},
+AspectoftheCheetah = {id = 5118, name = GetSpellInfo(5118)},
+EagleEye = {id = 6197, name = GetSpellInfo(6197)},
+TameBeast = {id = 1515, name = GetSpellInfo(1515)},
 FeedPet = {id = 6991, name = GetSpellInfo(6991)},
 RevivePet = {id = 982, name = GetSpellInfo(982)},
-TameBeast = {id = 1515, name = GetSpellInfo(1515)},
+ScareBeast = {id = 1513, name = GetSpellInfo(1513)},
+AspectoftheHawk = {id = 14318, name = GetSpellInfo(14318)},
 --Marksmanship
-ArcaneShotRank1 = {id = 3044, name = GetSpellInfo(3044)},
-AutoShot = {id = 75, name = GetSpellInfo(75)},
 ConcussiveShot = {id = 5116, name = GetSpellInfo(5116)},
-HuntersMarkRank1 = {id = 1130, name = GetSpellInfo(1130)},
-SerpentStingRank1 = {id = 1978, name = GetSpellInfo(1978)},
-SerpentStingRank2 = {id = 13549, name = GetSpellInfo(13549)},
+HuntersMark = {id = 1130, name = GetSpellInfo(1130)},
+MultiShot = {id = 2643, name = GetSpellInfo(2643)},
+AutoShot = {id = 75, name = GetSpellInfo(75)},
+DistractingShot = {id = 20736, name = GetSpellInfo(20736)},
+SerpentSting = {id = 13550, name = GetSpellInfo(13550)},
+ArcaneShot = {id = 14282, name = GetSpellInfo(14282)},
 --Survival
-RaptorStrikeRank1 = {id = 2973, name = GetSpellInfo(2973)},
-RaptorStrikeRank2 = {id = 14260, name = GetSpellInfo(14260)},
-TrackBeasts = {id = 1494, name = GetSpellInfo(1494)},
+Disengage = {id = 781, name = GetSpellInfo(781)},
 TrackHumanoids = {id = 19883, name = GetSpellInfo(19883)},
---Talents
+MongooseBite = {id = 1495, name = GetSpellInfo(1495)},
+RaptorStrike = {id = 14261, name = GetSpellInfo(14261)},
+TrackUndead = {id = 19884, name = GetSpellInfo(19884)},
+TrackBeasts = {id = 1494, name = GetSpellInfo(1494)},
+ImmolationTrap = {id = 13795, name = GetSpellInfo(13795)},
+WingClip = {id = 2974, name = GetSpellInfo(2974)},
+FreezingTrap = {id = 1499, name = GetSpellInfo(1499)},
 }
 
 local enemies = {}
@@ -95,13 +115,27 @@ local function ActiveEnemies()
 	return #enemies
 end
 
+local lastSpell, lastGuid, lastTime = "", "", 0
 local function FacingLosCast(spell, tar)
 	if ni.player.isfacing(tar, 145) and ni.player.los(tar) and IsSpellInRange(spell, tar) == 1 then
 		ni.spell.cast(spell, tar)
 		ni.debug.log(string.format("Casting %s on %s", spell, tar))
+		lastSpell = spell
+		lastGuid = UnitGUID(tar)
+		lastTime = GetTime()
 		return true
 	end
 	return false
+end
+local function DoubleCast(spell, tar)
+		if(lastSpell == spell) then
+			if lastGuid == UnitGUID(tar) then
+				if GetTime() - lastTime < 2 then
+					return true
+				end
+			end
+		end
+		return false
 end
 
 local function ValidUsable(id, tar)
@@ -112,8 +146,9 @@ local function ValidUsable(id, tar)
 end
 
 local function InRange(tar)
-	local distance = ni.unit.distance("player", tar);
-	if distance > 5 and distance <= 35 then
+	local melee = IsSpellInRange(spells.MongooseBite.name, tar) == 1
+	local ranged = IsSpellInRange(spells.ArcaneShot.name, tar) == 1
+	if not melee and ranged then
 			return true;
 	end
 	return false
@@ -136,31 +171,48 @@ local abilities = {
 		end
 	end,
 	["RaptorStrike"] = function()
-		if ValidUsable(spells.RaptorStrikeRank2.id, "target")
-		and ni.unit.distance("player", "target") <= 5
-		and FacingLosCast(spells.RaptorStrikeRank2.name, "target") then
+		if ValidUsable(spells.RaptorStrike.id, "target")
+		and IsSpellInRange(spells.RaptorStrike.name, "target") == 1
+		-- /dump IsSpellInRange("Mongoose Bite", "target")
+		and FacingLosCast(spells.RaptorStrike.name, "target") then
+				return false
+		end
+	end,
+	["MongooseBite"] = function()
+		if ValidUsable(spells.MongooseBite.id, "target")
+		and IsSpellInRange(spells.MongooseBite.name, "target") == 1
+		and FacingLosCast(spells.MongooseBite.name, "target") then
 				return true
 		end
 	end,
 	["HuntersMark"] = function()
-		if ValidUsable(spells.HuntersMarkRank1.id, "target")
-		and ni.unit.debuffremaining("target", spells.HuntersMarkRank1.id) <= 2
-		and FacingLosCast(spells.HuntersMarkRank1.name, "target") then
+		if ValidUsable(spells.HuntersMark.id, "target")
+		and ni.unit.debuffremaining("target", spells.HuntersMark.id) <= 2
+		and not DoubleCast(spells.HuntersMark.name, "target")
+		and FacingLosCast(spells.HuntersMark.name, "target") then
 				return true
 		end
 	end,
 	["SerpentSting"] = function()
-		if ValidUsable(spells.SerpentStingRank1.id, "target")
+		if ValidUsable(spells.SerpentSting.id, "target")
 		and InRange("target")
-		and ni.unit.debuffremaining("target", spells.SerpentStingRank1.id, "player") <= 2
-		and FacingLosCast(spells.SerpentStingRank1.name, "target") then
+		and ni.unit.debuffremaining("target", spells.SerpentSting.id, "player") <= 2
+		and not DoubleCast(spells.SerpentSting.name, "target")
+		and FacingLosCast(spells.SerpentSting.name, "target") then
 				return true
 		end
 	end,
 	["ArcaneShot"] = function()
-		if ValidUsable(spells.ArcaneShotRank1.id, "target")
+		if ValidUsable(spells.ArcaneShot.id, "target")
 		and InRange("target")
-		and FacingLosCast(spells.ArcaneShotRank1.name, "target") then
+		and FacingLosCast(spells.ArcaneShot.name, "target") then
+				return true
+		end
+	end,
+	["MultiShot"] = function()
+		if ValidUsable(spells.MultiShot.id, "target")
+		and InRange("target")
+		and FacingLosCast(spells.MultiShot.name, "target") then
 				return true
 		end
 	end,
@@ -173,11 +225,53 @@ local abilities = {
 		end
 	end,
 	["AspectoftheHawk"] = function()
-		if ni.spell.available(spells.AspectoftheHawkRank1.id)
-		and not ni.player.buff(spells.AspectoftheHawkRank1.id) then
-			ni.spell.cast(spells.AspectoftheHawkRank1.name)
-				return true
+		if ni.player.power("mana") > 80
+		and ni.spell.available(spells.AspectoftheHawk.id)
+		and not ni.player.buff(spells.AspectoftheHawk.id) then
+			ni.spell.cast(spells.AspectoftheHawk.name)
 		end
 	end,
+	--Need to update spells when I get them
+	["KillShot"] = function()
+			if ValidUsable(61006, "target")
+			and InRange("target")
+			and FacingLosCast("Kill Shot", "target") then
+				return true
+				end
+	end,
+	["SteadyShot"] = function()
+		if ValidUsable(49052, "target")
+		and InRange("target")
+		and FacingLosCast("Steady Shot", "target") then
+			return true
+			end
+	end,
+	["AspectoftheViper"] = function()
+		if ni.player.power("mana") < 20
+		and ni.spell.available(spells.AspectoftheViper.id)
+		and not ni.player.buff(spells.AspectoftheViper.id) then
+			ni.spell.cast(spells.AspectoftheViper.name)
+		end
+	end,
+
+	--Pet Control
+	["PetControl"] = function()
+			if UnitExists("pet")
+			and not UnitIsDeadOrGhost("pet") then
+					--Attack the same unit as player
+					local petTarget = UnitGUID("pettarget")
+					local playerTarget = UnitGUID("target")
+					if petTarget ~= playerTarget then
+						ni.player.runtext("/petattack")
+					end
+					-- MendPet
+					if ni.unit.hp("pet") < 70
+					and ni.player.distance("pet") < 45
+					and ni.spell.available(spells.MendPet.id) then
+							ni.spell.cast(spells.MendPet.name)
+							return true
+					end
+			end
+	end
 }
 ni.bootstrap.profile("BM_WotLK", queue, abilities, OnLoad, OnUnload);
