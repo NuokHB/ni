@@ -132,7 +132,7 @@ ni.player = {
 			return true
 		end
 		return false
-	end
+	end,
 }
 
 setmetatable(

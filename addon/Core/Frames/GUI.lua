@@ -590,6 +590,11 @@ local function CreateInput(frame, t, settingsfile, callback)
 	Box:SetScript("OnLeave", function(self, ...) 
 		PopBack(ni.GUI, ...);
 	end);
+	if t.key then
+		Box.key = t.key;
+	end
+	TempFrame.editbox = Box;
+	TempFrame.isinput = true;
 	f.items[id] = TempFrame;
 	if id > 1 then
 		TempFrame:SetPoint("TOP", f.items[id-1], "BOTTOM", 0, -4);

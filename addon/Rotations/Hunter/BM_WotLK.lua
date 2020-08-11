@@ -1,7 +1,7 @@
 local queue = {
 	"Pause",
 	"AspectoftheHawk",
---	"AspectoftheViper",
+	"AspectoftheViper",
 	"HuntersMark",
 	"PetControl",
 	"KillShot",

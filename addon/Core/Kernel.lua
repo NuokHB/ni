@@ -64,4 +64,6 @@ ni.functions = {
 	auras = %%Auras%%,
 	safeexec = %%SafeExec%%,
 	safeget = %%SafeGet%%,
+	bestaoeloc = %%BestAoELoc%%,
+	getpath = %%GetPath%%,
 }
