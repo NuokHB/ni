@@ -16,6 +16,7 @@ local queue = {
 }
 local enables = {
 	["ConcussiveShot"] = false,
+	["MultiShot"]= false,
 }
 local values = {
 }
@@ -45,6 +46,13 @@ local items = {
 		tooltip = "Use Concussive Shot",
 		enabled = enables["ConcussiveShot"],
 		key = "ConcussiveShot"
+	},
+	{
+		type = "entry",
+		text = "Multi Shot",
+		tooltip = "Use Multi Shot",
+		enabled = enables["MultiShot"],
+		key = "MultiShot"
 	},
 };
 local incombat = false;
@@ -172,8 +180,8 @@ local abilities = {
 	end,
 	["RaptorStrike"] = function()
 		if ValidUsable(spells.RaptorStrike.id, "target")
-		and IsSpellInRange(spells.RaptorStrike.name, "target") == 1
-		-- /dump IsSpellInRange("Mongoose Bite", "target")
+		and IsSpellInRange(spells.MongooseBite.name, "target") == 1
+		and not DoubleCast(spells.RaptorStrike.name, "target")
 		and FacingLosCast(spells.RaptorStrike.name, "target") then
 				return false
 		end
@@ -210,7 +218,8 @@ local abilities = {
 		end
 	end,
 	["MultiShot"] = function()
-		if ValidUsable(spells.MultiShot.id, "target")
+		if enables["MultiShot"]
+		and ValidUsable(spells.MultiShot.id, "target")
 		and InRange("target")
 		and FacingLosCast(spells.MultiShot.name, "target") then
 				return true
@@ -266,7 +275,8 @@ local abilities = {
 					end
 					-- MendPet
 					if ni.unit.hp("pet") < 70
-					and ni.player.distance("pet") < 45
+					and not ni.unit.buff("pet", spells.MendPet.id)
+					and IsSpellInRange(spells.MendPet.name, "pet")
 					and ni.spell.available(spells.MendPet.id) then
 							ni.spell.cast(spells.MendPet.name)
 							return true
