@@ -62,6 +62,7 @@ local creationstable = { };
 local targetingtable = { };
 local unitauras = { };
 local BehindTime = 0;
+local los = ni.functions.los;
 
 ni.unit = {
 	exists = function(t)
@@ -77,7 +78,7 @@ ni.unit = {
 				end
 			end
 		end
-		return ni.functions.los(...)
+		return los(...)
 	end,
 	creator = function(t)
 		return ni.unit.exists(t) and ni.functions.unitcreator(t) or nil
@@ -238,6 +239,43 @@ ni.unit = {
 		end
 		return 0, 0, 0
 	end,
+	newz = function(...)
+		local nArgs = #{...};
+		if nArgs == 1 or nArgs == 2 then
+			local t, offset = ...;
+			offset = offset or 20;
+			local x, y, z = ni.unit.location(t);
+			return select(4, los(x, y, z + offset, x, y, z - offset));
+		elseif nArgs == 3 or nArgs == 4 then
+			local x, y, z, offset = ...;
+			offset = offset or 20;
+			return select(4, los(x, y, z + offset, x, y, z - offset));			
+		end
+	end,
+	path = function(...)
+		local num = #{...};
+		local t1x, t1y, t1z;
+		local t2x, t2y, t2z;
+		if num == 2 then
+			local t1, t2 = ...;
+			t1x, t1y, t1z = ni.unit.location(t1);
+			t2x, t2y, t2z = ni.unit.location(t2);
+		elseif num == 4 then
+			local t1, t2, t3, t4 = ...;
+			if type(t1) == "string" then
+				t1x, t1y, t1z = ni.unit.location(t1);
+				t2x, t2y, t2z = t2, t3, t4;
+			elseif type(t4) == "string" then
+				t1x, t1y, t1z = t1, t2, t3;
+				t2x, t2y, t2z = ni.unit.location(t4);
+			end
+		elseif num == 6 then
+			t1x, t1y, t1z, t2x, t2y, t2z = ...;
+		end
+		if t1x and t1x ~= 0 and t2x and t2x ~= 0 then
+			return ni.functions.getpath(t1x, t1y, t1z, t2x, t2y, t2z);
+		end
+	end,
 	isfacing = function(t1, t2, degrees)
 		return (t1 ~= nil and t2 ~= nil) and ni.functions.isfacing(t1, t2, degrees) or false
 	end,
@@ -255,8 +293,10 @@ ni.unit = {
 		end
 		return (t1 ~= nil and t2 ~= nil) and ni.functions.isbehind(t1, t2) or false
 	end,
-	distance = function(t1, t2)
-		return (t1 ~= nil and t2 ~= nil) and ni.functions.getdistance(t1, t2) or nil
+	distance = function(...)
+		if #{...} >= 2 then
+			return ni.functions.getdistance(...) or nil
+		end
 	end,
 	distancesqr = function(t1, t2)
 		local x1, y1, z1 = ni.unit.location(t1)
