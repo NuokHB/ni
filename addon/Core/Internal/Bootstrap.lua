@@ -1,11 +1,14 @@
-local function start(queue, abilities, data, GUI)
+local function start(name, queue, abilities, data, GUI)
 	local profile = { };
 	profile.loaded = false;
+	profile.name = name;
 	profile.GUI = GUI;
 	profile.data = data;
 	function profile.execute(self)
-		if not profile.loaded then
-			if self.data ~= nil and #self.data > 0 then
+		if not self.loaded then
+			if self.data ~= nil 
+			 and #self.data > 0
+			 and self.data.key ~= nil then
 				if ni.utils.loaddatafiles(self.data) then
 					self.loaded = true
 				end
@@ -37,16 +40,20 @@ local function start(queue, abilities, data, GUI)
 		end
 	end;
 	function profile.unload(self)
-		if self.loaded then
-			table.wipe(ni.data)
+		if self.loaded
+		 and self.data
+		 and self.data.key then
+			table.wipe(ni.data[self.data.key])
+			ni.data[self.data.key] = nil;
 			self.loaded = false
 		end
 	end;
 	return profile;
 end
-local function startv2(queue, abilities, onload, onunload)
+local function startv2(name, queue, abilities, onload, onunload)
 	local profile = {};
 	profile.loaded = false;
+	profile.name = name;
 	function profile.load(self)
 		if not self.loaded
 		 and onload ~= nil
@@ -84,10 +91,10 @@ ni.bootstrap = {
 		GUI = true and GUI or {};
 		data = true and data or {}
 		ni.debug.log("Loaded " .. profile)
-		ni.rotation.profile[profile] = start(queue, abilities, data, GUI);
+		ni.rotation.profile[profile] = start(profile, queue, abilities, data, GUI);
 	end,
 	profile = function(profile, queue, abilities, onload, onunload)
 		ni.debug.log("Loaded "..profile);
-		ni.rotation.profile[profile] = startv2(queue, abilities, onload, onunload);
+		ni.rotation.profile[profile] = startv2(profile, queue, abilities, onload, onunload);
 	end
 }
