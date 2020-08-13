@@ -66,4 +66,5 @@ ni.functions = {
 	safeget = %%SafeGet%%,
 	bestaoeloc = %%BestAoELoc%%,
 	getpath = %%GetPath%%,
+	require = %%Require%%,
 }

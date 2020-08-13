@@ -1,3 +1,4 @@
+local modules = { }
 ni.utils = {
 	loadfile = function(filename)
 		return ni.functions.loadlua(filename);
@@ -10,6 +11,20 @@ ni.utils = {
 			end
 		end
 		return true;
+	end,
+	require = function(filename)
+		if not filename then
+			return;
+		end
+		if not filename:find(".lua") then
+			filename = filename..".lua";
+		end
+		if modules[filename] then
+			return modules[filename];
+		else
+			modules[filename] = ni.functions.require(filename);
+			return modules[filename];
+		end
 	end,
 	loaddatafile = function(filename)
 		return ni.functions.loadlua("Rotations\\Data\\" .. filename);

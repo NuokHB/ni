@@ -46,12 +46,6 @@ ni.frames.global_OnUpdate = function(self, elapsed)
 		end
 		ni.rotation.aoetoggle()
 		ni.rotation.cdtoggle()
-
-		if ni.rotation.profile[ni.rotation.lastprofile] and ni.rotation.lastprofile ~= ni.vars.profiles.active then
-			if ni.rotation.profile[ni.rotation.lastprofile].unload then
-				ni.rotation.profile[ni.rotation.lastprofile]:unload()
-			end
-		end
 	else
 		if ni.frames.notification:IsShown() then
 			ni.frames.notification:Hide();

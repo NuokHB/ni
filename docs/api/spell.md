@@ -69,6 +69,58 @@ if true then
 end
 ```
 
+## bestaoeloc
+
+- **distance** `number`
+- **radius** `number`
+- **friendly** `boolean` _optional_
+- **minimumcount** `number` _optional_
+- **inc** `number` _optional_
+- **zindex_inc** `number` _optional_
+
+Returns: `X/Y/Z`
+
+This function uses the internal check for sweeping around the player to search for the best X/Y/Z coordinate to place an AoE at. The distance and radius are the only two required, the rest are optional. Friendly is to check for units you can assist if true, or that you can attack if false (default: false). minimumcount is the minimum number of units within the radius to be counted as a good location (default: 2). inc is for the incremental looping that is done, the higher the number the less efficient the scan is, but the quicker it is done; for example if a distance of 30 is passed and the increment is 1.5 it would go -30, -28.5, -27, -25.5 ... to +30 (default: 1). zindex_inc is for the readjustment to obtain a new Z for each position checked, meaning the point where the ground actually is, each point uses +increment and -increment from the players Z and uses the hit location as the new z (default: 20).
+
+```lua
+local x, y, z = ni.spells.bestaoeloc(30, 4, false, 6);
+--This would return nil if there is no good location, otherwise x, y, z will be the best location to hit at least 6 mobs within a location that is at least 30 yards from the player and has a splash radius of 4 yards
+```
+
+## castharmfulatbest
+
+- **spell** `id|string`
+- **distance** `number`
+- **radius** `number`
+- **minimumcount** `number` _optional_
+- **inc** `number` _optional_
+- **zindex_inc** `number` _optional_
+
+Returns: `void`
+
+This function will cast the spell specified at the best location matching the requirements. See above for what each argument is.
+
+```lua
+ni.spell.cast("Hurricane", 36, 4, 4); --On a druid this would cast hurricane at the best location within 36 yards of the player that has at least 4 mobs to be hit
+```
+
+## casthelpfulatbest
+
+- **spell** `id|string`
+- **distance** `number`
+- **radius** `number`
+- **minimumcount** `number` _optional_
+- **inc** `number` _optional_
+- **zindex_inc** `number` _optional_
+
+Returns: `void`
+
+This function will cast the spell specified at the best location matching the requirements. See above for what each argument is.
+
+```lua
+ni.spell.cast("Healing Rain", 36, 4, 5); --On a shaman this would cast healing rain at the best location within 36 yards of the player that has at least 5 friendlies to be hit by the heal
+```
+
 ## castat
 
 Arguments:
