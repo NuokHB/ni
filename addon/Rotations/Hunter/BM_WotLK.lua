@@ -19,6 +19,7 @@ local enables = {
 	["MultiShot"]= false,
 }
 local values = {
+	["PetFood"] = 0,
 }
 local inputs = {
 }
@@ -54,6 +55,13 @@ local items = {
 		enabled = enables["MultiShot"],
 		key = "MultiShot"
 	},
+	{
+		type = "entry",
+		text = "Pet Food Id",
+		tooltip = "Id of food to feed your pet",
+		value = values["PetFood"],
+		key = "PetFood"
+	},
 };
 local incombat = false;
 local function CombatEventCatcher(event, ...)
@@ -64,18 +72,15 @@ local function CombatEventCatcher(event, ...)
 	end
 end
 local function OnLoad()
-	ni.combatlog.registerhandler("Prot-Cata", CombatEventCatcher);
-	ni.GUI.AddFrame("Prot-Cata", items);
+	ni.combatlog.registerhandler("BM_WOTLK", CombatEventCatcher);
+	ni.GUI.AddFrame("BM_WOTLK", items);
 end
 local function OnUnload()
-	ni.combatlog.unregisterhandler("Prot-Cata");
-	ni.GUI.DestroyFrame("Prot-Cata");
+	ni.combatlog.unregisterhandler("BM_WOTLK");
+	ni.GUI.DestroyFrame("BM_WOTLK");
 end
 
 local spells = {
---General
-Berserking = {id = 26297, name = GetSpellInfo(26297)},
-AutoAttack = {id = 6603, name = GetSpellInfo(6603)},
 --Beast Mastery
 MendPet = {id = 3111, name = GetSpellInfo(3111)},
 AspectoftheMonkey = {id = 13163, name = GetSpellInfo(13163)},
@@ -89,15 +94,15 @@ TameBeast = {id = 1515, name = GetSpellInfo(1515)},
 FeedPet = {id = 6991, name = GetSpellInfo(6991)},
 RevivePet = {id = 982, name = GetSpellInfo(982)},
 ScareBeast = {id = 1513, name = GetSpellInfo(1513)},
-AspectoftheHawk = {id = 14318, name = GetSpellInfo(14318)},
+AspectoftheHawk = {id = 14319, name = GetSpellInfo(14319)},
 --Marksmanship
 ConcussiveShot = {id = 5116, name = GetSpellInfo(5116)},
-HuntersMark = {id = 1130, name = GetSpellInfo(1130)},
+HuntersMark = {id = 14323, name = GetSpellInfo(14323)},
 MultiShot = {id = 2643, name = GetSpellInfo(2643)},
 AutoShot = {id = 75, name = GetSpellInfo(75)},
 DistractingShot = {id = 20736, name = GetSpellInfo(20736)},
-SerpentSting = {id = 13550, name = GetSpellInfo(13550)},
-ArcaneShot = {id = 14282, name = GetSpellInfo(14282)},
+SerpentSting = {id = 13551, name = GetSpellInfo(13551)},
+ArcaneShot = {id = 14283, name = GetSpellInfo(14283)},
 --Survival
 Disengage = {id = 781, name = GetSpellInfo(781)},
 TrackHumanoids = {id = 19883, name = GetSpellInfo(19883)},
@@ -280,8 +285,25 @@ local abilities = {
 					and ni.spell.available(spells.MendPet.id) then
 							ni.spell.cast(spells.MendPet.name)
 							return true
-					end
+					end				
 			end
-	end
+	end,
+	["FeedPet"] = function()
+		if not incombat
+		and UnitExists("pet")
+		and not UnitIsDeadOrGhost("pet") then
+			local happiness = GetPetHappiness()
+			local foodId = values["PetFood"]
+			if happiness ~= 3
+			and foodId ~= 0
+			and ni.player.hasitem(foodId) then
+				local name = GetItemInfo(foodId)
+				if(name ~= nil) then
+					ni.spell.cast(spells.FeedPet.name)
+					ni.player.runtext(string.format("/use %s", name))
+				end
+			end
+		end
+	end,
 }
 ni.bootstrap.profile("BM_WotLK", queue, abilities, OnLoad, OnUnload);
