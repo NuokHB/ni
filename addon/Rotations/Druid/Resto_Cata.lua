@@ -196,8 +196,8 @@ local abilities = {
 	["Tank Heal"] = function ()
 		local mainTank, offTank = ni.tanks()
 		local lbTar = menus["LifebloomTar"]
-		local rjTankValue, rjEnabled = enables["RejuvenationTank"], values["RejuvenationTank"]
-		local rgTankValue, rgEnabled = enables["RegrowthTank"], values["RegrowthTank"]
+		local rjTankValue, rjEnabled = values["RejuvenationTank"], enables["RejuvenationTank"]
+		local rgTankValue, rgEnabled = values["RegrowthTank"], enables["RegrowthTank"]
 		--Lifebloom focus
 		if lbTar == 3 and ni.unit.exists("focus") then
 			local lbftank, _, _, lbftank_count, _, _, lbftank_time = ni.unit.buff("focus", spells.Lifebloom.id, "player")

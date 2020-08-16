@@ -149,14 +149,17 @@ local function ValidUsable(id, tar)
 end
 
 --GetTotemInfo
+local fireSlot, earthSlot, waterSlot, airSlot = 1, 2, 3, 4;
 local function HasTotem(slot, name)
 	local haveTotem, totemName = GetTotemInfo(slot)
 	if haveTotem and totemName == name then
 		return true
 	end
+	if haveTotem and totemName == nil then
+		return true
+	end
 	return false
 end
-
 local function TotemTimeRemaining(slot, name)
 	if not HasTotem(slot, name) then
 		return 0
@@ -183,6 +186,7 @@ local abilities = {
 		end
 		local cTar = ni.player.enemiesinrange(40)
 		for k, v in ipairs(cTar) do
+			--/dump aa.player.threat("target")
 			if ni.player.threat(v.guid) == -1 then
 				table.remove(cTar, k)
 			end
@@ -210,7 +214,9 @@ local abilities = {
 	end,
 
 	["FlametongueWeapon"] = function()
+		local enchant = GetWeaponEnchantInfo()
 		if ni.spell.available(spells.FlameShock.id)
+		and enchant ~= 1
 		and not ni.player.buff(spells.FlameShock.id) then
 		ni.spell.cast(spells.FlametongueWeapon.name)
 			return true

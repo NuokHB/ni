@@ -1,4 +1,5 @@
 local queue = {
+	"FeedPet",
 	"Pause",
 	"AspectoftheHawk",
 	"AspectoftheViper",
@@ -296,7 +297,8 @@ local abilities = {
 			local foodId = values["PetFood"]
 			if happiness ~= 3
 			and foodId ~= 0
-			and ni.player.hasitem(foodId) then
+			and ni.player.hasitem(foodId)
+			and not ni.unit.buff("pet", 1539) then
 				local name = GetItemInfo(foodId)
 				if(name ~= nil) then
 					ni.spell.cast(spells.FeedPet.name)
