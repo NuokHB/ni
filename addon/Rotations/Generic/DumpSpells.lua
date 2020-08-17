@@ -36,7 +36,8 @@ local abilities = {
 									if ni.vars.build > 30300 then
 									local type, id = GetSpellBookItemInfo(j, "player")
 									if (type == "SPELL" or type == "FUTURESPELL") then
-											local sname = GetSpellInfo(id)
+										local sname, rank = GetSpellInfo(id)
+										if(rank ~= "Passive") then
 											sname =  string.gsub(sname, "%s+", "")
 											sname =  string.gsub(sname,"'","")
 											sname =  string.gsub(sname,"-","")
@@ -44,6 +45,7 @@ local abilities = {
 											CopyChatFrameEditBox:Insert(text)
 											CopyChatFrameEditBox:Insert("\n")
 											dumped = true
+										end
 								end
 							end
 						end
@@ -93,7 +95,7 @@ local abilities = {
             local enabled, glyphType, glyphTooltipIndex, glyphSpell, icon = GetGlyphSocketInfo(index);
             if glyphSpell ~= nil then
                 local name = GetSpellInfo(glyphSpell)
-                CopyChatFrameEditBox:Insert(string.format("%s %s ", name, glyphSpell, enabled))
+                CopyChatFrameEditBox:Insert(string.format("%s %s %s", name, glyphSpell, enabled))
                 CopyChatFrameEditBox:Insert("\n")
             end
         end
