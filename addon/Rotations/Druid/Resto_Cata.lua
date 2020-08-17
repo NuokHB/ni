@@ -2,31 +2,30 @@ local queue = {
 	"Pause",
 	"Innervate",
 	"Swiftmend",
-	"Tank Heal",
 	"WildGrowth",
+	"Tank Heal",
+	"RemoveCorruption",
 	"Regrowth",
 	"Rejuvenation",
 	"Nourish",
 }
 
 local spells = {
-	Disentanglement = {id = 96429, name = GetSpellInfo(96429)},
-	GiftofNature = {id = 87305, name = GetSpellInfo(87305)},
-	Meditation = {id = 85101, name = GetSpellInfo(85101)},
-	Nourish = {id = 50464, name = GetSpellInfo(50464)},
-	OmenofClarity = {id = 16864, name = GetSpellInfo(16864)},
-	Rebirth = {id = 20484, name = GetSpellInfo(20484)},
-	Regrowth = {id = 8936, name = GetSpellInfo(8936)},
-	Rejuvenation = {id = 774, name = GetSpellInfo(774)},
-	RemoveCorruption = {id = 2782, name = GetSpellInfo(2782)},
-	Revive = {id = 50769, name = GetSpellInfo(50769)},
-	Swiftmend = {id = 18562, name = GetSpellInfo(18562)},
-	MarkoftheWild = {id = 1126, name = GetSpellInfo(1126)},
-	Lifebloom = {id = 33763, name = GetSpellInfo(33763)},
-	Tranquility = {id = 740, name = GetSpellInfo(740)},
-	HealingTouch = {id = 5185, name = GetSpellInfo(5185)},
-	WildGrowth = {id = 48438, name = GetSpellInfo(48438)},
-	Innervate = {id = 29166, name = GetSpellInfo(29166)},
+--Restoration
+MarkoftheWild = {id = 1126, name = GetSpellInfo(1126)},
+Nourish = {id = 50464, name = GetSpellInfo(50464)},
+Rebirth = {id = 20484, name = GetSpellInfo(20484)},
+Regrowth = {id = 8936, name = GetSpellInfo(8936)},
+Rejuvenation = {id = 774, name = GetSpellInfo(774)},
+RemoveCorruption = {id = 2782, name = GetSpellInfo(2782)},
+Revive = {id = 50769, name = GetSpellInfo(50769)},
+Swiftmend = {id = 18562, name = GetSpellInfo(18562)},
+WildGrowth = {id = 48438, name = GetSpellInfo(48438)},
+Lifebloom = {id = 33763, name = GetSpellInfo(33763)},
+Tranquility = {id = 740, name = GetSpellInfo(740)},
+HealingTouch = {id = 5185, name = GetSpellInfo(5185)},
+
+Innervate = {id = 29166, name = GetSpellInfo(29166)},
 }
 
 local enables =
@@ -36,6 +35,8 @@ local enables =
 	["NourishHp"] = true,
 	["SwiftmendHp"] = true,
 	["Dispel"] = false,
+	["CombatOnly"] = true,
+	["LifebloomExpire"] = false,
 }
 local values =
 {
@@ -44,6 +45,7 @@ local values =
 	["RegrowthHp"] = 80,
 	["RejuvenationHp"] = 90,
 	["WildGrowthHp"] = 90,
+	["WildGrowthAoeCount"] = 2,
 	["NourishHp"] = 75,
 	["SwiftmendHp"] = 50,
 	["Innervate"] = 60,
@@ -71,6 +73,15 @@ local items = {
 	callback = GUICallback,
 	{ type = "title", text = "Resto Druid Cata" },
 	{ type = "separator" },
+	{ type = "title", text = "Combat Only" },
+	{
+		type = "entry",
+		text = "Combat Only",
+		tooltip = "Only let the routine run if your in combat",
+		enabled = enables["CombatOnly"],
+		key = "CombatOnly"
+	},
+	{ type = "separator" },
 	{ type = "title", text = "Tank Heal" },
 	{ type = "title", text = "Lifebloom Target" },
 	{
@@ -93,6 +104,13 @@ local items = {
 		},
 	},
 	key = "LifebloomTar" },
+	{
+		type = "entry",
+		text = "Let Lifebloom Expire",
+		tooltip = "Allows lifebloom to expire instead of refreshing",
+		enabled = enables["LifebloomExpire"],
+		key = "LifebloomExpire"
+	},
 	{
 		type = "entry",
 		text = "Regrowth Tank HP",
@@ -129,6 +147,13 @@ local items = {
 	},
 	{
 		type = "entry",
+		text = "Wild Growth AoE count",
+		tooltip = "The number of units nearby below set Hp%",
+		value = values["WildGrowthAoeCount"],
+		key = "WildGrowthAoeCount"
+	},
+	{
+		type = "entry",
 		text = "Nourish HP",
 		value = values["NourishHp"],
 		enabled = enables["NourishHp"],
@@ -148,7 +173,7 @@ local items = {
 		value = 60,
 		key = "Innervate"
 	},
-	{ 
+	{
 		type = "entry",
 		text = "Enable Dispel",
 		enabled = true,
@@ -188,7 +213,9 @@ end
 local abilities = {
 	["Pause"] = function()
 		if	IsMounted() or
-			UnitIsDeadOrGhost("player")
+		UnitIsDeadOrGhost("player")
+		or (enables["CombatOnly"]
+		and not incombat)
 		 then
 			return true
 		end
@@ -196,8 +223,8 @@ local abilities = {
 	["Tank Heal"] = function ()
 		local mainTank, offTank = ni.tanks()
 		local lbTar = menus["LifebloomTar"]
-		local rjTankValue, rjEnabled = enables["RejuvenationTank"], values["RejuvenationTank"]
-		local rgTankValue, rgEnabled = enables["RegrowthTank"], values["RegrowthTank"]
+		local rjTankValue, rjEnabled = values["RejuvenationTank"], enables["RejuvenationTank"]
+		local rgTankValue, rgEnabled = values["RegrowthTank"], enables["RegrowthTank"]
 		--Lifebloom focus
 		if lbTar == 3 and ni.unit.exists("focus") then
 			local lbftank, _, _, lbftank_count, _, _, lbftank_time = ni.unit.buff("focus", spells.Lifebloom.id, "player")
@@ -251,7 +278,8 @@ local abilities = {
 				--Lifebloom offTank
 				if (not lbotank
 				or lbotank_count < 3
-				or lbotank_time - GetTime() < 2)
+				or (not enables["LifebloomExpire"]
+				and	lbotank_time - GetTime() < 2))
 				and lbTar == 2
 				and ValidUsable(spells.Lifebloom.id, offTank)
 				and LosCast(spells.Lifebloom.name, offTank) then
@@ -302,11 +330,14 @@ local abilities = {
 			end
 		end
 	end,
-	["Wild Growth"] = function()
-		if ni.members.averageof(4) <= values["WildGrowthHp"]
-		 and ValidUsable(spells.WildGrowth.id, ni.members[1].unit)
-		 and LosCast(spells.WildGrowth.name, ni.members[1].unit) then
-			return true
+	["WildGrowth"] = function()
+		if ni.spell.available(spells.WildGrowth.id) then
+			local members = ni.members.inrangebelow("player", 40, values["WildGrowthHp"])
+			if #members >= values["WildGrowthAoeCount"]
+				and ValidUsable(spells.WildGrowth.id, members[1].unit)
+				and LosCast(spells.WildGrowth.name, members[1].unit) then
+					return true
+				end
 			end
 	end,
 	["Nourish"] = function()
@@ -341,7 +372,6 @@ local abilities = {
 			return true
 			end
 		end,
-
 	["RemoveCorruption"] = function ()
 	if enables["Dispel"] then
 	local naturesCure = GetTalentInfo(3, 17)
@@ -355,8 +385,8 @@ local abilities = {
 			or debufftype == "Poison"
 			or (naturesCure == 1
 			and debufftype == "Magic") then
-				if ValidUsable(spells.Swiftmend.id, tar)
-				and LosCast(spells.Swiftmend.name, tar) then
+				if ValidUsable(spells.RemoveCorruption.id, tar)
+				and LosCast(spells.RemoveCorruption.name, tar) then
 					return true
 				end
 			end

@@ -1,6 +1,7 @@
+
 *.xml
-addon/Settings/ui.ini
-*.dll
+*.ini
 *.exe
 *.zip
+*.dll
 *.DS_Store

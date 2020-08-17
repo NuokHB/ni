@@ -5,8 +5,11 @@ local queue = {
 	"Seal",
 	"Devotion Aura",
 	"Fury",
-	"Divine Plea",
+	"ArdentDefender",
+	"GuardianofAncientKings",
+	"DivineProtection",
 	"Holy Sheild",
+	"Divine Plea",
 	"Cleanse",
 	"Word of Glory",
 	"Inquisition",
@@ -25,6 +28,9 @@ local enables =
 	["WordofGlory"] = true,
 	["HolyShield"] = true,
 	["Cleanse"] = false,
+	["GuardianofAncientKings"] = true,
+	["ArdentDefender"] = true,
+	["DivineProtection"] = true,
 }
 local values =
 {
@@ -32,11 +38,13 @@ local values =
 	["DivinePlea"] = 60,
 	["WordofGlory"] = 75,
 	["HolyShield"] = 80,
+	["DivineProtection"] = 75,
+	["GuardianofAncientKings"] = 50,
+	["ArdentDefender"] = 25,
 }
 local inputs = {
 }
 local Truth, Insight, Righteousness = "|cffFFFF33Truth", "|cffFF9900Insight", "|cff24E0FBRighteousness"
-
 
 local menus = {
 	["Seal"] = 1,
@@ -80,8 +88,41 @@ local items = {
 		},
 	},
 	key = "Seal" },
+	{ type = "separator" },
+	{ type = "title", text = "Defensive CD's" },
 	{
-		type = "separator" },
+		type = "entry",
+		text = "Ardent Defender",
+		tooltip = "The players health pct before using Ardent Defender",
+		enabled = enables["ArdentDefender"],
+		value = values["ArdentDefender"],
+		key = "ArdentDefender"
+	},
+	{
+		type = "entry",
+		text = "Divine Protection",
+		tooltip = "The players health pct before using Ardent Defender",
+		enabled = enables["DivineProtection"],
+		value = values["DivineProtection"],
+		key = "DivineProtection"
+	},
+	{
+		type = "entry",
+		text = "Guardian of Ancient Kings",
+		tooltip = "The players health pct before using Guardian of Ancient Kings",
+		enabled = enables["GuardianofAncientKings"],
+		value = values["GuardianofAncientKings"],
+		key = "GuardianofAncientKings"
+	},
+	{
+		type = "entry",
+		text = "Holy Sheild",
+		tooltip = "The players health pct before using Holy Sheild",
+		enabled = enables["HolyShield"],
+		value = values["HolyShield"],
+		key = "HolyShield"
+	},
+	{type = "separator" },
 		{
 			type = "entry",
 			text = "Holy Wrath",
@@ -90,15 +131,6 @@ local items = {
 		 	value = values["HolyWrath"],
 		 	key = "HolyWrath"
 		},
-	{ type = "separator" },
-	{
-		type = "entry",
-		text = "Divine Plea",
-		tooltip = "The players mana pct before using Divine Plea",
-		enabled = enables["DivinePlea"],
-		value = values["DivinePlea"],
-		key = "DivinePlea"
-	},
 	{ type = "separator" },
 	{
 		type = "entry",
@@ -111,13 +143,12 @@ local items = {
 	{ type = "separator" },
 	{
 		type = "entry",
-		text = "Holy Sheild",
-		tooltip = "The players health pct before using Holy Sheild",
-		enabled = enables["HolyShield"],
-		value = values["HolyShield"],
-		key = "HolyShield"
+		text = "Divine Plea",
+		tooltip = "The players mana pct before using Divine Plea",
+		enabled = enables["DivinePlea"],
+		value = values["DivinePlea"],
+		key = "DivinePlea"
 	},
-	{ type = "separator" },
 	{
 		type = "entry",
 		text = "Cleanse Self",
@@ -312,9 +343,37 @@ local abilities = {
 	end,
 	["Holy Sheild"] = function()
 		if enables["HolyShield"]
+		and incombat
 		and ni.player.hp() <= values["HolyShield"]
 		and ActiveEnemies() >= 1 then
 			ni.spell.cast(spells.HolyShield.name)
+			return true
+		end
+	end,
+	["GuardianofAncientKings"] = function()
+		if enables["GuardianofAncientKings"]
+		and incombat
+		and ni.player.hp() <= values["GuardianofAncientKings"]
+		and ActiveEnemies() >= 1 then
+			ni.spell.cast(spells.GuardianofAncientKings.name)
+			return true
+		end
+	end,
+	["ArdentDefender"] = function()
+		if enables["ArdentDefender"]
+		and incombat
+		and ni.player.hp() <= values["ArdentDefender"]
+		and ActiveEnemies() >= 1 then
+			ni.spell.cast(spells.ArdentDefender.name)
+			return true
+		end
+	end,
+	["DivineProtection"] = function()
+		if enables["DivineProtection"]
+		and incombat
+		and ni.player.hp() <= values["DivineProtection"]
+		and ActiveEnemies() >= 1 then
+			ni.spell.cast(spells.DivineProtection.name)
 			return true
 		end
 	end,

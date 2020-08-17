@@ -3,6 +3,7 @@ local queue = {
 	"WaterShield",
 	"EarthlivingWeapon",
 	"Tank Heal",
+	"HealingStreamTotem",
 	"Riptide",
 	"ChainHeal",
 	"HealingSurge",
@@ -189,14 +190,17 @@ local function ValidUsable(id, tar)
 end
 
 --GetTotemInfo
+local fireSlot, earthSlot, waterSlot, airSlot = 1, 2, 3, 4;
 local function HasTotem(slot, name)
 	local haveTotem, totemName = GetTotemInfo(slot)
 	if haveTotem and totemName == name then
 		return true
 	end
+	if haveTotem and totemName == nil then
+		return true
+	end
 	return false
 end
-
 local function TotemTimeRemaining(slot, name)
 	if not HasTotem(slot, name) then
 		return 0
@@ -220,7 +224,9 @@ local abilities = {
 		end
 	end,
 	["EarthlivingWeapon"]  = function ()
+		local enchant = GetWeaponEnchantInfo()
 		if ni.spell.available(spells.EarthlivingWeapon.id)
+		and enchant ~= 1
 		and not ni.player.buff(spells.EarthlivingWeapon.id) then
 			ni.spell.cast(spells.EarthlivingWeapon.name)
 			return  true;
@@ -310,6 +316,13 @@ local abilities = {
 					return true
 				end
 			end
+	end,
+	["HealingStreamTotem"] = function()
+		if not HasTotem(waterSlot)
+		and ni.spell.available(spells.HealingStreamTotem.id)
+		and #ni.members.inrangebelow("player", 40, 95) >= 1 then
+			ni.spell.cast(spells.HealingStreamTotem.name)
+		end
 	end,
 	["HealingSurge"] = function()
 		local value = GetSetting("HealingSurgeHP")
