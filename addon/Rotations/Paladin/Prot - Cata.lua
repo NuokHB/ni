@@ -291,13 +291,16 @@ local abilities = {
 	end,
 	["Divine Plea"] = function()
 		if not enables["DivinePlea"]
+		and ni.spell.available(spells.DivinePlea.id)
 		and ni.player.power("mana") <= values["DivinePlea"] then
 			ni.spell.cast(spells.DivinePlea.name)
 			return true
 		end
 	end,
 	["Devotion Aura"] = function()
-		if not ni.player.buff(spells.DevotionAura.id) then
+		if not ni.player.buff(spells.DevotionAura.id)
+		and ni.spell.available(spells.DevotionAura.id)
+		then
 			ni.spell.cast(spells.DevotionAura.name)
 			return true
 		end
@@ -343,6 +346,7 @@ local abilities = {
 	end,
 	["Holy Sheild"] = function()
 		if enables["HolyShield"]
+		and ni.spell.available(spells.HolyShield.id)
 		and incombat
 		and ni.player.hp() <= values["HolyShield"]
 		and ActiveEnemies() >= 1 then
@@ -352,6 +356,7 @@ local abilities = {
 	end,
 	["GuardianofAncientKings"] = function()
 		if enables["GuardianofAncientKings"]
+		and ni.spell.available(spells.GuardianofAncientKings.id)
 		and incombat
 		and ni.player.hp() <= values["GuardianofAncientKings"]
 		and ActiveEnemies() >= 1 then
@@ -361,6 +366,7 @@ local abilities = {
 	end,
 	["ArdentDefender"] = function()
 		if enables["ArdentDefender"]
+		and ni.spell.available(spells.ArdentDefender.id)
 		and incombat
 		and ni.player.hp() <= values["ArdentDefender"]
 		and ActiveEnemies() >= 1 then
@@ -371,6 +377,7 @@ local abilities = {
 	["DivineProtection"] = function()
 		if enables["DivineProtection"]
 		and incombat
+		and ni.spell.available(spells.DivineProtection.id)
 		and ni.player.hp() <= values["DivineProtection"]
 		and ActiveEnemies() >= 1 then
 			ni.spell.cast(spells.DivineProtection.name)
@@ -394,6 +401,7 @@ local abilities = {
 		local holy = ni.player.powerraw("holy")
 		local cd = ni.spell.cd(spells.WordofGlory.id)
 		if holy == 3
+		and ni.spell.available(spells.Inquisition.id)
 			and (not enables["WordofGlory"] or
 			cd > 0 or
 			ni.player.hp() >= values["WordofGlory"])
