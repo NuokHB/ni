@@ -3,8 +3,10 @@ local queue = {
 	"Pause",
 	"AspectoftheHawk",
 	"AspectoftheViper",
-	"HuntersMark",
 	"PetControl",
+	"Volley",
+	"HuntersMark",
+	"BestialWrath",
 	"KillShot",
 	"SerpentSting",
 	"ConcussiveShot",
@@ -18,9 +20,11 @@ local queue = {
 local enables = {
 	["ConcussiveShot"] = false,
 	["MultiShot"]= false,
+	["Volley"]= true
 }
 local values = {
 	["PetFood"] = 0,
+	["Volley"]= 4,
 }
 local inputs = {
 }
@@ -58,6 +62,14 @@ local items = {
 	},
 	{
 		type = "entry",
+		text = "Volley",
+		tooltip = "Volley AoE Count",
+		enabled = enables["Volley"],
+		value = values["Volley"],
+		key = "Volley"
+	},
+	{
+		type = "entry",
 		text = "Pet Food Id",
 		tooltip = "Id of food to feed your pet",
 		value = values["PetFood"],
@@ -82,52 +94,51 @@ local function OnUnload()
 end
 
 local spells = {
+--General
+AutoAttack = {id = 6603, name = GetSpellInfo(6603)},
+Throw = {id = 2764, name = GetSpellInfo(2764)},
+Berserking = {id = 26297, name = GetSpellInfo(26297)},
 --Beast Mastery
-MendPet = {id = 3111, name = GetSpellInfo(3111)},
+MendPet = {id = 3662, name = GetSpellInfo(3662)},
 AspectoftheMonkey = {id = 13163, name = GetSpellInfo(13163)},
 CallPet = {id = 883, name = GetSpellInfo(883)},
 DismissPet = {id = 2641, name = GetSpellInfo(2641)},
-AspectoftheViper = {id = 34074, name = GetSpellInfo(34074)},
+AspectoftheHawk = {id = 25296, name = GetSpellInfo(25296)},
 EyesoftheBeast = {id = 1002, name = GetSpellInfo(1002)},
+Intimidation = {id = 19577, name = GetSpellInfo(19577)},
+TameBeast = {id = 1515, name = GetSpellInfo(1515)},
 AspectoftheCheetah = {id = 5118, name = GetSpellInfo(5118)},
 EagleEye = {id = 6197, name = GetSpellInfo(6197)},
-TameBeast = {id = 1515, name = GetSpellInfo(1515)},
+ScareBeast = {id = 1513, name = GetSpellInfo(1513)},
 FeedPet = {id = 6991, name = GetSpellInfo(6991)},
 RevivePet = {id = 982, name = GetSpellInfo(982)},
-ScareBeast = {id = 1513, name = GetSpellInfo(1513)},
-AspectoftheHawk = {id = 14319, name = GetSpellInfo(14319)},
+AspectoftheViper = {id = 34074, name = GetSpellInfo(34074)},
+BestialWrath = {id = 19574, name = GetSpellInfo(19574)},
 --Marksmanship
+Volley = {id = 14294, name = GetSpellInfo(14294)},
+MultiShot = {id = 25294, name = GetSpellInfo(25294)},
+SteadyShot = {id = 56641, name = GetSpellInfo(56641)},
 ConcussiveShot = {id = 5116, name = GetSpellInfo(5116)},
-HuntersMark = {id = 14323, name = GetSpellInfo(14323)},
-MultiShot = {id = 2643, name = GetSpellInfo(2643)},
+HuntersMark = {id = 14324, name = GetSpellInfo(14324)},
+RapidFire = {id = 3045, name = GetSpellInfo(3045)},
 AutoShot = {id = 75, name = GetSpellInfo(75)},
+ArcaneShot = {id = 14287, name = GetSpellInfo(14287)},
+SerpentSting = {id = 25295, name = GetSpellInfo(25295)},
 DistractingShot = {id = 20736, name = GetSpellInfo(20736)},
-SerpentSting = {id = 13551, name = GetSpellInfo(13551)},
-ArcaneShot = {id = 14283, name = GetSpellInfo(14283)},
 --Survival
 Disengage = {id = 781, name = GetSpellInfo(781)},
 TrackHumanoids = {id = 19883, name = GetSpellInfo(19883)},
-MongooseBite = {id = 1495, name = GetSpellInfo(1495)},
-RaptorStrike = {id = 14261, name = GetSpellInfo(14261)},
+MongooseBite = {id = 14270, name = GetSpellInfo(14270)},
+FreezingTrap = {id = 1499, name = GetSpellInfo(1499)},
 TrackUndead = {id = 19884, name = GetSpellInfo(19884)},
 TrackBeasts = {id = 1494, name = GetSpellInfo(1494)},
-ImmolationTrap = {id = 13795, name = GetSpellInfo(13795)},
 WingClip = {id = 2974, name = GetSpellInfo(2974)},
-FreezingTrap = {id = 1499, name = GetSpellInfo(1499)},
+RaptorStrike = {id = 14261, name = GetSpellInfo(14261)},
+Deterrence = {id = 19263, name = GetSpellInfo(19263)},
+ImmolationTrap = {id = 13795, name = GetSpellInfo(13795)},
+ExplosiveTrap = {id = 13813, name = GetSpellInfo(13813)},
+FeignDeath = {id = 5384, name = GetSpellInfo(5384)},
 }
-
-local enemies = {}
-
-local function ActiveEnemies()
-	table.wipe(enemies)
-	enemies = ni.player.enemiesinrange(10)
-	for k, v in ipairs(enemies) do
-		if ni.player.threat(v.guid) == -1 then
-			table.remove(enemies, k)
-		end
-	end
-	return #enemies
-end
 
 local lastSpell, lastGuid, lastTime = "", "", 0
 local function FacingLosCast(spell, tar)
@@ -167,6 +178,8 @@ local function InRange(tar)
 	end
 	return false
 end
+
+local lastVolleyCheck = 0
 
 local abilities = {
 	["Pause"] = function()
@@ -227,6 +240,7 @@ local abilities = {
 		if enables["MultiShot"]
 		and ValidUsable(spells.MultiShot.id, "target")
 		and InRange("target")
+		and not ni.player.ismoving()
 		and FacingLosCast(spells.MultiShot.name, "target") then
 				return true
 		end
@@ -246,6 +260,30 @@ local abilities = {
 			ni.spell.cast(spells.AspectoftheHawk.name)
 		end
 	end,
+	["Volley"] = function()
+		if enables["Volley"] then
+			local nearby = #ni.unit.enemiesinrange("target", 8)
+			local n = UnitChannelInfo("player")
+			if n ~= nil and n == spells.Volley.name
+			and nearby >= values["Volley"] then
+				ni.debug.log(string.format("Volley - Nearby = %s, Current Channel = %s", nearby, n))
+				return true
+				end
+			if ni.spell.available(spells.Volley.id)
+			and InRange("target")
+			and nearby >= values["Volley"] then
+				ni.spell.castat(spells.Volley.name, "target", 1)
+				return true
+				end
+		end
+	end,
+	["BestialWrath"] = function()
+		if ni.spell.available(spells.BestialWrath.id)
+		and InRange("target") then
+			ni.spell.cast(spells.BestialWrath.name)
+			return true
+			end
+	end,
 	--Need to update spells when I get them
 	["KillShot"] = function()
 			if ValidUsable(61006, "target")
@@ -255,9 +293,10 @@ local abilities = {
 				end
 	end,
 	["SteadyShot"] = function()
-		if ValidUsable(49052, "target")
+		if ValidUsable(spells.SteadyShot.id, "target")
 		and InRange("target")
-		and FacingLosCast("Steady Shot", "target") then
+		and not ni.player.ismoving()
+		and FacingLosCast(spells.SteadyShot.name, "target") then
 			return true
 			end
 	end,
