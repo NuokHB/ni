@@ -33,7 +33,7 @@ Delays a call for specified time on a specific function.
 ```lua
 ni.delayfor(2, function()
   ni.spell.cast("Shadow Bolt", "target")
-);
+end);
 -- Shadow Bolt will be casted 2 seconds from now
 ```
 

@@ -43,7 +43,8 @@ for k, v in ipairs(auras) do
 	if v.ID == 32223 then
 		--The unit has the aura Crusader Aura by ID check
 	end
-end```
+end
+```
 
 ## buff
 

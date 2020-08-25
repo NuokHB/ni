@@ -32,6 +32,8 @@ See the [Quick start](/getting-started/quickstart.md) guide for more details.
 - **[DarhangeR](https://github.com/DarhangeR/Ni-Profiles/)**
 - **[Xcesius](https://github.com/Xcesius/Ni-Profiles/)**
 
+- **[NuokHB](https://github.com/NuokHB/ni/tree/master/addon/Rotations)**
+
 
 ## Community 👋
 

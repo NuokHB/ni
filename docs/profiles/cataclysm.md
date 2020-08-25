@@ -18,6 +18,8 @@
 
 #### Restoration
 
+[NuokHB Restoration](https://raw.githubusercontent.com/NuokHB/ni/master/addon/Rotations/Druid/Resto_Cata.lua)
+
 ## Hunter
 
 #### Beast Mastery
@@ -41,6 +43,8 @@
 #### Retribution
 
 #### Protection
+
+[NuokHB Protection](https://raw.githubusercontent.com/NuokHB/ni/master/addon/Rotations/Paladin/Prot%20-%20Cata.lua)
 
 ## Priest
 

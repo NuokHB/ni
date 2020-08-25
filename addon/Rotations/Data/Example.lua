@@ -30,6 +30,6 @@ function example.combatfilter(event, ...)
 		end
 	end
 end
-			
+
 --Finished up with everything so we return it now to be used in the profile
 return example;

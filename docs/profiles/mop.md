@@ -82,9 +82,13 @@
 
 #### Elemental
 
+[NuokHB Elemental](https://raw.githubusercontent.com/NuokHB/ni/master/addon/Rotations/Shaman/Ele_MOP.lua)
+
 #### Enhancement
 
 #### Restoration
+
+[NuokHB Restoration](https://raw.githubusercontent.com/NuokHB/ni/master/addon/Rotations/Shaman/Restro_MOP.lua)
 
 ## Warlock
 
