@@ -256,6 +256,7 @@ ni.unit = {
 		local num = #{...};
 		local t1x, t1y, t1z;
 		local t2x, t2y, t2z;
+		local includes, excludes = nil, nil;
 		if num == 2 then
 			local t1, t2 = ...;
 			t1x, t1y, t1z = ni.unit.location(t1);
@@ -269,11 +270,14 @@ ni.unit = {
 				t1x, t1y, t1z = t1, t2, t3;
 				t2x, t2y, t2z = ni.unit.location(t4);
 			end
-		elseif num == 6 then
+		elseif num == 6 or num == 8 then
 			t1x, t1y, t1z, t2x, t2y, t2z = ...;
+			if num == 8 then
+				includes, excludes = select(7, ...);
+			end
 		end
 		if t1x and t1x ~= 0 and t2x and t2x ~= 0 then
-			return ni.functions.getpath(t1x, t1y, t1z, t2x, t2y, t2z);
+			return ni.functions.getpath(t1x, t1y, t1z, t2x, t2y, t2z, includes, excludes);
 		end
 	end,
 	isfacing = function(t1, t2, degrees)

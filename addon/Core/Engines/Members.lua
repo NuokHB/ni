@@ -284,7 +284,6 @@ memberssetup.set = function()
 		local groupMember = memberssetup:create(unit);
 		if groupMember then
 			tinsert(ni.members, groupMember);
-			print("Added "..unit.." to the members table");
 		end
 	end
 	function ni.members.removecustom(unit)
@@ -292,7 +291,6 @@ memberssetup.set = function()
 			if v.unit == unit then
 				memberssetup.cache[ni.unit.shortguid(unit)] = nil;
 				tremove(ni.members, k);
-				print("Removed "..unit.." from the members table");
 			end
 		end
 	end

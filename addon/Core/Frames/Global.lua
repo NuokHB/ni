@@ -29,7 +29,7 @@ local lastclick = 0;
 local totalelapsed = 0;
 ni.frames.global = CreateFrame("Frame")
 ni.frames.global_OnUpdate = function(self, elapsed)
-	if UnitExists == nil or ni.functions.cast == nil or not GetZoneText() then
+	if UnitExists == nil or ni.functions.getfunction("cast") == "nil" or not GetZoneText() then
 		totalelapsed = 0;
 		return true
 	end

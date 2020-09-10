@@ -9,5 +9,6 @@ ni.tables.whitelistedlosunits = {
 	[33670] = "Aerial Command Unit",
 	[32955] = "Collapsing Star",
 	[33142] = "Leviathan Defense Turret",
-	[45568] = "Azure Serpent",
+	[56754] = "Azure Serpent",
+	[71407] = "Amber"
 }

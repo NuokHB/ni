@@ -125,8 +125,10 @@ ni.spell = {
 	end,
 	delaycast = function(spell, target, delay)
 		if delay then
-			if GetTime() - casts[spell].at < delay then
-				return false
+			if rawget(casts, spell) ~= nil then
+				if GetTime() - casts[spell].at < delay then
+					return false
+				end
 			end
 		end
 		ni.spell.cast(spell, target);

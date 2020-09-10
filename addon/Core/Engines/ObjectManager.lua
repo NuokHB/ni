@@ -16,7 +16,9 @@ end
 
 ni.objectmanager = {
 	get = function()
-		return ni.functions.getobjects()
+		if ni.functions.getobjects then
+			return ni.functions.getobjects()
+		end
 	end,
 	contains = function(o)
 		local tmp = UnitName(o)
