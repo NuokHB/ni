@@ -1,9 +1,11 @@
 local queue = {
 	"FeedPet",
 	"Pause",
+	"Cache",
 	"AspectoftheHawk",
 	"AspectoftheViper",
 	"PetControl",
+	"Intimidation",
 	"Volley",
 	"HuntersMark",
 	"BestialWrath",
@@ -20,8 +22,9 @@ local queue = {
 }
 local enables = {
 	["ConcussiveShot"] = false,
-	["MultiShot"]= false,
-	["Volley"]= true
+	["MultiShot"] = false,
+	["Volley"] = true,
+	["Intimidation"] = false,
 }
 local values = {
 	["PetFood"] = 0,
@@ -75,6 +78,13 @@ local items = {
 		tooltip = "Id of food to feed your pet",
 		value = values["PetFood"],
 		key = "PetFood"
+	},
+	{
+		type = "entry",
+		text = "Intimidation",
+		tooltip = "Use Intimidation",
+		enabled = enables["Intimidation"],
+		key = "Intimidation"
 	},
 };
 local incombat = false;
@@ -140,6 +150,8 @@ Deterrence = {id = 19263, name = GetSpellInfo(19263)},
 ImmolationTrap = {id = 13795, name = GetSpellInfo(13795)},
 ExplosiveTrap = {id = 13813, name = GetSpellInfo(13813)},
 FeignDeath = {id = 5384, name = GetSpellInfo(5384)},
+
+PetGrowl = {id = 27047, name = GetSpellInfo(27047)},
 }
 
 local lastSpell, lastGuid, lastTime = "", "", 0
@@ -181,7 +193,17 @@ local function InRange(tar)
 	return false
 end
 
-local lastVolleyCheck = 0
+local function PetInRange(tar)
+	if UnitExists("pet") then
+		if IsSpellInRange(spells.PetGrowl.name, "pettarget") then
+			return true
+		end
+	end
+	return false
+end
+
+local _petInRange = false
+local _playerInRange = false
 
 local abilities = {
 	["Pause"] = function()
@@ -193,6 +215,10 @@ local abilities = {
 			and not UnitCanAttack("player", "target")) then
 			return true
 		end
+	end,
+	["Cache"] = function()
+		_petInRange = PetInRange("target")
+		_playerInRange = InRange("target")
 	end,
 	["AutoAttack"] = function()
 		if not IsCurrentSpell(6603) and not IsCurrentSpell(75) then
@@ -224,7 +250,7 @@ local abilities = {
 	end,
 	["SerpentSting"] = function()
 		if ValidUsable(spells.SerpentSting.id, "target")
-		and InRange("target")
+		and _playerInRange
 		and ni.unit.debuffremaining("target", spells.SerpentSting.id, "player") <= 2
 		and not DoubleCast(spells.SerpentSting.name, "target")
 		and FacingLosCast(spells.SerpentSting.name, "target") then
@@ -233,7 +259,7 @@ local abilities = {
 	end,
 	["ArcaneShot"] = function()
 		if ValidUsable(spells.ArcaneShot.id, "target")
-		and InRange("target")
+		and _playerInRange
 		and FacingLosCast(spells.ArcaneShot.name, "target") then
 				return true
 		end
@@ -241,7 +267,7 @@ local abilities = {
 	["MultiShot"] = function()
 		if enables["MultiShot"]
 		and ValidUsable(spells.MultiShot.id, "target")
-		and InRange("target")
+		and _playerInRange
 		and not ni.player.ismoving()
 		and FacingLosCast(spells.MultiShot.name, "target") then
 				return true
@@ -250,9 +276,18 @@ local abilities = {
 	["ConcussiveShot"]= function()
 		if enables["ConcussiveShot"]
 		and ValidUsable(spells.ConcussiveShot.id, "target")
-		and InRange("target")
+		and _playerInRange
 		and FacingLosCast(spells.ConcussiveShot.name, "target") then
 				return true
+		end
+	end,
+	["Intimidation"]= function()
+		if enables["Intimidation"]
+		and ni.spell.available(spells.Intimidation.id)
+		and _petInRange
+		and (UnitGUID("player") == UnitGUID("playertargettarget")) then
+			ni.spell.cast(spells.Intimidation.name)
+			return true
 		end
 	end,
 	["AspectoftheHawk"] = function()
@@ -268,11 +303,10 @@ local abilities = {
 			local n = UnitChannelInfo("player")
 			if n ~= nil and n == spells.Volley.name
 			and nearby >= values["Volley"] then
-				ni.debug.log(string.format("Volley - Nearby = %s, Current Channel = %s", nearby, n))
 				return true
 				end
 			if ni.spell.available(spells.Volley.id)
-			and InRange("target")
+			and _playerInRange
 			and nearby >= values["Volley"] then
 				ni.spell.castat(spells.Volley.name, "target", 1)
 				return true
@@ -282,7 +316,7 @@ local abilities = {
 	["BestialWrath"] = function()
 		if ni.spell.available(spells.BestialWrath.id)
 		and ni.player.buff(spells.AspectoftheHawk.id)
-		and InRange("target") then
+		and _playerInRange and _petInRange then
 			ni.spell.cast(spells.BestialWrath.name)
 			return true
 			end
@@ -290,7 +324,7 @@ local abilities = {
 	["KillCommand"] = function()
 		if ni.spell.available(spells.KillCommand.id)
 		and ni.player.buff(spells.AspectoftheHawk.id)
-		and InRange("target") then
+		and _petInRange then
 			ni.spell.cast(spells.KillCommand.name)
 			return true
 			end
@@ -298,14 +332,14 @@ local abilities = {
 	--Need to update spells when I get them
 	["KillShot"] = function()
 			if ValidUsable(61006, "target")
-			and InRange("target")
+			and _playerInRange
 			and FacingLosCast("Kill Shot", "target") then
 				return true
 				end
 	end,
 	["SteadyShot"] = function()
 		if ValidUsable(spells.SteadyShot.id, "target")
-		and InRange("target")
+		and _playerInRange
 		and not ni.player.ismoving()
 		and FacingLosCast(spells.SteadyShot.name, "target") then
 			return true
@@ -342,7 +376,8 @@ local abilities = {
 	["FeedPet"] = function()
 		if not incombat
 		and UnitExists("pet")
-		and not UnitIsDeadOrGhost("pet") then
+		and not UnitIsDeadOrGhost("pet")
+		and IsSpellInRange(spells.FeedPet.name, "pet") then
 			local happiness = GetPetHappiness()
 			local foodId = values["PetFood"]
 			if happiness ~= 3
