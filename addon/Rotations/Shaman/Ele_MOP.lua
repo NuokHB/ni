@@ -183,25 +183,26 @@ local abilities = {
 		and ni.unit.debuffremaining("target", spells.FlameShock.id, "player") <= 2
 		and FacingLosCast(spells.FlameShock.name) then
 			return true
-		end
-		local cTar = ni.player.enemiesinrange(40)
-		for k, v in ipairs(cTar) do
-			--/dump aa.player.threat("target")
-			if ni.player.threat(v.guid) == -1 then
-				table.remove(cTar, k)
-			end
-		end
-		if #cTar > 0 and ni.spell.available(spells.FlameShock.id) then
+		else
+			local cTar = ni.player.enemiesinrange(40)
 			for k, v in ipairs(cTar) do
-				if ni.unit.debuffremaining(v.guid, spells.FlameShock.id, "player") <= 2 then
-					if ni.spell.valid(v.guid, spells.FlameShock.id, true, true) then
-						ni.spell.cast(spells.FlameShock.name, v.guid)
-						ni.debug.log(string.format("Casting %s on %s", spells.FlameShock.name, v.guid))
-						return true
+				--/dump aa.player.threat("target")
+				if ni.player.threat(v.guid) == -1 then
+					table.remove(cTar, k)
+				end
+			end
+			if #cTar > 0 and ni.spell.available(spells.FlameShock.id) then
+				for k, v in ipairs(cTar) do
+					if ni.unit.debuffremaining(v.guid, spells.FlameShock.id, "player") <= 2 then
+						if ni.spell.valid(v.guid, spells.FlameShock.id, true, true) then
+							ni.spell.cast(spells.FlameShock.name, v.guid)
+							ni.debug.log(string.format("Casting %s on %s", spells.FlameShock.name, v.guid))
+							return true
+						end
 					end
 				end
 			end
-		end
+	end
 	end,
 
 	["LightningShield"] = function()
@@ -234,6 +235,7 @@ local abilities = {
 	["LavaBurst"] = function()
 		if ValidUsable(spells.LavaBurst.id, "target")
 		and (not ni.player.ismoving() or ni.spell.isinstant(spells.LavaBurst.id))
+		and ni.unit.debuff("target", spells.FlameShock.id, "player")
 		and FacingLosCast(spells.LavaBurst.name, "target") then
 			return true
 		end

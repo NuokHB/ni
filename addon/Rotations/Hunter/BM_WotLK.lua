@@ -7,6 +7,7 @@ local queue = {
 	"Volley",
 	"HuntersMark",
 	"BestialWrath",
+	"KillCommand",
 	"KillShot",
 	"SerpentSting",
 	"ConcussiveShot",
@@ -99,31 +100,32 @@ AutoAttack = {id = 6603, name = GetSpellInfo(6603)},
 Throw = {id = 2764, name = GetSpellInfo(2764)},
 Berserking = {id = 26297, name = GetSpellInfo(26297)},
 --Beast Mastery
-MendPet = {id = 3662, name = GetSpellInfo(3662)},
+MendPet = {id = 13543, name = GetSpellInfo(13543)},
 AspectoftheMonkey = {id = 13163, name = GetSpellInfo(13163)},
 CallPet = {id = 883, name = GetSpellInfo(883)},
 DismissPet = {id = 2641, name = GetSpellInfo(2641)},
-AspectoftheHawk = {id = 25296, name = GetSpellInfo(25296)},
+AspectoftheHawk = {id = 27044, name = GetSpellInfo(27044)},
+TameBeast = {id = 1515, name = GetSpellInfo(1515)},
 EyesoftheBeast = {id = 1002, name = GetSpellInfo(1002)},
 Intimidation = {id = 19577, name = GetSpellInfo(19577)},
-TameBeast = {id = 1515, name = GetSpellInfo(1515)},
+ScareBeast = {id = 1513, name = GetSpellInfo(1513)},
 AspectoftheCheetah = {id = 5118, name = GetSpellInfo(5118)},
 EagleEye = {id = 6197, name = GetSpellInfo(6197)},
-ScareBeast = {id = 1513, name = GetSpellInfo(1513)},
+KillCommand = {id = 34026, name = GetSpellInfo(34026)},
 FeedPet = {id = 6991, name = GetSpellInfo(6991)},
 RevivePet = {id = 982, name = GetSpellInfo(982)},
 AspectoftheViper = {id = 34074, name = GetSpellInfo(34074)},
 BestialWrath = {id = 19574, name = GetSpellInfo(19574)},
 --Marksmanship
-Volley = {id = 14294, name = GetSpellInfo(14294)},
-MultiShot = {id = 25294, name = GetSpellInfo(25294)},
-SteadyShot = {id = 56641, name = GetSpellInfo(56641)},
+Volley = {id = 27022, name = GetSpellInfo(27022)},
+MultiShot = {id = 27021, name = GetSpellInfo(27021)},
+SteadyShot = {id = 34120, name = GetSpellInfo(34120)},
 ConcussiveShot = {id = 5116, name = GetSpellInfo(5116)},
-HuntersMark = {id = 14324, name = GetSpellInfo(14324)},
+HuntersMark = {id = 14325, name = GetSpellInfo(14325)},
 RapidFire = {id = 3045, name = GetSpellInfo(3045)},
 AutoShot = {id = 75, name = GetSpellInfo(75)},
 ArcaneShot = {id = 14287, name = GetSpellInfo(14287)},
-SerpentSting = {id = 25295, name = GetSpellInfo(25295)},
+SerpentSting = {id = 27016, name = GetSpellInfo(27016)},
 DistractingShot = {id = 20736, name = GetSpellInfo(20736)},
 --Survival
 Disengage = {id = 781, name = GetSpellInfo(781)},
@@ -279,8 +281,17 @@ local abilities = {
 	end,
 	["BestialWrath"] = function()
 		if ni.spell.available(spells.BestialWrath.id)
+		and ni.player.buff(spells.AspectoftheHawk.id)
 		and InRange("target") then
 			ni.spell.cast(spells.BestialWrath.name)
+			return true
+			end
+	end,
+	["KillCommand"] = function()
+		if ni.spell.available(spells.KillCommand.id)
+		and ni.player.buff(spells.AspectoftheHawk.id)
+		and InRange("target") then
+			ni.spell.cast(spells.KillCommand.name)
 			return true
 			end
 	end,
