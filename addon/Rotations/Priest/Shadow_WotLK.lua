@@ -4,6 +4,7 @@ local queue = {
 	"Shadowform",
 	"InnerFire",
 	"VampiricEmbrace",
+	"Shadowfiend",
 	"VampiricTouch",
 	"ShadowWordPain",
 	"DevouringPlague",
@@ -15,6 +16,7 @@ local queue = {
 
 local enables = {
 	["Dispersion"] = true,
+	["Shadowfiend"] = true,
 }
 local values = {
 	["Dispersion"] = 30,
@@ -44,6 +46,13 @@ local items = {
 		tooltip = "The mana pct before casting Dispersion",
 		enabled = enables["Dispersion"],
 		value = values["Dispersion"],
+		key = "Dispersion"
+	},
+	{
+		type = "entry",
+		text = "Shadowfiend",
+		tooltip = "Use Shadowfiend in combat",
+		enabled = enables["Shadowfiend"],
 		key = "Dispersion"
 	},
 };
@@ -144,12 +153,10 @@ local function FacingLosCast(spell, tar)
 	return false
 end
 local function DoubleCast(spell, tar)
-		if(lastSpell == spell) then
-			if lastGuid == UnitGUID(tar) then
-				if GetTime() - lastTime < 2 then
-					return true
-				end
-			end
+		if(lastSpell == spell)
+		and lastGuid == UnitGUID(tar)
+		and GetTime() - lastTime < 2 then
+			return true
 		end
 		return false
 end
@@ -162,38 +169,39 @@ local function ValidUsable(id, tar)
 end
 
 local _shadowweaving = 0
+local _targetTTD = 0
 
 local abilities = {
-	["Pause"] = function()
-		if
-			IsMounted()
-			or UnitIsDeadOrGhost("player")
-			or not UnitExists("target")
-			or UnitIsDeadOrGhost("target")
-			or (UnitExists("target") and not UnitCanAttack("player", "target"))
-		 	then return true
-			 	end
-			if UnitChannelInfo("player") == spells.MindSear.name
-			or UnitChannelInfo("player") == spells.MindFlay.name
-			then return true
-				end
-	end,
-	["Cache"]= function()
-		_shadowweaving = ni.player.buffstacks(15258)
-	end,
-	["Shadowform"] = function()
-			if not ni.player.buff(spells.Shadowform.id)
-			and ni.spell.available(spells.Shadowform.id)
-			then
-				ni.spell.cast(spells.Shadowform.name)
-			end
-	end,
-	["VampiricEmbrace"] = function()
-		if not ni.player.buff(spells.VampiricEmbrace.id)
-		and ni.spell.available(spells.VampiricEmbrace.id)
-		then
-			ni.spell.cast(spells.VampiricEmbrace.name)
+["Pause"] = function()
+	if IsMounted()
+	or UnitIsDeadOrGhost("player")
+	or not UnitExists("target")
+	or UnitIsDeadOrGhost("target")
+	or (UnitExists("target") and not UnitCanAttack("player", "target"))
+	then return true
 		end
+	if UnitChannelInfo("player") == spells.MindSear.name
+	or UnitChannelInfo("player") == spells.MindFlay.name
+	then return true
+		end
+end,
+["Cache"]= function()
+	_shadowweaving = ni.player.buffstacks(15258)
+	_targetTTD = ni.unit.ttd("target")
+end,
+["Shadowform"] = function()
+		if not ni.player.buff(spells.Shadowform.id)
+		and ni.spell.available(spells.Shadowform.id)
+		then
+			ni.spell.cast(spells.Shadowform.name)
+		end
+end,
+["VampiricEmbrace"] = function()
+	if not ni.player.buff(spells.VampiricEmbrace.id)
+	and ni.spell.available(spells.VampiricEmbrace.id)
+	then
+		ni.spell.cast(spells.VampiricEmbrace.name)
+	end
 end,
 ["InnerFire"] = function()
 	if not ni.player.buff(spells.InnerFire.id)
@@ -202,27 +210,29 @@ end,
 		ni.spell.cast(spells.InnerFire.name)
 	end
 end,
-	["VampiricTouch"] = function()
-			if not DoubleCast(spells.VampiricTouch.name, "target")
-			and ni.unit.debuffremaining("target", spells.VampiricTouch.id, "player") < 2
-			and not ni.player.ismoving()
-			and ValidUsable(spells.VampiricTouch.id, "target")
-			and FacingLosCast(spells.VampiricTouch.name, "target") then
-				return true
-			end
-	end,
-	["DevouringPlague"] = function()
-		if not DoubleCast(spells.DevouringPlague.name, "target")
-		and ni.unit.debuffremaining("target", spells.DevouringPlague.id, "player") < 2
-		and ValidUsable(spells.DevouringPlague.id, "target")
-		and FacingLosCast(spells.DevouringPlague.name, "target") then
+["VampiricTouch"] = function()
+		if not DoubleCast(spells.VampiricTouch.name, "target")
+		and ni.unit.debuffremaining("target", spells.VampiricTouch.id, "player") < 2
+		and not ni.player.ismoving()
+		and _targetTTD > 4
+		and ValidUsable(spells.VampiricTouch.id, "target")
+		and FacingLosCast(spells.VampiricTouch.name, "target") then
 			return true
 		end
+	end,
+["DevouringPlague"] = function()
+	if not DoubleCast(spells.DevouringPlague.name, "target")
+	and ni.unit.debuffremaining("target", spells.DevouringPlague.id, "player") < 2
+	and ValidUsable(spells.DevouringPlague.id, "target")
+	and FacingLosCast(spells.DevouringPlague.name, "target") then
+		return true
+	end
 end,
 ["ShadowWordPain"] = function()
 	if not DoubleCast(spells.ShadowWordPain.name, "target")
 	and ni.unit.debuffremaining("target", spells.ShadowWordPain.id, "player") < 2
 	and _shadowweaving == 5
+	and _targetTTD > 4
 	and ValidUsable(spells.ShadowWordPain.id, "target")
 	and FacingLosCast(spells.ShadowWordPain.name, "target") then
 		return true
@@ -260,11 +270,29 @@ end,
 	end
 end,
 ["Dispersion"] = function()
-		if enables["Dispersion"]
-		and ni.player.power("mana") <= values["Dispersion"]
-		and ni.spell.available(spells.Dispersion.id) then
-				ni.spell.cast(spells.Dispersion.name)
+	if enables["Dispersion"]
+	and ni.player.power("mana") <= values["Dispersion"]
+	and ni.spell.available(spells.Dispersion.id) then
+			ni.spell.cast(spells.Dispersion.name)
+	end
+end,
+["Shadowfiend"] = function()
+	if enables["Shadowfiend"]
+	and ni.spell.available(spells.Shadowfiend.id)
+	and _targetTTD > 10
+	and IsSpellInRange(spells.MindBlast.name, "target") then
+		ni.spell.cast(spells.Shadowfiend.name)
+		return true
+	end
+	if UnitExists("pet")
+	and not UnitIsDeadOrGhost("pet") then
+		--Attack the same unit as player
+		local petTarget = UnitGUID("pettarget")
+		local playerTarget = UnitGUID("target")
+		if petTarget ~= playerTarget then
+			ni.player.runtext("/petattack")
 		end
+	end
 end
 }
 ni.bootstrap.profile("Shadow_WotLK", queue, abilities, OnLoad, OnUnload);

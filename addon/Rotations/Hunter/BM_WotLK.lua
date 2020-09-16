@@ -370,7 +370,7 @@ local abilities = {
 					and ni.spell.available(spells.MendPet.id) then
 							ni.spell.cast(spells.MendPet.name)
 							return true
-					end				
+					end
 			end
 	end,
 	["FeedPet"] = function()
