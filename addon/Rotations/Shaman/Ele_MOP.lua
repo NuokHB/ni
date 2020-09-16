@@ -177,7 +177,6 @@ local abilities = {
 			return true
 		end
 	end,
-
 	["FlameShock"] = function()
 		if ValidUsable(spells.FlameShock.id, "target")
 		and ni.unit.debuffremaining("target", spells.FlameShock.id, "player") <= 2
@@ -204,7 +203,6 @@ local abilities = {
 			end
 	end
 	end,
-
 	["LightningShield"] = function()
 		if  ni.spell.available(spells.LightningShield.id)
 		and not ni.player.buff(spells.LightningShield.id)
@@ -213,7 +211,6 @@ local abilities = {
 			return true
 		end
 	end,
-
 	["FlametongueWeapon"] = function()
 		local enchant = GetWeaponEnchantInfo()
 		if ni.spell.available(spells.FlameShock.id)
@@ -223,7 +220,6 @@ local abilities = {
 			return true
 		end
 	end,
-
 	["EarthShock"] = function()
 		local lsStacks = ni.unit.buffstacks("player", spells.LightningShield.id)
 		if  lsStacks >= 7 and ValidUsable(spells.EarthShock.id, "target")
@@ -231,7 +227,6 @@ local abilities = {
 			return true
 		end
 	end,
-
 	["LavaBurst"] = function()
 		if ValidUsable(spells.LavaBurst.id, "target")
 		and (not ni.player.ismoving() or ni.spell.isinstant(spells.LavaBurst.id))
@@ -240,7 +235,6 @@ local abilities = {
 			return true
 		end
 	end,
-
 	["Thunderstorm"] = function()
 		if ActiveEnemies(6) >= 1
 		and ni.spell.available(spells.Thunderstorm.id) then
