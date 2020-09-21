@@ -35,6 +35,12 @@ local funcs = {
 	["cast"] = %%Cast%%,
 	["getobjects"] = %%GetOM%%,
 }
+function ni.functions.registercallback(...)
+	local f = %%RegisterCallback%%
+	if type(f) == "function" then
+		return f(...);
+	end
+end
 function ni.functions.addlog(...)
 	local f = %%AddLog%%
 	if type(f) == "function" then

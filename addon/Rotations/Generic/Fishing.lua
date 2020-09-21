@@ -8,14 +8,17 @@ local queue = {
 local enables = {
 	lure = false,
 	weapon_swap = false,
+	pole_check = false,
 }
 local values = {
 	lure = 6532,
 }
 local inputs = {
-	rod = "6256",
+	pole = "6256",
 	main = "",
 	off = "",
+	bobber = "Fishing Bobber",
+	pool = "School"
 }
 local menus = {
 	full_bags = "AFK",
@@ -27,6 +30,8 @@ local function GUICallback(key, item_type, value)
 		values[key] = value;
 	elseif item_type == "input" then
 		inputs[key] = value;
+	elseif item_type == "menu" then
+		menus[key] = value;
 	end
 end
 local items = {
@@ -50,18 +55,43 @@ local items = {
 		tooltip = "Enable/Disable this for the profile to swap weapons to the id's you specifiy below",
 		key = "weapon_swap"
 	},
-	{ type = "title", text = "Rod ID" },
+	{ type = "title", text = "Fishing Pool/School Name" },
 	{
 		type = "input",
-		value = inputs["rod"],
+		value = inputs["pool"],
+		width = 140,
+		height = 15,
+		key = "pool"
+	},
+	{ type = "title", text = "Fishing Bobber Name" },
+	{
+		type = "input",
+		value = inputs["bobber"],
+		width = 140,
+		height = 15,
+		key = "bobber"
+	},
+	{
+		type = "entry",
+		text = "Check if pole equipped",
+		tooltip = "This is for checking if you have the pole equipped before trying to cast the fishing spell",
+		enabled = enables["pole_check"],
+		key = "pole_check"
+	},
+	{ type = "title", text = "Fishing Pole ID" },
+	{
+		type = "input",
+		value = inputs["pole"],
 		widht = 100,
-		key = "rod"
+		height = 15,
+		key = "pole"
 	},
 	{ type = "title", text = "Main Hand ID" },
 	{
 		type = "input",
 		value = inputs["main"],
 		widht = 100,
+		height = 15,
 		key = "main"
 	},
 	{ type = "title", text = "Off Hand ID" },
@@ -69,6 +99,7 @@ local items = {
 		type = "input",
 		value = inputs["off"],
 		widht = 100,
+		height = 15,
 		key = "off"
 	},
 	{ type = "title", text = "What to do on full bags?" },
@@ -134,12 +165,12 @@ local abilities = {
 	end,
 	["combat check"] = function()
 		if enables["weapon_swap"] and not UnitIsDeadOrGhost("player") then
-			local rod = tonumber(inputs["rod"]);
+			local pole = tonumber(inputs["pole"]);
 			local mh = tonumber(inputs["main"]);
 			local oh = tonumber(inputs["off"]);
-			if rod and mh then
+			if pole and mh then
 				if UnitAffectingCombat("player") then
-					if IsEquippedItem(rod) then
+					if IsEquippedItem(pole) then
 						EquipItemByName(mh);
 						if oh then
 							EquipItemByName(oh);
@@ -147,8 +178,8 @@ local abilities = {
 						return true;
 					end
 				else
-					if not IsEquippedItem(rod) then
-						EquipItemByName(rod);
+					if not IsEquippedItem(pole) then
+						EquipItemByName(pole);
 						return true;
 					end
 				end
@@ -156,13 +187,13 @@ local abilities = {
 		end
 	end,
 	["lure check"] = function()
-		local rod = tonumber(inputs["rod"]);
-		if enables["lure"] and rod then
+		local pole = tonumber(inputs["pole"]);
+		if enables["lure"] and pole then
 			if GetTime() - lure_applied < 4 then
 				return false;
 			end
 			local lure_enchant = GetWeaponEnchantInfo();
-			if IsEquippedItem(rod)
+			if IsEquippedItem(pole)
 			 and not lure_enchant
 			 and not UnitAffectingCombat("player")
 			 and ni.player.hasitem(values["lure"]) then
@@ -187,6 +218,12 @@ local abilities = {
 		end
 	end,
 	["fish"] = function()
+		if enables["pole_check"] then
+			local pole = tonumber(inputs["pole"]);
+			if not IsEquippedItem(pole) then
+				return;
+			end
+		end
 		if ni.player.islooting() then
 			return
 		end
@@ -195,7 +232,7 @@ local abilities = {
 				local playerguid = UnitGUID("player");
 				for k, v in pairs(ni.objects) do
 					if type(k) ~= "function" and (type(k) == "string" and type(v) == "table") then
-						if v.name == "Fishing Bobber" then
+						if v.name == inputs["bobber"] then
 							local creator = v:creator();
 							if creator == playerguid then
 								local ptr = ni.memory.objectpointer(v.guid);
@@ -214,7 +251,7 @@ local abilities = {
 			end
 		else
 			for k, v in pairs(ni.objects) do
-				if type(v) ~= "function" and v.name ~= nil and string.match(v.name, "School") then
+				if type(v) ~= "function" and v.name ~= nil and string.match(v.name, inputs["pool"]) then
 					local dist = ni.player.distance(k);
 					if dist ~= nil and dist < 20 then
 						ni.player.lookat(k);

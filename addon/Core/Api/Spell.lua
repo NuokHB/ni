@@ -167,18 +167,18 @@ ni.spell = {
 			end
 		end
 	end,
-	bestaoeloc = function(distance, radius, friendly, minimumcount, inc, zindex_inc)
-		return ni.functions.bestaoeloc(distance, radius, friendly, minimumcount, inc, zindex_inc);
+	bestaoeloc = function(unit, distance, radius, friendly, minimumcount, inc, zindex_inc)
+		return ni.functions.bestaoeloc(unit, distance, radius, friendly, minimumcount, inc, zindex_inc);
 	end,
-	casthelpfulatbest = function(spell, distance, radius, minimumcount, inc, zindex_inc)
-		local x, y, z = ni.spell.bestaoeloc(distance, radius, true, minimumcount, inc, zindex_inc);
+	casthelpfulatbest = function(spell, unit, distance, radius, minimumcount, inc, zindex_inc)
+		local x, y, z = ni.spell.bestaoeloc(unit, distance, radius, true, minimumcount, inc, zindex_inc);
 		if x and y and z then
 			ni.spell.cast(spell);
 			ni.player.clickat(x, y, z);
 		end
 	end,
-	castharmfulatbest = function(spell, distance, radius, minimumcount, inc, zindex_inc)
-		local x, y, z = ni.spell.bestaoeloc(distance, radius, false, minimumcount, inc, zindex_inc);
+	castharmfulatbest = function(spell, unit, distance, radius, minimumcount, inc, zindex_inc)
+		local x, y, z = ni.spell.bestaoeloc(unit, distance, radius, false, minimumcount, inc, zindex_inc);
 		if x and y and z then
 			ni.spell.cast(spell);
 			ni.player.clickat(x, y, z);

@@ -98,7 +98,7 @@ local abilities = {
 		 and UnitExists("pet")
 		 and not UnitIsDead("pet")
 		 and ni.player.los("pet")
-		 and ni.unit.health("pet") < 95
+		 and ni.unit.hp("pet") < 95
 		 and ni.unit.buff("pet", 136)
 		 and IsSpellInRange(spells.mendpet.name, "pet") == 1 then
 			ni.spell.cast(spells.mendpet.name);

@@ -13,19 +13,6 @@ ni.rune = {
 
 		return runesavailable
 	end,
-	availableType = function(rune)
-		local runesavailable = 0
-		local cur_time = GetTime();
-		for i = 1, 6 do
-			if GetRuneType(i) == rune then
-			local start, duration, ready = GetRuneCooldown(i);
-				if start == 0 or cur_time - start > duration then
-				runesavailable = runesavailable + 1
-			end
-		end
-	end
-		return runesavailable
-	end,
 	deathrunes = function()
 		local dr = 0;
 		for i = 1, 6 do
@@ -63,17 +50,5 @@ ni.rune = {
 	end,
 	bloodrunecd = function()
 		return ni.rune.cd(1)
-	end,
-	deathruneav = function()
-		return ni.rune.availableType(4)
-	end,
-	frostruneav = function()
-		return ni.rune.availableType(2)
-	end,
-	unholyruneav = function()
-		return ni.rune.availableType(3)
-	end,
-	bloodruneav = function()
-		return ni.rune.availableType(1)
 	end
 }

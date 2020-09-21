@@ -14,6 +14,7 @@ local files = {
 	"Core\\Tables\\CantHeal.lua",
 	"Core\\Tables\\Classes.lua",
 	"Core\\Frames\\CombatLog.lua",
+	"Core\\Frames\\Events.lua",
 	"Core\\Api\\Power.lua",
 	"Core\\Api\\Rune.lua",
 	"Core\\Api\\Unit.lua",
