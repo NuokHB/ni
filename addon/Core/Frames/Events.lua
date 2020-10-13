@@ -33,19 +33,31 @@ function ni.events.unregisterpacketreceivedevent(name)
 	packet_received_events[name] = nil;
 end;
 local function OnKeyHandler(self, keyType, key)
+	local result = false;
 	for k, v in pairs(keypress_events) do
-		v(keyType, key);
+		if v(keyType, key) then
+			result = true;
+		end
 	end
+	return result;
 end;
 local function OnPacketSentHandler(self, opcode)
+	local result = false;
 	for k, v in pairs(packet_sent_events) do
-		v(opcode);
+		if v(opcode) then
+			result = true;
+		end
 	end
+	return result;
 end;
 local function OnPacketReceivedHandler(self, opcode)
+	local result = false;
 	for k, v in pairs(packet_received_events) do
-		v(opcode);
+		if v(opcode) then
+			result = true;
+		end
 	end
+	return result;
 end;
 ni.functions.registercallback(ni.events, "OnKey", OnKeyHandler);
 ni.functions.registercallback(ni.events, "OnPacketSent", OnPacketSentHandler);

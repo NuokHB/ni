@@ -1,3 +1,0 @@
--Make GUI Editbox react to mouse wheel to add or remove value
--Have GUI be slider from different directions or pop up by keybind
--Implement navigation with Recast & Detour

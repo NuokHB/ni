@@ -129,17 +129,6 @@ DevouringPlague = {id = 48300, name = GetSpellInfo(48300)},
 
 local enemies = {}
 
-local function ActiveEnemies(range)
-	table.wipe(enemies)
-	enemies = ni.player.enemiesinrange(range)
-	for k, v in ipairs(enemies) do
-		if ni.player.threat(v.guid) == -1 then
-			table.remove(enemies, k)
-		end
-	end
-	return #enemies
-end
-
 local lastSpell, lastGuid, lastTime = "", "", 0
 local function FacingLosCast(spell, tar)
 	if ni.player.isfacing(tar, 145) and ni.player.los(tar) and IsSpellInRange(spell, tar) == 1 then

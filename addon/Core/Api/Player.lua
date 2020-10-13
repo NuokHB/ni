@@ -138,9 +138,12 @@ ni.player = {
 setmetatable(
 	ni.player,
 	{
-		__index = function(_, k)
-			return function(...)
-				return ni.unit[k]("player", ...)
+		__index = function(t, k)
+			if ni.unit[k] then
+				rawset(t, k, function(...)
+					return ni.unit[k]("player", ...);
+				end);
+				return t[k];
 			end
 		end
 	}
