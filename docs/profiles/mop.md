@@ -6,7 +6,7 @@
 
 #### Blood
 
-[Scotts Death Knight](https://raw.githubusercontent.com/scizzydo/ni/master/addon/Rotations/Death%20Knight/Blood%20-%20MoP.lua)
+[Scotts Death Knight](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/DeathKnight/Blood%20-%20MoP.lua)
 
 #### Frost
 
@@ -24,7 +24,7 @@
 
 #### Beast Mastery
 
-[Scotts Hunter - Beast Mastery](https://raw.githubusercontent.com/scizzydo/ni/master/addon/Rotations/Hunter/BM%20-%20MoP.lua)
+[Scotts Hunter - Beast Mastery](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Hunter/BM%20-%20MoP.lua)
 
 #### Marksmanship
 
@@ -46,11 +46,11 @@
 
 #### Mistweaver
 
-[Scotts Mistweaver](https://raw.githubusercontent.com/scizzydo/ni/master/addon/Rotations/Monk/Mistweaver.lua)  
+[Scotts Mistweaver](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Monk/Mistweaver.lua)  
 
 #### Windwalker
 
-[Scotts Windwalker](https://raw.githubusercontent.com/scizzydo/ni/master/addon/Rotations/Monk/Windwalker.lua)
+[Scotts Windwalker](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Monk/Windwalker.lua)
 
 ## Paladin
 
@@ -58,11 +58,11 @@
 
 #### Retribution
 
-[Scotts Retribution](https://raw.githubusercontent.com/scizzydo/ni/master/addon/Rotations/Paladin/PreRaid%20Ret%20-%20MoP.lua)
+[Scotts Retribution](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Paladin/PreRaid%20Ret%20-%20MoP.lua)
 
 #### Protection
 
-[Scotts Protection](https://raw.githubusercontent.com/scizzydo/ni/master/addon/Rotations/Paladin/Prot%20-%20MoP.lua)
+[Scotts Protection](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Paladin/Prot%20-%20MoP.lua)
 
 ## Priest
 

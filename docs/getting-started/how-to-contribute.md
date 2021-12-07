@@ -21,7 +21,7 @@ Therefore we are strongly advising everyone to create profiles specficially desi
 
 ## Ni Documentation & API Reference
 
-See an issue with the documentation? Good news! It is very easy to contribute. The [Ni Website](https://nhub.app/) is generated from Markdown files using [Docsify](https://docsify.js.org/).
+See an issue with the documentation? Good news! It is very easy to contribute. The [Ni Website](https://darhanger.github.io/ni/) is generated from Markdown files using [Docsify](https://docsify.js.org/).
 
 If you are a developer you can follow the standard pull request process.
 
