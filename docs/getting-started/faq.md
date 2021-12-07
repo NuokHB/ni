@@ -1,6 +1,6 @@
 # Frequently Asked Questions
 
-!> Before asking questions on our [Discord Channel](https://discord.gg/BbSE5qw) please read these frequently asked questions.
+!> Before asking questions on our [Discord Channel](https://discord.gg/xBFKJc6QRr) please read these frequently asked questions.
 
 ---
 
@@ -10,7 +10,7 @@ Major Anti-viruses will recognize ni as a malware. However that is because ni co
 
 ## One of the existing profiles doesn't work - what should I do?
 
-Best option would be to contact the profile creator directly. They will usually hang out on ni's [Discord Channel](https://discord.gg/BbSE5qw).
+Best option would be to contact the profile creator directly. They will usually hang out on ni's [Discord Channel](https://discord.gg/xBFKJc6QRr).
 
 ## How to reload profiles while the game is running?
 
