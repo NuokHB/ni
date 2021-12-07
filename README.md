@@ -11,6 +11,7 @@
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?style=flat-square&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=E5ULM2VAQHE9N&source=url)
 
 <img src="https://nhub.app/_media/GitHub Logo.png" alt="Logo of ni" width="256"/>
+
 > Profile Framework for World of Warcraft and its older expansions.
 
 </div>
