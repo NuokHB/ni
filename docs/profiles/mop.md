@@ -6,7 +6,7 @@
 
 #### Blood
 
-[Scotts Death Knight](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/DeathKnight/Blood%20-%20MoP.lua)
+[Scotts Death Knight](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/DeathKnight/Blood%20-%20MoP.lua)
 
 #### Frost
 
@@ -24,17 +24,17 @@
 
 #### Beast Mastery
 
-[Scotts Hunter - Beast Mastery](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Hunter/BM%20-%20MoP.lua)
+[Scotts Hunter - Beast Mastery](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/Hunter/BM%20-%20MoP.lua)
 
 #### Marksmanship
 
 #### Survival
-[Brecherbernd - BearKills](https://raw.githubusercontent.com/Brecherbernd/Doomsday/master/Rotations/Hunter/Brecherbernd_BearKills.lua)
+[Brecherbernd - BearKills](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/Hunter/Brecherbernd_BearKills.lua)
 
 ## Mage
 
 #### Arcane
-[Brecherbernd - Arkanist](https://raw.githubusercontent.com/Brecherbernd/Doomsday/master/Rotations/Mage/Brecherbernd_Arkanist.lua)
+[Brecherbernd - Arkanist](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/Mage/Brecherbernd_Arkanist.lua)
 
 #### Fire
 
@@ -46,11 +46,11 @@
 
 #### Mistweaver
 
-[Scotts Mistweaver](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Monk/Mistweaver.lua)  
+[Scotts Mistweaver](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/Monk/Mistweaver.lua)
 
 #### Windwalker
 
-[Scotts Windwalker](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Monk/Windwalker.lua)
+[Scotts Windwalker](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/Monk/Windwalker.lua)
 
 ## Paladin
 
@@ -58,11 +58,11 @@
 
 #### Retribution
 
-[Scotts Retribution](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Paladin/PreRaid%20Ret%20-%20MoP.lua)
+[Scotts Retribution](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/Paladin/PreRaid%20Ret%20-%20MoP.lua)
 
 #### Protection
 
-[Scotts Protection](https://raw.githubusercontent.com/darhanger/ni/main/addon/Rotations/Paladin/Prot%20-%20MoP.lua)
+[Scotts Protection](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/Paladin/Prot%20-%20MoP.lua)
 
 ## Priest
 
@@ -87,7 +87,7 @@
 [NuokHB Elemental](https://raw.githubusercontent.com/NuokHB/ni/master/addon/Rotations/Shaman/Ele_MOP.lua)
 
 #### Enhancement
-[Brecherbernd - Enhancing Wisdom](https://raw.githubusercontent.com/Brecherbernd/Doomsday/master/Rotations/Shaman/Brecherbernd_EnhancingWisdom.lua)
+[Brecherbernd - Enhancing Wisdom](https://raw.githubusercontent.com/official-nhub/ni/master/addon/Rotations/Shaman/Brecherbernd_EnhancingWisdom.lua)
 
 #### Restoration
 

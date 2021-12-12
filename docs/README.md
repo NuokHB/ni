@@ -49,10 +49,10 @@ https://github.com/official-nhub/ni/releases
 - **[NuokHB](https://github.com/NuokHB/ni/tree/master/addon/Rotations)**
 - **[Brecherbernd](https://github.com/Brecherbernd/Doomsday)**
 
-## Community 
+## Community
 
 Users and the development team are usually in the [![Discord Server](https://img.shields.io/badge/Discord-7289DA?style=flat-squaree&logo=discord&logoColor=white)](https://discord.gg/KBnQQgNBGm)
 
 ## Community 👋
 
-Users and the development team are usually in the [Discord Channel](https://discord.gg/BbSE5qw).
+Users and the development team are usually in the [Discord Channel](https://discord.gg/KBnQQgNBGm).
