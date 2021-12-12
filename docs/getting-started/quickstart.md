@@ -90,7 +90,7 @@ ni.bootstrap.rotation("Warlock_Example", dynamicqueue, abilities)
 
 !> It's possible to only use one way to set the priority queue (either static or dynamic).
 
-!> The following method for loading data files is deprecated and should be avoided. Please look at the newer method [here](https://github.com/darhanger/ni/blob/main/addon/Rotations/Generic/GUIExample.lua#L1)
+!> The following method for loading data files is deprecated and should be avoided. Please look at the newer method [here](https://github.com/official-nhub/ni/blob/master/addon/Rotations/Generic/GUIExample.lua#L1)
 
 #### 5. In case we have some common functions or variables that we would like to share among multiple profiles - we can do it by creating Lua files in `Data` folder. Lets create `Data_Example.lua`.
 
@@ -120,7 +120,7 @@ ni.data.example = {
 }
 ```
 
-!> The following method for loading the data file or GUI is deprecated and should be avoided. Please look at the examples [here](https://github.com/darhanger/ni/blob/main/addon/Rotations/Generic/GUIExample.lua)
+!> The following method for loading the data file or GUI is deprecated and should be avoided. Please look at the examples [here](https://github.com/official-nhub/ni/blob/master/addon/Rotations/Generic/GUIExample.lua)
 
 #### 7. Loading Data files can be done by creating a table which contains strings of file names and passing that table as 4th argument to `ni.bootstrap.rotation`.
 
