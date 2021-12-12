@@ -1,6 +1,6 @@
 # Quick start
 
-Assuming you already downloaded ni from [Discord Channel](https://discord.gg/xBFKJc6QRr) this introductory guide will help you get up to speed.
+Assuming you already downloaded ni from [Discord Channel](https://discord.gg/KBnQQgNBGm) this introductory guide will help you get up to speed.
 
 Lets get started with the location of profiles.
 
