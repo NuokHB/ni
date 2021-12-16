@@ -6,7 +6,6 @@ local queue = {
 	"Tank Heal",
 	"CleanseSpirit",
 	"CalloftheTotems",
-	"HealingStreamTotem",
 	"Riptide",
 	"ChainHeal",
 	"HealingSurge",
@@ -127,9 +126,9 @@ local enables = {
 	["FlameShock"] = false,
 	["EarthShock"] = false,
 	["SearingTotem"] = false,
-	["HealingStreamTotem"] = true,
 	["MultiTotem"] = true,
-	["CleanseSpirit"] = false
+	["CleanseSpirit"] = false,
+	["TotemicRecall"] = true
 }
 local values = {
 	["RiptideTank"] = 92,
@@ -138,7 +137,8 @@ local values = {
 	["HealingSurgeHP"] = 70,
 	["HealingWaveHP"] = 86,
 	["ChainHealHP"] = 75,
-	["GreaterHealingWave"] = 60
+	["GreaterHealingWave"] = 60,
+	["TotemicRecall"] = 30
 }
 local inputs = {}
 local menus = {
@@ -266,9 +266,10 @@ local items = {
 	},
 	{
 		type = "entry",
-		text = "\124T" .. spells.HealingStreamTotem.icon .. ":15:15\124t " .. spells.HealingStreamTotem.name,
-		enabled = not enables["MultiTotem"] and enables["HealingStreamTotem"],
-		key = "HealingStreamTotem"
+		text = "\124T" .. spells.TotemicRecall.icon .. ":15:15\124t " .. spells.TotemicRecall.name,
+		enabled = enables["TotemicRecall"],
+		value = values["TotemicRecall"],
+		key = "TotemicRecall"
 	},
 	{type = "separator"},
 	{type = "title", text = "Dps"},
@@ -303,7 +304,7 @@ local items = {
 		key = "SearingTotem"
 	}
 }
-
+local t, p, f = "target", "player", "focus"
 local incombat = false
 local function CombatEventCatcher(event, ...)
 	if event == "PLAYER_REGEN_DISABLED" then
@@ -355,7 +356,6 @@ local function GetTableForBestUnit(health, distance, unitsclose, buff)
 end
 
 local lastSpell, lastUnit, lastTime
-local t, p, f = "target", "player", "focus"
 
 local function LosCast(spell, tar)
 	if ni.player.los(tar) and IsSpellInRange(spell, tar) == 1 then
@@ -408,14 +408,14 @@ local Totem = {
 	Air = 4
 }
 local function HasTotem(slot)
-	local _, _, startTime= GetTotemInfo(slot)
+	local _, _, startTime = GetTotemInfo(slot)
 	if startTime ~= 0 then
 		return true
 	end
 	return false
 end
 local function HasTotemName(slot, name)
-	local _, totemName, startTime= GetTotemInfo(slot)
+	local _, totemName, startTime = GetTotemInfo(slot)
 	if totemName ~= nil and totemName == name then
 		return true
 	end
@@ -463,7 +463,7 @@ local abilities = {
 	end,
 	["Cache"] = function()
 		Cache.moving = ni.player.ismoving()
-		Cache.members = ni.members
+		Cache.members = ni.members.inrangebelow(p, 45, 100)
 		if #Cache.members > 0 then
 			table.sort(Cache.members, SortByHP)
 		end
@@ -564,27 +564,20 @@ local abilities = {
 		end
 	end,
 	["Riptide"] = function()
-		for i = 1, #Cache.members do
-			if
-				Cache.members[i].hp <= values["RiptideHP"] and not ni.unit.buff(Cache.members[i].unit, spells.Riptide.id, p) and
-					ValidUsable(spells.Riptide.id, Cache.members[i].unit) and
-					LosCast(spells.Riptide.name, Cache.members[i].unit)
-			 then
-				return true
+		if ni.spell.available(spells.Riptide.id) then
+			for i = 1, #Cache.members do
+				if
+					Cache.members[i].hp <= values["RiptideHP"] and not ni.unit.buff(Cache.members[i].unit, spells.Riptide.id, p) and
+						ValidUsable(spells.Riptide.id, Cache.members[i].unit) and
+						LosCast(spells.Riptide.name, Cache.members[i].unit)
+				 then
+					return true
+				end
 			end
 		end
 	end,
-	["HealingStreamTotem"] = function()
-		if
-			not enables["MultiTotem"] and (not GetTotemInfo(Totem.Water) or TotemDistance(spells.HealingStreamTotem.name, p) > 20) and
-				ni.spell.available(spells.HealingStreamTotem.id) and
-				#Cache.members.inrangebelow(p, 40, 95) > 0
-		 then
-			ni.spell.cast(spells.HealingStreamTotem.name)
-		end
-	end,
 	["HealingSurge"] = function()
-		if not Cache.moving then
+		if not Cache.moving and ni.spell.available(spells.HealingSurge.id) then
 			for i = 1, #Cache.members do
 				if
 					Cache.members[i].hp <= values["HealingSurgeHP"] and ValidUsable(spells.HealingSurge.id, Cache.members[i].unit) and
@@ -596,7 +589,7 @@ local abilities = {
 		end
 	end,
 	["HealingWave"] = function()
-		if not Cache.moving then
+		if not Cache.moving and ni.spell.available(spells.HealingWave.id) then
 			for i = 1, #Cache.members do
 				if
 					Cache.members[i].hp <= values["HealingWaveHP"] and ValidUsable(spells.HealingWave.id, Cache.members[i].unit) and
@@ -608,11 +601,10 @@ local abilities = {
 		end
 	end,
 	["GreaterHealingWave"] = function()
-		if not Cache.moving then
+		if not Cache.moving and ni.spell.available(spells.GreaterHealingWave.id) then
 			for i = 1, #Cache.members do
 				if
-					Cache.members[i].hp <= values["GreaterHealingWave"] and
-						ValidUsable(spells.GreaterHealingWave.id, Cache.members[i].unit) and
+					ValidUsable(spells.GreaterHealingWave.id, Cache.members[i].unit) and
 						LosCast(spells.GreaterHealingWave.name, Cache.members[i].unit)
 				 then
 					return true
@@ -625,10 +617,8 @@ local abilities = {
 			GetTableForBestUnit(values["ChainHealHP"], 10, 3)
 			if #customtable > 0 then
 				if customtable[1].unitsclose >= 3 and ValidUsable(spells.ChainHeal.id, customtable[1].unit) then
-					if customtable[1].hp <= values["ChainHealHP"] then
-						LosCast(spells.ChainHeal.name, customtable[1].unit)
-						return true
-					end
+					LosCast(spells.ChainHeal.name, customtable[1].unit)
+					return true
 				end
 			end
 		end
@@ -682,11 +672,13 @@ local abilities = {
 		end
 	end,
 	["CalloftheTotems"] = function()
-		if enables["MultiTotem"] then
-			if (AnyTotemDistance(p) > 30) and ni.spell.available(spells.TotemicRecall.id) then
+		if enables["TotemicRecall"] then
+			if (AnyTotemDistance(p) > values["TotemicRecall"]) and ni.spell.available(spells.TotemicRecall.id) then
 				ni.spell.cast(spells.TotemicRecall.name)
 				return true
 			end
+		end
+		if enables["MultiTotem"] then
 			if not HasTotem(Totem.Water) and incombat then
 				if menus.Callofthe == Callofthe.Elements and ni.spell.available(spells.CalloftheElements.id) then
 					ni.spell.cast(spells.CalloftheElements.name)
