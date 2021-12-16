@@ -697,7 +697,7 @@ local abilities = {
 	end,
 	["CleanseSpirit"] = function()
 		if enables["CleanseSpirit"] and ni.spell.available(spells.CleanseSpirit.id) then
-			local ImprovedCleanseSpirit = GetTalentInfo(3, 12)
+			local ImprovedCleanseSpirit = (select(5,GetTalentInfo(3, 12)) == 1)
 			for c = 1, #Cache.members do
 				local tar = Cache.members[c].unit
 				local i = 1
