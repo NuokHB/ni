@@ -107,7 +107,9 @@ local enables = {
 	["MultiTotem"] = true,
 	["TotemicRecall"] = true
 }
-local values = {}
+local values = {
+	["TotemicRecall"] = 35
+}
 local inputs = {}
 local menus = {
 	["Callofthe"] = 1
@@ -335,7 +337,8 @@ local abilities = {
 	end,
 	["EarthShock"] = function()
 		if
-			ValidUsable(spells.EarthShock.name, t) and ni.player.buffstacks(spells.LightningShield.id) > 7 and
+			ValidUsable(spells.EarthShock.name, t) and ni.player.buffstacks(spells.LightningShield.id) == 9 and
+				select(5, GetTalentInfo(1, 13)) == 1 and
 				FacingLosCast(spells.EarthShock.name, t)
 		 then
 			return true
@@ -343,12 +346,12 @@ local abilities = {
 	end,
 	["CalloftheTotems"] = function()
 		if enables["TotemicRecall"] then
-			if (AnyTotemDistance(p) > values["TotemicRecall"]) and ni.spell.available(spells.TotemicRecall.id) then
+			if (AnyTotemDistance(t) > values["TotemicRecall"]) and ni.spell.available(spells.TotemicRecall.id) then
 				ni.spell.cast(spells.TotemicRecall.name)
 				return true
 			end
 		end
-		if enables["MultiTotem"] then
+		if enables["MultiTotem"] and IsSpellInRange(spells.LightningBolt.name, t) == 1 then
 			if not HasTotem(Totem.Fire) and incombat then
 				if menus.Callofthe == Callofthe.Elements and ni.spell.available(spells.CalloftheElements.id) then
 					ni.spell.cast(spells.CalloftheElements.name)
