@@ -463,7 +463,7 @@ local abilities = {
 	end,
 	["Cache"] = function()
 		Cache.moving = ni.player.ismoving()
-		Cache.members = ni.members.inrangebelow(p, 45, 100)
+		Cache.members = ni.members
 		if #Cache.members > 0 then
 			table.sort(Cache.members, SortByHP)
 		end
@@ -616,7 +616,7 @@ local abilities = {
 		if ni.spell.available(spells.ChainHeal.id) and not Cache.moving then
 			GetTableForBestUnit(values["ChainHealHP"], 10, 3)
 			if #customtable > 0 then
-				if customtable[1].unitsclose >= 3 and ValidUsable(spells.ChainHeal.id, customtable[1].unit) then
+				if customtable[1].unitsclose >= 2 and ValidUsable(spells.ChainHeal.id, customtable[1].unit) then
 					LosCast(spells.ChainHeal.name, customtable[1].unit)
 					return true
 				end
@@ -697,14 +697,14 @@ local abilities = {
 	end,
 	["CleanseSpirit"] = function()
 		if enables["CleanseSpirit"] and ni.spell.available(spells.CleanseSpirit.id) then
-			local ImprovedCleanseSpirit = (select(5,GetTalentInfo(3, 12)) == 1)
+			local ImprovedCleanseSpirit = (select(5, GetTalentInfo(3, 12)) == 1)
 			for c = 1, #Cache.members do
 				local tar = Cache.members[c].unit
 				local i = 1
 				local debuff = UnitDebuff(tar, i)
 				while debuff do
 					local debufftype = select(5, UnitDebuff(tar, i))
-					if debufftype == "Curse" or (ImprovedCleanseSpirit == 1 and debufftype == "Magic") then
+					if debufftype == "Curse" or (ImprovedCleanseSpirit and debufftype == "Magic") then
 						if ValidUsable(spells.CleanseSpirit.id, tar) and LosCast(spells.CleanseSpirit.name, tar) then
 							return true
 						end
