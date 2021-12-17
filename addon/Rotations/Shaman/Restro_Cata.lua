@@ -555,8 +555,8 @@ local abilities = {
 				--HealingSurge offTank
 				if
 					enables["HealingSurgeTank"] and not Cache.moving and ni.unit.hp(offTank) <= values["HealingSurgeTank"] and
-						ValidUsable(spells.HealingSurge.id, mainTank) and
-						LosCast(spells.HealingSurge.name, mainTank)
+						ValidUsable(spells.HealingSurge.id, offTank) and
+						LosCast(spells.HealingSurge.name, offTank)
 				 then
 					return true
 				end
@@ -613,7 +613,7 @@ local abilities = {
 		end
 	end,
 	["ChainHeal"] = function()
-		if ni.spell.available(spells.ChainHeal) and not Cache.moving then
+		if ni.spell.available(spells.ChainHeal.id) and not Cache.moving then
 			GetTableForBestUnit(values["ChainHealHP"], 10, 3)
 			if #customtable > 0 then
 				if customtable[1].unitsclose >= 3 and ValidUsable(spells.ChainHeal.id, customtable[1].unit) then
