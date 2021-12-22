@@ -614,7 +614,7 @@ local abilities = {
 	end,
 	["ChainHeal"] = function()
 		if ni.spell.available(spells.ChainHeal.id) and not Cache.moving then
-			GetTableForBestUnit(values["ChainHealHP"], 10, 3)
+			GetTableForBestUnit(values["ChainHealHP"], 12, 2)
 			if #customtable > 0 then
 				if customtable[1].unitsclose >= 2 and ValidUsable(spells.ChainHeal.id, customtable[1].unit) then
 					LosCast(spells.ChainHeal.name, customtable[1].unit)
