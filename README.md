@@ -16,12 +16,12 @@
 
 </div>
 
-##  <img src="https://github.com/official-nhub/ni/blob/master/Assets/PC.gif" width="30px"> How to?
+##  <img src="https://github.com/official-nhub/ni/blob/documents/Assets/PC.gif" width="30px"> How to?
 
 See the [Quick start](https://nhub.app/#/getting-started/quickstart) guide for more details.
 https://github.com/official-nhub/ni/releases
 
-##  <img src="https://github.com/official-nhub/ni/blob/master/Assets/coin.gif" width="30px"> Features
+##  <img src="https://github.com/official-nhub/ni/blob/documents/Assets/coin.gif" width="30px"> Features
 
 ⚡️ Wrapper for Protected Lua Functions<br>
 ⚡️ Anti Warden<br>
@@ -33,21 +33,21 @@ https://github.com/official-nhub/ni/releases
 ⚡️ Time to Die Calculations<br>
 ⚡️ Framework for Top Tier PvE/PvP Profiles<br>
 
-## <img src="https://github.com/official-nhub/ni/blob/master/Assets/Designer.gif" width="30px"> Program Developer
+## <img src="https://github.com/official-nhub/ni/blob/documents/Assets/Designer.gif" width="30px"> Program Developer
 
 - **[Scott](https://github.com/scizzydo)**
 
-## <img src="https://github.com/official-nhub/ni/blob/master/Assets/Designer.gif" width="30px"> Lead Administrator
+## <img src="https://github.com/official-nhub/ni/blob/documents/Assets/Designer.gif" width="30px"> Lead Administrator
 
 - **[brajevicm](https://github.com/brajevicm)**
 
-## <img src="https://github.com/official-nhub/ni/blob/master/Assets/Developer.gif" width="30px"> Contributers
+## <img src="https://github.com/official-nhub/ni/blob/documents/Assets/Developer.gif" width="30px"> Contributers
 
 - **[DarhangeR](https://github.com/DarhangeR)**
 - **[Dimonsky](https://github.com/Dimonskynew)**
 - **[NuokHB](https://github.com/NuokHB/ni/tree/master/addon/Rotations)**
 - **[Brecherbernd](https://github.com/Brecherbernd/Doomsday)**
 
-## <img src="https://github.com/official-nhub/ni/blob/master/Assets/Hi.gif" width="30px"> Community 
+## <img src="https://github.com/official-nhub/ni/blob/documents/Assets/Hi.gif" width="30px"> Community 
 
 Users and the development team are usually in the [![Discord Server](https://img.shields.io/badge/Discord-7289DA?style=flat-squaree&logo=discord&logoColor=white)](https://discord.gg/KBnQQgNBGm)
