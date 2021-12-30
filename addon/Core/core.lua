@@ -132,7 +132,6 @@ end
 local function LoadProfile(entry)
 	local gbi = ni.backend.GetFunction("GetBuildInfo")
 	local _, err = ni.backend.ParseFile(entry.path, function(content)
-		print("Parsing "..entry.title)
 		local version = string.match(content, "--Version:%s*(%d[,.%d]*)")
 		if not version or version == select(4,gbi()) then
 			local result, err = ni.backend.LoadString(content, string.format("@%s", entry.filename))
@@ -140,7 +139,7 @@ local function LoadProfile(entry)
 				result(ni)
 				return true
 			end
-			ni.backend.MessageBox(err, entry.title, 0x10)
+			ni.backend.MessageBox(err, entry.filename, 0x10)
 			return false
 		end
 	end)
