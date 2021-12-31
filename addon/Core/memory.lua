@@ -1,3 +1,4 @@
+local ni = ...
 local memory = {
 	baseaddress = function()
 		return ni.backend.BaseAddress();

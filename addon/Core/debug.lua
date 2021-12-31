@@ -1,3 +1,4 @@
+local ni = ...
 local debug = {
 	print = function(string)
 		local p = ni.backend.GetFunction("print")

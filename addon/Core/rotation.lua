@@ -1,3 +1,4 @@
+local ni = ...
 local IsLeftShiftKeyDown,
 	GetCurrentKeyBoardFocus,
 	GetTime,
