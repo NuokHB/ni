@@ -248,7 +248,7 @@ frames.OnEvent = function(self, event, ...)
 		v(event, ...)
 	end
 	if event == "PLAYER_LEAVING_WORLD" then
-		ni.functions.freemaps()
+		ni.backend.FreeMaps()
 		ni.utils.savesetting(UnitName("player") .. ".json", ni.utils.json.encode(ni.vars))
 	end
 	if event == "PLAYER_REGEN_DISABLED" then
