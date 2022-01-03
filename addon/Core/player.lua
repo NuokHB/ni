@@ -8,34 +8,34 @@ local GetGlyphSocketInfo,
 	GetSpellCooldown,
 	GetTime,
 	IsFalling =
-	GetGlyphSocketInfo,
-	GetContainerNumSlots,
-	GetContainerItemID,
-	GetItemSpell,
-	GetInventoryItemID,
-	GetItemCooldown,
-	GetSpellCooldown,
-	GetTime,
-	IsFalling
+	ni.backend.GetFunction("GetGlyphSocketInfo"),
+	ni.backend.GetFunction("GetContainerNumSlots"),
+	ni.backend.GetFunction("GetContainerItemID"),
+	ni.backend.GetFunction("GetItemSpell"),
+	ni.backend.GetFunction("GetInventoryItemID"),
+	ni.backend.GetFunction("GetItemCooldown"),
+	ni.backend.GetFunction("GetSpellCoolown"),
+	ni.backend.GetFunction("GetTime"),
+	ni.backend.GetFunction("IsFalling")
 
 local CurrentMovingTime, CurrentStationaryTime, ResetMovementTime = 0, 0, 0.5;
 
 local player = {}
 player.moveto = function(...) --target/x,y,z
-	ni.functions.moveto(...)
+	ni.backend.MoveTo(...)
 end
 player.clickat = function(...) --target/x,y,z/mouse
-	ni.functions.clickat(...)
+	ni.backend.ClickAt(...)
 end
 player.stopmoving = function()
-	ni.functions.callprotected(StrafeLeftStop);
-	ni.functions.callprotected(StrafeRightStop);
-	ni.functions.callprotected(TurnLeftStop);
-	ni.functions.callprotected(TurnRightStop);
-	ni.functions.stopmoving();
+	ni.backend.CallProtected(StrafeLeftStop);
+	ni.backend.CallProtected(StrafeRightStop);
+	ni.backend.CallProtected(TurnLeftStop);
+	ni.backend.CallProtected(TurnRightStop);
+	ni.backend.StopMoving();
 end
 player.lookat = function(target, inv) --inv true to look away
-	ni.functions.lookat(target, inv)
+	ni.backend.LookAt(target, inv)
 end
 player.target = function(target)
 	ni.functions.settarget(target)
