@@ -1,8 +1,7 @@
 local ni = ...
-local GetNumRaidMembers, GetNumPartyMembers, tinsert, UnitClass, UnitIsDeadOrGhost, UnitHealthMax, UnitName, UnitGUID =
-	ni.backend.GetFunction("GetNumRaidMembers"),
-	ni.backend.GetFunction("GetNumPartyMembers"),
-	tinsert,--ni.backend.GetFunction("tinsert"),
+local tinsert, UnitClass, UnitIsDeadOrGhost, UnitHealthMax, UnitName, UnitGUID =
+	tinsert,
+	--ni.backend.GetFunction("tinsert"),
 	ni.backend.GetFunction("UnitClass"),
 	ni.backend.GetFunction("UnitIsDeadOrGhost"),
 	ni.backend.GetFunction("UnitHealthMax"),
@@ -35,6 +34,7 @@ local membersmt = {}
 setmetatable(members, membersmt)
 membersmt.__call = function(_, ...)
 	if ni.vars.build == 50400 then
+		local IsInRaid, GetNumGroupMembers = ni.backend.GetFunction("IsInRaid"), ni.backend.GetFunction("GetNumGroupMembers")
 		local group = IsInRaid() and "raid" or "party"
 		local groupSize = IsInRaid() and GetNumGroupMembers() or GetNumGroupMembers() - 1
 		if group == "party" then
@@ -48,6 +48,9 @@ membersmt.__call = function(_, ...)
 			end
 		end
 	else
+		local GetNumRaidMembers, GetNumPartyMembers =
+			ni.backend.GetFunction("GetNumRaidMembers"),
+			ni.backend.GetFunction("GetNumPartyMembers")
 		local group = GetNumRaidMembers() > 0 and "raid" or "party"
 		local groupsize = group == "raid" and GetNumRaidMembers() or GetNumPartyMembers()
 		if group == "party" then

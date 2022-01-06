@@ -214,7 +214,9 @@ if not ni.loaded then
 	ni.objects, ni.objectmanager = LoadFile("addon\\core\\objectmanager.lua")(ni)
 	ni.stopcastingtracker = LoadFile("addon\\core\\stopcastingtracker.lua")(ni)
 	ni.ttd = LoadFile("addon\\core\\timetodie.lua")(ni)
-	ni.GUI = LoadFile("addon\\core\\gui.lua")(ni)
+	ni.GUI = LoadFile("addon\\core\\GUI.lua")(ni)
+	ni.GUI.window.Open = true
+
 	ni.strongrand = LoadFile("addon\\core\\mwcrand.lua")(ni)
 	local function RandomVariable(length)
 		local res = ""
@@ -233,8 +235,6 @@ if not ni.loaded then
 		table.insert(generated_names, name)
 		return name
 	end
-
-	ni.main = LoadFile("addon\\core\\mainui.lua")(ni)
 	ni.showstatus = function(str, enabled)
 		if enabled then
 			ni.frames.floatingtext:message("\124cff00ff00" .. str)
