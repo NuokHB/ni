@@ -209,7 +209,6 @@ local function AddCheckBox(tab, text, value)
 		else
 			currentresources = bitwise.clearbit(currentresources, value)
 		end
-		ni.backend.SetResourceTracking(c_bit)
 		update_boxes(currentresources)
 	end
 	return rb
