@@ -130,7 +130,7 @@ spell.available = function(id, stutter)
 
 	local result = false
 
-	if id ~= nil and id ~= 0 and (IsSpellKnown(id) or (ni.vars.build >= 50400 and IsPlayerSpell(id))) then
+	if id ~= nil and id ~= 0 and (IsSpellKnown(id) or (ni.vars.build >= 18414 and IsPlayerSpell(id))) then
 		local name, _, _, cost, _, powertype = GetSpellInfo(id)
 
 		if ni.stopcastingtracker.shouldstop(id) then
@@ -296,7 +296,7 @@ spell.valid = function(t, spellid, facing, los, friendly)
 	if
 		ni.unit.exists(t) and ((not friendly and (not UnitIsDeadOrGhost(t) and UnitCanAttack("player", t) == 1)) or friendly) and
 			IsSpellInRange(name, t) == 1 and
-			(IsSpellKnown(spellid) or (ni.vars.build >= 50400 and IsPlayerSpell(spellid))) and
+			(IsSpellKnown(spellid) or (ni.vars.build >= 18414 and IsPlayerSpell(spellid))) and
 			ni.player.powerraw(powertype) >= cost and
 			((facing and ni.player.isfacing(t)) or not facing) and
 			((los and ni.player.los(t)) or not los)
@@ -312,7 +312,7 @@ spell.getinterrupt = function()
 	if class == "SHAMAN" then
 		interruptSpell = 57994
 	elseif class == "WARRIOR" then
-		if ni.vars.build >= 40300 then
+		if ni.vars.build >= 15595 then
 			interruptSpell = 6552
 		else
 			if GetShapeshiftForm() == 3 then

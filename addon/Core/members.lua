@@ -33,7 +33,7 @@ memberssetup.cache.__index = {
 local membersmt = {}
 setmetatable(members, membersmt)
 membersmt.__call = function(_, ...)
-	if ni.vars.build == 50400 then
+	if ni.vars.build == 18414 then
 		local IsInRaid, GetNumGroupMembers = ni.backend.GetFunction("IsInRaid"), ni.backend.GetFunction("GetNumGroupMembers")
 		local group = IsInRaid() and "raid" or "party"
 		local groupSize = IsInRaid() and GetNumGroupMembers() or GetNumGroupMembers() - 1

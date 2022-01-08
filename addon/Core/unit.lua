@@ -146,10 +146,10 @@ unit.id = function(t)
 			local bitfrom = -7
 			local bitto = -10
 
-			if ni.vars.build == 40300 then
+			if ni.vars.build == 15595 then
 				bitfrom = -9
 				bitto = -12
-			elseif ni.vars.build == 50400 then
+			elseif ni.vars.build == 18414 then
 				bitfrom = 10
 				bitto = 6
 			end
@@ -199,7 +199,7 @@ unit.hpraw = function(t)
 	return UnitHealthMax(t) - UnitHealth(t)
 end
 unit.hppredicted = function(t)
-	if ni.vars.build >= 40300 then
+	if ni.vars.build >= 15595 then
 		return (100 * (UnitHealth(t) + UnitGetIncomingHeals(t)) / UnitHealthMax(t))
 	end
 
