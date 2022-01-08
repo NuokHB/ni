@@ -108,12 +108,19 @@ local function GetProfiles()
 				if not sub_contents[i].is_dir then
 					local extension = GetFileExtension(sub_contents[i].path)
 					if extension == ".enc" or extension == ".lua" then
+						local vers = 0
+						local _, err ni.backend.ParseFile(
+							sub_contents[i].path,
+							function(content)
+								vers = string.match(content, "--Version:%s*(%d[,.%d]*)")
+							end)
 						ti(
 							files,
 							{
 								title = GetFilename(sub_contents[i].path, true),
 								filename = GetFilename(sub_contents[i].path),
 								path = sub_contents[i].path,
+								version = vers or 0
 							}
 						)
 						if not processed then
@@ -166,7 +173,14 @@ local function LoadFile(file)
 	end
 	return func
 end
+
+local profiles = {}
+
 if not ni.loaded then
+	profiles = GetProfiles()
+	for k, v in pairs(profiles) do
+		print(string.format("%s: %s %s", k, v.title, v.version))
+	end
 	local dir = ni.backend.GetBaseFolder()
 	local cf = ni.backend.GetFunction("CreateFrame")
 	if not cf then
@@ -182,8 +196,8 @@ if not ni.loaded then
 	ni.vars.profiles.enabled = false
 	ni.vars.profiles.genericenabled = false
 	ni.vars.profiles.delay = 0
-	local build = ni.backend.GetFunction("GetBuildInfo")
-	ni.vars.build = select(4, build())
+	local GetBuildInfo = ni.backend.GetFunction("GetBuildInfo")
+	ni.vars.build = tonumber((select(4, GetBuildInfo())))
 	ni.backend.SaveContent(dir .. "addon\\settings\\" .. unitname("player") .. ".json", json.encode(ni.vars))
 	ni.debug = LoadFile("addon\\core\\debug.lua")(ni)
 	ni.memory = LoadFile("addon\\core\\memory.lua")(ni)
