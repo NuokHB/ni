@@ -199,6 +199,7 @@ local function update_boxes(c_bit)
 			currentresources = bitwise.clearbit(currentresources, v.bit)
 		end
 	end
+	ni.backend.SetResourceTracking(c_bit)
 end
 local function AddCheckBox(tab, text, value)
 	local rb = ni.ui.new("Checkbox", tab)
