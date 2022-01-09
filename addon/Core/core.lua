@@ -228,8 +228,8 @@ if not ni.loaded then
 	ni.objects, ni.objectmanager = LoadFile("addon\\core\\objectmanager.lua")(ni)
 	ni.stopcastingtracker = LoadFile("addon\\core\\stopcastingtracker.lua")(ni)
 	ni.ttd = LoadFile("addon\\core\\timetodie.lua")(ni)
-	ni.GUI = LoadFile("addon\\core\\GUI.lua")(ni)
-	ni.GUI.window.Open = true
+	ni.OverlayUi = LoadFile("addon\\core\\OverlayUi.lua")(ni)
+	ni.OverlayUi.window.Open = true
 
 	ni.strongrand = LoadFile("addon\\core\\mwcrand.lua")(ni)
 	local function RandomVariable(length)

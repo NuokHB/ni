@@ -1,5 +1,5 @@
 local ni = ...
-local GUI = {}
+local OverlayUi = {}
 local Localization = {
 	Assistant = "Rotation Assistant",
 	Primary = "Select your primary rotation:",
@@ -142,11 +142,21 @@ if (GetLocale() == "ruRU") then
 	Localization.OffTankOverride = "Имя второго танка:"
 	Localization.IsMelee = "Ближний бой:"
 end
-GUI.window = ni.ui.new("Window", "ni", false)
-local label = ni.ui.new("Label", GUI.window)
+OverlayUi.window = ni.ui.new("Window", "ni", false)
+local label = ni.ui.new("Label", OverlayUi.window)
 label.Text = "Test"
-local tabselector = ni.ui.new("TabSelector", GUI.window)
-
+local tabselector = ni.ui.new("TabSelector", OverlayUi.window)
+--#region profile selection
+local mainTab = tabselector:AddTab(Localization.MainSettings)
+local combobox = ni.ui.new("ComboBox", mainTab)
+combobox.Text = "Profiles"
+local current = ""
+combobox.Callback = function(selected)
+	current = selected
+end
+for k, v in ipairs(ni.profiles) do
+	combobox:Add(v.title)
+end
 --Resource tracking menu
 local resourcetab = tabselector:AddTab(Localization.ResourceTrack)
 local bitwise = {}
@@ -304,4 +314,4 @@ cboxes.slimes.box = AddCCheckBox(creaturetab, Localization.Slimes, cboxes.slimes
 cboxes.totem.box = AddCCheckBox(creaturetab, Localization.Totem, cboxes.totem.bit)
 cboxes.undead.box = AddCCheckBox(creaturetab, Localization.Undead, cboxes.undead.bit)
 
-return GUI
+return OverlayUi
