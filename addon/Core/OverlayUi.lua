@@ -156,12 +156,7 @@ combobox.Callback = function(selected)
 	for k, v in ipairs(ni.profiles) do
 		if selected == v.title then
 			print("Selected ".. selected)
-			ni.vars.profiles.primaryidx = k
-			local f, e = ni.backend.LoadFile(v.path)
-			if error then
-				ni.backend.Error(error, v.title)
-			end
-			return f(ni)
+			ni.utils.LoadProfile(ni.profiles[k])
 		end
 	end
 	ni.utils.savesetting(UnitName("player") .. ".json", ni.utils.json.encode(ni.vars))
