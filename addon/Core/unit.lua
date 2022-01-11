@@ -32,7 +32,7 @@ local UnitGUID,
 	ni.backend.GetFunction("UnitIsDeadOrGhost"),
 	ni.backend.GetFunction("UnitReaction"),
 	ni.backend.GetFunction("UnitCastingInfo"),
-	UnitBuff,--ni.backend.GetFunction("UnitBuff"),
+	ni.backend.GetFunction("UnitBuff"),
 	ni.backend.GetFunction("GetSpellInfo"),
 	ni.backend.GetFunction("tContains"),
 	ni.backend.GetFunction("UnitDebuff"),
@@ -57,16 +57,16 @@ local creaturetypes = {
 	[13] = "GasCloud"
 }
 
-local unitauras = { };
-local BehindTime = 0;
-local los = ni.backend.LoS;
+local unitauras = {}
+local BehindTime = 0
+local los = ni.backend.LoS
 
-local unit = {};
+local unit = {}
 unit.exists = function(t)
 	return ni.backend.ObjectExists(t)
 end
 unit.los = function(...) --target, target/x1,y1,z1,x2,y2,z2 [optional, hitflags]
-	local _, t = ...;
+	local _, t = ...
 	if tonumber(t) == nil then
 		local unitid = unit.id(t)
 		if unitid then
@@ -104,7 +104,7 @@ unit.readablecreaturetype = function(t)
 	return creaturetypes[unit.creaturetype(t)]
 end
 unit.combatreach = function(t)
-	return ni.functions.combatreach(t) or 0
+	return ni.backend.CombatReach(t) or 0
 end
 unit.isboss = function(t)
 	local bossId = unit.id(t)
@@ -125,16 +125,16 @@ unit.isboss = function(t)
 	return UnitLevel(t) == -1
 end
 unit.threat = function(t, u)
-	local threat;
+	local threat
 	if u then
-		threat = UnitThreatSituation(t, u);
+		threat = UnitThreatSituation(t, u)
 	else
-		threat = UnitThreatSituation(t);
+		threat = UnitThreatSituation(t)
 	end
 	if threat ~= nil then
 		return threat
 	else
-		return -1;
+		return -1
 	end
 end
 unit.ismoving = function(t)
@@ -164,9 +164,9 @@ unit.id = function(t)
 end
 unit.shortguid = function(t)
 	if UnitExists(t) then
-		return string.sub(tostring(UnitGUID(t)), -5, -1);
+		return string.sub(tostring(UnitGUID(t)), -5, -1)
 	end
-	return "";
+	return ""
 end
 unit.isdummy = function(t)
 	if unit.exists(t) then
@@ -225,7 +225,7 @@ unit.info = function(t)
 	end
 
 	if unit.exists(t) then
-		return ni.functions.objectinfo(t)
+		return ni.backend.ObjectInfo(t)
 	end
 end
 unit.location = function(t)
@@ -236,44 +236,44 @@ unit.location = function(t)
 	return 0, 0, 0
 end
 unit.newz = function(...)
-	local nArgs = #{...};
+	local nArgs = #{...}
 	if nArgs == 1 or nArgs == 2 then
-		local t, offset = ...;
-		offset = offset or 20;
-		local x, y, z = unit.location(t);
-		return select(4, los(x, y, z + offset, x, y, z - offset));
+		local t, offset = ...
+		offset = offset or 20
+		local x, y, z = unit.location(t)
+		return select(4, los(x, y, z + offset, x, y, z - offset))
 	elseif nArgs == 3 or nArgs == 4 then
-		local x, y, z, offset = ...;
-		offset = offset or 20;
-		return select(4, los(x, y, z + offset, x, y, z - offset));			
+		local x, y, z, offset = ...
+		offset = offset or 20
+		return select(4, los(x, y, z + offset, x, y, z - offset))
 	end
 end
 unit.path = function(...)
-	local num = #{...};
-	local t1x, t1y, t1z;
-	local t2x, t2y, t2z;
-	local includes, excludes = nil, nil;
+	local num = #{...}
+	local t1x, t1y, t1z
+	local t2x, t2y, t2z
+	local includes, excludes = nil, nil
 	if num == 2 then
-		local t1, t2 = ...;
-		t1x, t1y, t1z = unit.location(t1);
-		t2x, t2y, t2z = unit.location(t2);
+		local t1, t2 = ...
+		t1x, t1y, t1z = unit.location(t1)
+		t2x, t2y, t2z = unit.location(t2)
 	elseif num == 4 then
-		local t1, t2, t3, t4 = ...;
+		local t1, t2, t3, t4 = ...
 		if type(t1) == "string" then
-			t1x, t1y, t1z = unit.location(t1);
-			t2x, t2y, t2z = t2, t3, t4;
+			t1x, t1y, t1z = unit.location(t1)
+			t2x, t2y, t2z = t2, t3, t4
 		elseif type(t4) == "string" then
-			t1x, t1y, t1z = t1, t2, t3;
-			t2x, t2y, t2z = unit.location(t4);
+			t1x, t1y, t1z = t1, t2, t3
+			t2x, t2y, t2z = unit.location(t4)
 		end
 	elseif num == 6 or num == 8 then
-		t1x, t1y, t1z, t2x, t2y, t2z = ...;
+		t1x, t1y, t1z, t2x, t2y, t2z = ...
 		if num == 8 then
-			includes, excludes = select(7, ...);
+			includes, excludes = select(7, ...)
 		end
 	end
 	if t1x and t1x ~= 0 and t2x and t2x ~= 0 then
-		return ni.backend.GetPath(t1x, t1y, t1z, t2x, t2y, t2z, includes, excludes);
+		return ni.backend.GetPath(t1x, t1y, t1z, t2x, t2y, t2z, includes, excludes)
 	end
 end
 unit.isfacing = function(t1, t2, degrees)
@@ -289,7 +289,7 @@ unit.notbehindtarget = function(seconds)
 end
 unit.isbehind = function(t1, t2, seconds)
 	if unit.notbehindtarget(seconds) then
-		return false;
+		return false
 	end
 	return (t1 ~= nil and t2 ~= nil) and ni.backend.IsBehind(t1, t2) or false
 end
@@ -409,19 +409,19 @@ unit.channelpercent = function(t)
 	return 0
 end
 unit.auras = function(t)
-	table.wipe(unitauras);
-	unitauras = ni.backend.Auras(t) or { };
-	return unitauras;
+	table.wipe(unitauras)
+	unitauras = ni.backend.Auras(t) or {}
+	return unitauras
 end
 unit.aura = function(t, s)
 	if tonumber(s) == nil then
-		unit.auras(t);
+		unit.auras(t)
 		for k, v in pairs(unitauras) do
 			if v.name == s then
-				return true;
+				return true
 			end
 		end
-		return false;
+		return false
 	else
 		return ni.backend.HasAuras(t, s) or false
 	end
@@ -458,24 +458,21 @@ unit.bufftype = function(t, str)
 	return has
 end
 unit.buff = function(t, id, filter)
-	local spellName;
+	local spellName
 	if tonumber(id) ~= nil then
-		spellName = GetSpellInfo(id);
+		spellName = GetSpellInfo(id)
 	else
 		spellName = id
 	end
 	if filter == nil then
-		return UnitBuff(t, spellName);
+		return UnitBuff(t, spellName)
 	else
 		if strfind(strupper(filter), "EXACT") then
-			local caster = strfind(strupper(filter), "PLAYER");
+			local caster = strfind(strupper(filter), "PLAYER")
 			for i = 1, 40 do
-				local _, _, _, _, _, _, _, buffCaster, _, _, buffSpellID = UnitBuff(t, i);
-				if buffSpellID ~= nil
-				 and buffSpellID == id
-				 and (not caster
-				 or buffCaster == "player") then
-					return UnitBuff(t, i);
+				local _, _, _, _, _, _, _, buffCaster, _, _, buffSpellID = UnitBuff(t, i)
+				if buffSpellID ~= nil and buffSpellID == id and (not caster or buffCaster == "player") then
+					return UnitBuff(t, i)
 				end
 			end
 		else
@@ -562,28 +559,25 @@ unit.debufftype = function(t, str)
 	return has
 end
 unit.debuff = function(t, id, filter)
-	local spellName;
+	local spellName
 	if tonumber(id) ~= nil then
-		spellName = GetSpellInfo(id);
+		spellName = GetSpellInfo(id)
 	else
 		spellName = id
 	end
 	if filter == nil then
-		return UnitDebuff(t, spellName);
+		return UnitDebuff(t, spellName)
 	else
 		if strfind(strupper(filter), "EXACT") then
-			local caster = strfind(strupper(filter), "PLAYER");
+			local caster = strfind(strupper(filter), "PLAYER")
 			for i = 1, 40 do
-				local _, _, _, _, _, _, _, debuffCaster, _, _, debuffSpellID = UnitDebuff(t, i);
-				if debuffSpellID ~= nil
-				 and debuffSpellID == id
-				 and (not caster
-				 or debuffCaster == "player") then
-					return UnitDebuff(t, i);
+				local _, _, _, _, _, _, _, debuffCaster, _, _, debuffSpellID = UnitDebuff(t, i)
+				if debuffSpellID ~= nil and debuffSpellID == id and (not caster or debuffCaster == "player") then
+					return UnitDebuff(t, i)
 				end
 			end
 		else
-			return UnitDebuff(t, spellName, nil, filter);
+			return UnitDebuff(t, spellName, nil, filter)
 		end
 	end
 end
@@ -635,7 +629,7 @@ unit.debuffs = function(t, spellIDs, filter)
 	end
 	return results
 end
-unit.buffstacks = function (target, spell, filter)
+unit.buffstacks = function(target, spell, filter)
 	local stacks = select(4, unit.buff(target, spell, filter))
 	if stacks ~= nil then
 		return stacks
@@ -643,7 +637,7 @@ unit.buffstacks = function (target, spell, filter)
 		return 0
 	end
 end
-unit.debuffstacks = function (target, spell, filter)
+unit.debuffstacks = function(target, spell, filter)
 	local stacks = select(4, unit.debuff(target, spell, filter))
 	if stacks ~= nil then
 		return stacks
@@ -743,10 +737,10 @@ unit.isplayer = function(t)
 	return select(5, unit.info(t)) == 4
 end
 unit.transport = function(t)
-	return ni.backend.ObjectTransport(t);
+	return ni.backend.ObjectTransport(t)
 end
 unit.facing = function(t)
-	return ni.backend.ObjectFacing(t);
+	return ni.backend.ObjectFacing(t)
 end
 unit.hasheal = function(t)
 	if UnitExists(t) then
@@ -768,11 +762,11 @@ end
 
 local function UnitEvents(event, ...)
 	if event == "UI_ERROR_MESSAGE" then
-		local errorMessage = ...;
+		local errorMessage = ...
 		if errorMessage == SPELL_FAILED_NOT_BEHIND then
-			BehindTime = GetTime();
+			BehindTime = GetTime()
 		end
 	end
 end
-ni.combatlog.registerhandler("Internal Unit Handler", UnitEvents);
-return unit;
+ni.combatlog.registerhandler("Internal Unit Handler", UnitEvents)
+return unit
