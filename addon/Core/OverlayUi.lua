@@ -155,7 +155,6 @@ combobox.Callback = function(selected)
 	ni.vars.profiles.primary = selected
 	for k, v in ipairs(ni.profiles) do
 		if selected == v.title then
-			print("Selected ".. selected)
 			ni.utils.LoadProfile(ni.profiles[k])
 		end
 	end
