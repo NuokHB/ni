@@ -1,3 +1,4 @@
+local ni = ...
 local GUI = CreateFrame("frame", nil, UIParent);
 -----------------------------------------------
 ----- Necessary tables for below functions ----

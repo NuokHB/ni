@@ -109,11 +109,13 @@ local function GetProfiles()
 					local extension = GetFileExtension(sub_contents[i].path)
 					if extension == ".enc" or extension == ".lua" then
 						local vers = 0
+						local c
 						local _, err
 						ni.backend.ParseFile(
 							sub_contents[i].path,
 							function(content)
 								vers = tonumber(string.match(content, "--Version:%s*(%d[,.%d]*)"))
+								c = content
 							end
 						)
 						ti(
@@ -122,7 +124,8 @@ local function GetProfiles()
 								title = GetFilename(sub_contents[i].path, true),
 								filename = GetFilename(sub_contents[i].path),
 								path = sub_contents[i].path,
-								version = vers or 0
+								version = vers or 0,
+								content = c
 							}
 						)
 						if not processed then
@@ -146,13 +149,12 @@ end
 		none/nil
 ]]
 local function LoadProfile(entry)
-	local gbi = ni.backend.GetFunction("GetBuildInfo")
 	local _, err =
 		ni.backend.ParseFile(
 		entry.path,
 		function(content)
 			local result, err = ni.backend.LoadString(content, string.format("@%s", entry.filename))
-			if result then
+			if result ~= nil then
 				result(ni)
 				return true
 			end
@@ -174,9 +176,6 @@ end
 
 if not ni.loaded then
 	ni.profiles = GetProfiles() or {}
-	for k, v in pairs(ni.profiles) do
-		print(string.format("%s: %s %s", k, v.title, v.version, v.path))
-	end
 	local dir = ni.backend.GetBaseFolder()
 	local cf = ni.backend.GetFunction("CreateFrame")
 	if not cf then

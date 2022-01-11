@@ -1,3 +1,4 @@
+local ni = ...
 local function start(name, queue, abilities, data, GUI)
 	local profile = { };
 	profile.loaded = false;

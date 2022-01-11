@@ -1,3 +1,4 @@
+local ni = ...
 local vars = {
 	latency = 170,
 	interrupt = "all",

@@ -1,3 +1,4 @@
+local ni = ...
 local tables = {
 	blacklistedaoeunits = {},
 	blacklisteddispels = {},

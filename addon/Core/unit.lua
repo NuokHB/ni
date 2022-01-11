@@ -32,13 +32,14 @@ local UnitGUID,
 	ni.backend.GetFunction("UnitIsDeadOrGhost"),
 	ni.backend.GetFunction("UnitReaction"),
 	ni.backend.GetFunction("UnitCastingInfo"),
-	ni.backend.GetFunction("UnitBuff"),
+	UnitBuff,--ni.backend.GetFunction("UnitBuff"), Fails to get unit buff???
 	ni.backend.GetFunction("GetSpellInfo"),
 	ni.backend.GetFunction("tContains"),
 	ni.backend.GetFunction("UnitDebuff"),
 	ni.backend.GetFunction("UnitChannelInfo"),
 	ni.backend.GetFunction("GetTime"),
 	ni.backend.GetFunction("UnitGetIncomingHeals")
+
 
 local creaturetypes = {
 	[0] = "Unknown",
@@ -423,7 +424,7 @@ unit.aura = function(t, s)
 		end
 		return false
 	else
-		return ni.backend.HasAuras(t, s) or false
+		return ni.backend.HasAura(t, s) or false
 	end
 end
 unit.bufftype = function(t, str)

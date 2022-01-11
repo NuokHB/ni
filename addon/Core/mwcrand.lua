@@ -1,3 +1,4 @@
+local ni = ...
 local mwcexports = {}
 
 local math_floor = math.floor

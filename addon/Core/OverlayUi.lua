@@ -155,15 +155,14 @@ combobox.Callback = function(selected)
 	ni.vars.profiles.primary = selected
 	for k, v in ipairs(ni.profiles) do
 		if selected == v.title then
+			print("Selected ".. selected)
 			ni.vars.profiles.primaryidx = k
-			break
+			local f, e = ni.backend.LoadFile(v.path)
+			return f(ni)
 		end
-		ni.utils.LoadProfile(ni.profiles[ni.vars.profiles.primaryidx])
 	end
 	ni.utils.savesetting(UnitName("player") .. ".json", ni.utils.json.encode(ni.vars))
 end
-combobox:Add("None")
-print(ni.vars.build)
 for k, v in ipairs(ni.profiles) do
 	if v.version == 0 or v.version == ni.vars.build then
 		combobox:Add(v.title)
