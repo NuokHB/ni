@@ -2,8 +2,8 @@ local ni = ...
 local UnitDebuff, UnitClass, tContains, tinsert, UnitHealthMax =
 	ni.backend.GetFunction("UnitDebuff"),
 	ni.backend.GetFunction("UnitClass"),
-	ni.backend.GetFunction("tContains"),
-	ni.backend.GetFunction("tinsert"),
+	tContains,
+	tinsert,
 	ni.backend.GetFunction("UnitHealthMax")
 
 local class = string.lower(select(2, UnitClass("player")))

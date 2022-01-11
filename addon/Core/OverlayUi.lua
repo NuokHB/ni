@@ -1,5 +1,6 @@
 local ni = ...
 local OverlayUi = {}
+local UnitName = ni.backend.GetFunction("UnitName")
 local Localization = {
 	Assistant = "Rotation Assistant",
 	Primary = "Select your primary rotation:",
@@ -150,13 +151,32 @@ local tabselector = ni.ui.new("TabSelector", OverlayUi.window)
 local mainTab = tabselector:AddTab(Localization.MainSettings)
 local combobox = ni.ui.new("ComboBox", mainTab)
 combobox.Text = "Profiles"
-local current = ""
 combobox.Callback = function(selected)
-	current = selected
+	ni.vars.profiles.primary = selected
+	for k, v in ipairs(ni.profiles) do
+		if selected == v.title then
+			ni.vars.profiles.primaryidx = k
+			break
+		end
+		ni.utils.LoadProfile(ni.profiles[ni.vars.profiles.primaryidx])
+	end
+	ni.utils.savesetting(UnitName("player") .. ".json", ni.utils.json.encode(ni.vars))
 end
+combobox:Add("None")
+print(ni.vars.build)
 for k, v in ipairs(ni.profiles) do
-	combobox:Add(v.title)
+	if v.version == 0 or v.version == ni.vars.build then
+		combobox:Add(v.title)
+	end
 end
+local loadButton = ni.ui.new("Button", mainTab)
+loadButton.Text = "Start"
+loadButton.Callback = function()
+	if ni.vars.profiles.primary ~= "None" and ni.vars.profiles.primaryidx ~= 0 then
+		ni.toggleprofile(ni.vars.profiles.primary);
+	end
+end
+
 --Resource tracking menu
 local resourcetab = tabselector:AddTab(Localization.ResourceTrack)
 local bitwise = {}
@@ -300,6 +320,7 @@ local function AddCCheckBox(tab, text, value)
 	end
 	return b
 end
+
 cboxes.beasts.box = AddCCheckBox(creaturetab, Localization.Beasts, cboxes.beasts.bit)
 cboxes.critters.box = AddCCheckBox(creaturetab, Localization.Critters, cboxes.critters.bit)
 cboxes.demons.box = AddCCheckBox(creaturetab, Localization.Demons, cboxes.demons.bit)

@@ -109,11 +109,13 @@ local function GetProfiles()
 					local extension = GetFileExtension(sub_contents[i].path)
 					if extension == ".enc" or extension == ".lua" then
 						local vers = 0
-						local _, err ni.backend.ParseFile(
+						local _, err
+						ni.backend.ParseFile(
 							sub_contents[i].path,
 							function(content)
-								vers = string.match(content, "--Version:%s*(%d[,.%d]*)")
-							end)
+								vers = tonumber(string.match(content, "--Version:%s*(%d[,.%d]*)"))
+							end
+						)
 						ti(
 							files,
 							{
@@ -149,20 +151,16 @@ local function LoadProfile(entry)
 		ni.backend.ParseFile(
 		entry.path,
 		function(content)
-			local version = string.match(content, "--Version:%s*(%d[,.%d]*)")
-			if not version or version == select(4, gbi()) then
-				local result, err = ni.backend.LoadString(content, string.format("@%s", entry.filename))
-				if result then
-					result(ni)
-					return true
-				end
-				ni.backend.MessageBox(err, entry.filename, 0x10)
-				return false
+			local result, err = ni.backend.LoadString(content, string.format("@%s", entry.filename))
+			if result then
+				result(ni)
+				return true
 			end
+			ni.backend.MessageBox(err, entry.filename, 0x10)
+			return false
 		end
 	)
 end
-
 
 -- Need to create method for loading everying up now
 local function LoadFile(file)
@@ -174,12 +172,10 @@ local function LoadFile(file)
 	return func
 end
 
-local profiles = {}
-
 if not ni.loaded then
-	profiles = GetProfiles()
-	for k, v in pairs(profiles) do
-		print(string.format("%s: %s %s", k, v.title, v.version))
+	ni.profiles = GetProfiles() or {}
+	for k, v in pairs(ni.profiles) do
+		print(string.format("%s: %s %s", k, v.title, v.version, v.path))
 	end
 	local dir = ni.backend.GetBaseFolder()
 	local cf = ni.backend.GetFunction("CreateFrame")
@@ -198,6 +194,7 @@ if not ni.loaded then
 	ni.vars.profiles.delay = 0
 	local GetBuildInfo = ni.backend.GetFunction("GetBuildInfo")
 	ni.vars.build = tonumber((select(4, GetBuildInfo())))
+	print("vars.build: " .. ni.vars.build)
 	ni.backend.SaveContent(dir .. "addon\\settings\\" .. unitname("player") .. ".json", json.encode(ni.vars))
 	ni.debug = LoadFile("addon\\core\\debug.lua")(ni)
 	ni.memory = LoadFile("addon\\core\\memory.lua")(ni)
@@ -207,6 +204,8 @@ if not ni.loaded then
 	ni.drtracker = LoadFile("addon\\core\\drtracker.lua")(ni)
 	ni.utils = LoadFile("addon\\core\\utils.lua")(ni)
 	ni.utils.json = json
+	ni.utils.LoadProfile = LoadProfile
+	ni.utils.LoadFile = LoadFile
 	ni.utils.savesetting = function(filename, settings)
 		if type(settings) == "table" then
 			settings = json.encode(settings)
@@ -230,7 +229,7 @@ if not ni.loaded then
 	ni.ttd = LoadFile("addon\\core\\timetodie.lua")(ni)
 	ni.OverlayUi = LoadFile("addon\\core\\OverlayUi.lua")(ni)
 	ni.OverlayUi.window.Open = true
-
+	ni.GUI = LoadFile("addon\\core\\gui.lua")(ni)
 	ni.strongrand = LoadFile("addon\\core\\mwcrand.lua")(ni)
 	local function RandomVariable(length)
 		local res = ""
@@ -249,6 +248,7 @@ if not ni.loaded then
 		table.insert(generated_names, name)
 		return name
 	end
+	--ni.main = LoadFile("addon\\core\\mainui.lua")(ni)
 	ni.showstatus = function(str, enabled)
 		if enabled then
 			ni.frames.floatingtext:message("\124cff00ff00" .. str)
