@@ -186,15 +186,13 @@ if not ni.loaded then
 	local frame = cf("frame")
 	local json = LoadFile("addon\\core\\json.lua")(ni)
 	local unitname = ni.backend.GetFunction("UnitName")
-	ni.vars = LoadFile("addon\\core\\vars.lua")(ni)
 	local vars = ni.backend.GetContent(dir .. "addon\\settings\\" .. unitname("player") .. ".json")
-	ni.vars = (vars and json.decode(vars)) or ni.vars
+	ni.vars = (vars and json.decode(vars)) or LoadFile("addon\\core\\vars.lua")(ni)
 	ni.vars.profiles.enabled = false
 	ni.vars.profiles.genericenabled = false
 	ni.vars.profiles.delay = 0
 	local GetBuildInfo = ni.backend.GetFunction("GetBuildInfo")
 	ni.vars.build = tonumber((select(4, GetBuildInfo())))
-	print("vars.build: " .. ni.vars.build)
 	ni.backend.SaveContent(dir .. "addon\\settings\\" .. unitname("player") .. ".json", json.encode(ni.vars))
 	ni.debug = LoadFile("addon\\core\\debug.lua")(ni)
 	ni.memory = LoadFile("addon\\core\\memory.lua")(ni)
