@@ -161,7 +161,11 @@ spell.cast = function(...)
 		ni.debug.print(string.format("Casting %s", ...))
 	end
 	ni.vars.combat.queued = true
-	ni.backend.Cast(...)
+  if tonumber(i) then
+    return ni.backend.CallProtected("CastSpellByID", ...)
+  else
+    return ni.backend.CallProtected("CastSpellByName", ...)
+  end
 end
 spell.delaycast = function(s, target, delay)
 	if delay then
