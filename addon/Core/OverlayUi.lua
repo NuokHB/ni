@@ -158,6 +158,9 @@ combobox.Callback = function(selected)
 			print("Selected ".. selected)
 			ni.vars.profiles.primaryidx = k
 			local f, e = ni.backend.LoadFile(v.path)
+			if error then
+				ni.backend.Error(error, v.title)
+			end
 			return f(ni)
 		end
 	end
