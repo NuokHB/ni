@@ -226,7 +226,7 @@ local function CreateText(frame, settext, offset_x, offset_y, r, g, b, a)
 	return text;
 end
 
-local title = CreateText(frame, Localization.Assistant, 0, -5, 0.2, 0.7, 1, 1);
+local title = CreateText(frame, string.format("ni (%s)", ni.__version), 0, -5, 0.2, 0.7, 1, 1);
 local primary_text = CreateText(frame, Localization.Primary, 0, -18, 0.1, 0.5, 0.8, 1);
 local secondary_text = CreateText(frame, Localization.Secondary, 0, -63, 0.1, 0.5, 0.8, 1);
 local generic_text = CreateText(frame, Localization.Generic, 0, -108, 0.1, 0.5, 0.8, 1);
@@ -348,7 +348,7 @@ UIDropDownMenu_SetText(dropdownmenu3, generic);
 local mainsettings = CreateFrame("frame", nil, frame);
 mainsettings:ClearAllPoints();
 mainsettings:SetWidth(220);
-mainsettings:SetHeight(460);
+mainsettings:SetHeight(420);
 mainsettings:SetPoint("TOPRIGHT", frame, 215, 0);
 mainsettings:SetBackdrop(backdrop);
 mainsettings:EnableMouse(true);
@@ -811,7 +811,7 @@ local reloadbutton = CreateFrame("BUTTON", nil, mainsettings, "UIPanelButtonTemp
 reloadbutton:SetWidth(96);
 reloadbutton:SetHeight(22);
 reloadbutton:SetText(Localization.ReloadDev);
-reloadbutton:SetPoint("BOTTOMLEFT", mainsettings, 15, 48);
+reloadbutton:SetPoint("BOTTOMLEFT", mainsettings, 15, 10);
 reloadbutton:SetAlpha(1);
 reloadbutton:SetScript("OnClick", function()
 	ReloadUI();
@@ -821,33 +821,12 @@ local consolebutton = CreateFrame("BUTTON", nil, mainsettings, "UIPanelButtonTem
 consolebutton:SetWidth(90);
 consolebutton:SetHeight(22);
 consolebutton:SetText(Localization.Console);
-consolebutton:SetPoint("BOTTOMRIGHT", mainsettings, -15, 48);
+consolebutton:SetPoint("BOTTOMRIGHT", mainsettings, -15, 10);
 consolebutton:SetAlpha(1);
 consolebutton:SetScript("OnClick", function()
 	ni.backend.ToggleConsole();
 end);
 
-CreateText(mainsettings, Localization.Contact, 0, -410, 0.8, 0.1, 0.1, 1);
-
-local consolebutton = CreateFrame("BUTTON", nil, mainsettings, "UIPanelButtonTemplate");
-consolebutton:SetWidth(82);
-consolebutton:SetHeight(22);
-consolebutton:SetText("Dimonskiy");
-consolebutton:SetPoint("BOTTOMRIGHT", mainsettings, -26, 9);
-consolebutton:SetAlpha(1);
-consolebutton:SetScript("OnClick", function()
-	ni.backend.Open("https://discord.com/users/649003031391633438") 
-end);
-
-local consolebutton = CreateFrame("BUTTON", nil, mainsettings, "UIPanelButtonTemplate");
-consolebutton:SetWidth(82);
-consolebutton:SetHeight(22);
-consolebutton:SetText("DarhangeR");
-consolebutton:SetPoint("BOTTOMLEFT", mainsettings, 26, 9);
-consolebutton:SetAlpha(1);
-consolebutton:SetScript("OnClick", function()
-	ni.backend.Open("https://discord.com/users/250267265285488641") 
-end);
 --Rotation Settings drop downs
 local mods = {
 	Localization.None,
@@ -960,14 +939,11 @@ local function SetClick(key, frame, button)
 	if key == Localization.None or key == nil then
 		return;
 	end
-	SetBindingClick(key, frame, button);
+	SetBindingClick(key, frame, button)
 end
 
 local mainkeys_name = ni.utils.GenerateRandomName();
 local mainkeys = CreateFrame("BUTTON", mainkeys_name, UIParent);
-SetClick(ni.vars.hotkeys.primary, mainkeys_name, "LeftButton");
-SetClick(ni.vars.hotkeys.secondary, mainkeys_name, "RightButton");
-SetClick(ni.vars.hotkeys.generic, mainkeys_name, "MiddleButton");
 mainkeys:SetScript("OnClick", function(self, button)
 	if button == "LeftButton" then
 		ni.toggleprofile(ni.vars.profiles.primary);
@@ -983,9 +959,6 @@ end);
 mainkeys:Show();
 local secondkeys_name = ni.utils.GenerateRandomName();
 local secondkeys = CreateFrame("BUTTON", secondkeys_name, UIParent);
-SetClick(ni.vars.hotkeys.interrupt, secondkeys_name, "LeftButton");
-SetClick(ni.vars.hotkeys.follow, secondkeys_name, "RightButton");
-SetClick(ni.vars.hotkeys.gui, secondkeys_name, "MiddleButton");
 secondkeys:SetScript("OnClick", function(self, button)
 	if button == "LeftButton" then
 		ni.vars.profiles.interrupt = not ni.vars.profiles.interrupt;
@@ -1002,3 +975,12 @@ secondkeys:SetScript("OnClick", function(self, button)
 	end
 end);
 secondkeys:Show();
+ni.main_ui.setupkeys = function()
+	SetClick(ni.vars.hotkeys.interrupt, secondkeys_name, "LeftButton");
+	SetClick(ni.vars.hotkeys.follow, secondkeys_name, "RightButton");
+	SetClick(ni.vars.hotkeys.gui, secondkeys_name, "MiddleButton");
+	SetClick(ni.vars.hotkeys.primary, mainkeys_name, "LeftButton");
+	SetClick(ni.vars.hotkeys.secondary, mainkeys_name, "RightButton");
+	SetClick(ni.vars.hotkeys.generic, mainkeys_name, "MiddleButton");
+end
+ni.main_ui.setupkeys()

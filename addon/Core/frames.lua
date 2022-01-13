@@ -209,16 +209,16 @@ ni.frames.OnEvent = function(self, event, ...)
 	for _, v in pairs(events) do
 		v(event, ...);
 	end
-	if event == "PLAYER_LEAVING_WORLD" then
+	if event == "PLAYER_ENTERING_WORLD" then
+		ni.main_ui.setupkeys()
+	elseif event == "PLAYER_LEAVING_WORLD" then
 		ni.backend.FreeMaps();
 		ni.utils.savesetting(UnitName("player")..".json", ni.json.encode(ni.vars));
-	end
-	if event == "PLAYER_REGEN_DISABLED" then
+	elseif event == "PLAYER_REGEN_DISABLED" then
 		ni.vars.combat.started = true
 		ni.vars.combat.time = GetTime()
 		ni.vars.combat.ended = 0
-	end
-	if event == "PLAYER_REGEN_ENABLED" then
+	elseif event == "PLAYER_REGEN_ENABLED" then
 		ni.vars.combat.started = false
 		ni.vars.combat.time = 0
 		ni.vars.combat.ended = GetTime()
