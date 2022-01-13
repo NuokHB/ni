@@ -1,20 +1,21 @@
 local ni = ...
+
 local UnitDebuff, UnitClass, tContains, tinsert, UnitHealthMax =
-	ni.backend.GetFunction("UnitDebuff"),
-	ni.backend.GetFunction("UnitClass"),
+	UnitDebuff,
+	UnitClass,
 	tContains,
 	tinsert,
-	ni.backend.GetFunction("UnitHealthMax")
+	UnitHealthMax
 
 local class = string.lower(select(2, UnitClass("player")))
 
-healing = {};
-healing.debufftoblacklist = function(id)
+ni.healing = {};
+ni.healing.debufftoblacklist = function(id)
 	if not tContains(ni.tables.blacklisteddispels, id) then
 		tinsert(ni.tables.blacklisteddispels, id)
 	end
 end
-healing.dontdispel = function(t)
+ni.healing.dontdispel = function(t)
 	for i = 1, #ni.tables.blacklisteddispels do
 		local blacklisted = ni.tables.blacklisteddispels[i]
 		local debuff = ni.unit.debuff(t, blacklisted)
@@ -22,7 +23,7 @@ healing.dontdispel = function(t)
 		if debuff then
 			local debufftype = select(5, UnitDebuff(t, debuff))
 
-			if healing.debufftypedispellable(debufftype) then
+			if ni.healing.debufftypedispellable(debufftype) then
 				return true
 			end
 		end
@@ -30,18 +31,18 @@ healing.dontdispel = function(t)
 
 	return false
 end
-healing.candispel = function(t)
+ni.healing.candispel = function(t)
 	local i = 1
 	local debuff = UnitDebuff(t, i)
 
-	if healing.dontdispel(t) then
+	if ni.healing.dontdispel(t) then
 		return false
 	end
 
 	while debuff do
 		local debufftype = select(5, UnitDebuff(t, i))
 
-		if healing.debufftypedispellable(debufftype) then
+		if ni.healing.debufftypedispellable(debufftype) then
 			return true
 		end
 
@@ -50,10 +51,10 @@ healing.candispel = function(t)
 	end
 	return false
 end
-healing.debufftypedispellable = function(debufftype)
+ni.healing.debufftypedispellable = function(debufftype)
 	return ni.tables.classes[class].dispel and tContains(ni.tables.classes[class].dispel, debufftype)
 end
-healing.averagehp = function(n)
+ni.healing.averagehp = function(n)
 	local average = 0
 	if #ni.members < n then
 		for i = n, 0, -1 do
@@ -70,8 +71,8 @@ healing.averagehp = function(n)
 	return average
 end
 
-local tanks = { };
-local function gettanks()
+ni.tanks = { };
+ni.gettanks = function()
 	if ni.vars.units.mainTankEnabled and ni.vars.units.offTankEnabled then
 		return ni.vars.units.mainTank, ni.vars.units.offTank
 	end
@@ -115,4 +116,3 @@ local function gettanks()
 		return "focus"
 	end
 end
-return healing, gettanks;

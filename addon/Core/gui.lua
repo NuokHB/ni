@@ -1,5 +1,6 @@
 local ni = ...
-local GUI = CreateFrame("frame", nil, UIParent);
+
+ni.GUI = CreateFrame("frame", nil, UIParent);
 -----------------------------------------------
 ----- Necessary tables for below functions ----
 -----------------------------------------------
@@ -24,11 +25,11 @@ local current_frame_name;
 -----------------------------------------------
 local function ApplyLayout()
 	local distance = main_y;
-	if GUI.isOpen then
+	if ni.GUI.isOpen then
 		distance = distance - offset;
 	end
-	GUI:ClearAllPoints();
-	GUI:SetPoint("TOP", UIParent, "TOP", 0, distance);
+	ni.GUI:ClearAllPoints();
+	ni.GUI:SetPoint("TOP", UIParent, "TOP", 0, distance);
 end
 local function PopOut(self, ...)
 	self.PopTimer = 0.5;
@@ -39,15 +40,15 @@ local function PopBack(self, ...)
 	self.PopDirection = -1;
 end
 local function PerformOpen()
-	GUI.PopDirection = nil;
-	GUI:ClearAllPoints();
-	GUI.isOpen = true;
+	ni.GUI.PopDirection = nil;
+	ni.GUI:ClearAllPoints();
+	ni.GUI.isOpen = true;
 	ApplyLayout();
 end
 local function PerformClose()
-	GUI.PopDirection = nil;
-	GUI:ClearAllPoints();
-	GUI.isOpen = false
+	ni.GUI.PopDirection = nil;
+	ni.GUI:ClearAllPoints();
+	ni.GUI.isOpen = false
 	ApplyLayout();
 end
 local function Popper(self, ...)
@@ -64,13 +65,13 @@ local function Popper(self, ...)
 	end
 end
 local function GUI_OnLeave(self, ...)
-	PopBack(GUI, ...);
+	PopBack(ni.GUI, ...);
 end;
 local function GUI_OnEnter(self, ...)
-	PopOut(GUI, ...);
+	PopOut(ni.GUI, ...);
 end;
 local function ResizeEntries(frame)
-	local width = GUI:GetWidth() - 16;
+	local width = ni.GUI:GetWidth() - 16;
 	for k, v in ipairs(frames[frame].items) do
 		if v.isentry then
 			if v.text then
@@ -165,12 +166,12 @@ local function Resize(frame, reset)
 		main_width = width;
 		main_y = height - 15;
 		offset = height - 25;
-		GUI:SetWidth(width);
+		ni.GUI:SetWidth(width);
 		frames[frame]:SetHeight(height);
-		GUI:SetHeight(height);
+		ni.GUI:SetHeight(height);
 		ResizeEntries(frame);
 		if reset then
-			GUI:SetPoint("TOP", UIParent, "TOP", 0, main_y);
+			ni.GUI:SetPoint("TOP", UIParent, "TOP", 0, main_y);
 		else
 			ApplyLayout();
 		end
@@ -179,10 +180,10 @@ local function Resize(frame, reset)
 		main_width = main_original_width;
 		main_y = main_original_y;
 		offset = original_offset;
-		GUI:SetWidth(main_original_width);
-		GUI:SetHeight(main_original_height);	
+		ni.GUI:SetWidth(main_original_width);
+		ni.GUI:SetHeight(main_original_height);	
 		if reset then
-			GUI:SetPoint("TOP", UIParent, "TOP", 0, main_original_y);
+			ni.GUI:SetPoint("TOP", UIParent, "TOP", 0, main_original_y);
 		else
 			ApplyLayout();
 		end
@@ -584,10 +585,10 @@ local function CreateInput(frame, t, settingsfile, callback)
 		self:ClearFocus();
 	end)
 	Box:SetScript("OnEnter", function(self, ...)
-		PopOut(GUI, ...);
+		PopOut(ni.GUI, ...);
 	end);
 	Box:SetScript("OnLeave", function(self, ...) 
-		PopBack(GUI, ...);
+		PopBack(ni.GUI, ...);
 	end);
 	if t.key then
 		Box.key = t.key;
@@ -772,7 +773,7 @@ local function CreateEntry(frame, t, settingsfile, callback)
 		if t.tooltip ~= nil then
 			TempFrame:EnableMouse(true);
 			TempFrame:SetScript("OnEnter", function(self, ...)
-				PopOut(GUI, ...);
+				PopOut(ni.GUI, ...);
 				local tooltip = GameTooltip;
 				tooltip:Hide();
 				tooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT");
@@ -781,7 +782,7 @@ local function CreateEntry(frame, t, settingsfile, callback)
 				tooltip:Show();
 			end);
 			TempFrame:SetScript("OnLeave", function(self, ...)
-				PopBack(GUI, ...);
+				PopBack(ni.GUI, ...);
 				local tooltip = GameTooltip;
 				tooltip:ClearLines();
 				tooltip:Hide();
@@ -794,10 +795,10 @@ local function CreateEntry(frame, t, settingsfile, callback)
 			EditBox:SetPoint("RIGHT", -4, 0);
 		end
 		EditBox:SetScript("OnEnter", function(self, ...)
-			PopOut(GUI, ...);
+			PopOut(ni.GUI, ...);
 		end);
 		EditBox:SetScript("OnLeave", function(self, ...) 
-			PopBack(GUI, ...);
+			PopBack(ni.GUI, ...);
 		end);
 		TempFrame.editbox = EditBox;
 		local twidth = Text:GetWidth();
@@ -844,7 +845,7 @@ local function CreateCenteredText(frame, t)
 	text:SetPoint("RIGHT", 0, 0);
 	if t.tooltip ~= nil then
 		TempFrame:SetScript("OnEnter", function(self, ...)
-			PopOut(GUI, ...);
+			PopOut(ni.GUI, ...);
 			local tooltip = GameTooltip;
 			tooltip:Hide();
 			tooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT");
@@ -853,7 +854,7 @@ local function CreateCenteredText(frame, t)
 			tooltip:Show();
 		end);
 		TempFrame:SetScript("OnLeave", function(self, ...)
-			PopBack(GUI, ...);
+			PopBack(ni.GUI, ...);
 			local tooltip = GameTooltip;
 			tooltip:ClearLines();
 			tooltip:Hide();
@@ -870,7 +871,7 @@ local function CreateCenteredText(frame, t)
 	end
 end
 local function NewFrame(frame)
-	frames[frame] = CreateFrame("frame", nil, GUI);
+	frames[frame] = CreateFrame("frame", nil, ni.GUI);
 	frames[frame].name = frame;
 	frames[frame]:SetHeight(16);
 	frames[frame]:SetPoint("LEFT", 0, 0);
@@ -904,10 +905,10 @@ local function CreatePage(frame, page, t)
 		ChangePageBack(frames[frame], Frame.page);
 	end);
 	LeftButton:SetScript("OnEnter", function(self, ...)
-		PopOut(GUI, ...);
+		PopOut(ni.GUI, ...);
 	end);
 	LeftButton:SetScript("OnLeave", function(self, ...)
-		PopBack(GUI, ...);
+		PopBack(ni.GUI, ...);
 	end);
 	Frame.leftbutton = LeftButton;
 	local RightButton = CreateFrame("Button", nil, Frame);
@@ -922,10 +923,10 @@ local function CreatePage(frame, page, t)
 		ChangePageForward(frames[frame], Frame.page);
 	end);
 	RightButton:SetScript("OnEnter", function(self, ...)
-		PopOut(GUI, ...);
+		PopOut(ni.GUI, ...);
 	end);
 	RightButton:SetScript("OnLeave", function(self, ...)
-		PopBack(GUI, ...);
+		PopBack(ni.GUI, ...);
 	end);
 	Frame.rightbutton = RightButton;
 	local TextFrame;
@@ -1111,12 +1112,12 @@ local function ApplySettings(name, t)
 	end
 end
 local function HideMainPages()
-	GUI.leftbutton:Hide();
-	GUI.rightbutton:Hide();
+	ni.GUI.leftbutton:Hide();
+	ni.GUI.rightbutton:Hide();
 end
 local function ShowMainPages()
-	GUI.leftbutton:Show();
-	GUI.rightbutton:Show();
+	ni.GUI.leftbutton:Show();
+	ni.GUI.rightbutton:Show();
 end
 local function CreatedFramesByName()
 	table.wipe(framenames);
@@ -1135,27 +1136,27 @@ local function GetStoredTable(name)
 	end
 	return nil;
 end
-GUI:ClearAllPoints();
-GUI:SetFrameLevel(0);
-GUI:SetWidth(main_width);
-GUI:SetHeight(main_height);
-GUI:EnableMouse(true);
-GUI:SetBackdrop({bgFile = "Interface/DialogFrame/UI-DialogBox-Background",  
+ni.GUI:ClearAllPoints();
+ni.GUI:SetFrameLevel(0);
+ni.GUI:SetWidth(main_width);
+ni.GUI:SetHeight(main_height);
+ni.GUI:EnableMouse(true);
+ni.GUI:SetBackdrop({bgFile = "Interface/DialogFrame/UI-DialogBox-Background",  
 				edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
 				tile = true, tileSize = 16, edgeSize = 14, 
 				insets = { left = 4, right = 4, top = 4, bottom = 4 }});
-GUI:SetBackdropColor(0,0,0,1);
-GUI:SetPoint("TOP", UIParent, "TOP", 0, main_y);
-GUI:SetScript("OnEnter", function(self, ...)
+ni.GUI:SetBackdropColor(0,0,0,1);
+ni.GUI:SetPoint("TOP", UIParent, "TOP", 0, main_y);
+ni.GUI:SetScript("OnEnter", function(self, ...)
 	PopOut(self, ...);
 end);
-GUI:SetScript("OnLeave", function(self, ...) 
+ni.GUI:SetScript("OnLeave", function(self, ...) 
 	PopBack(self, ...);
 end);
-GUI:SetScript("OnUpdate", function(self, ...)
+ni.GUI:SetScript("OnUpdate", function(self, ...)
 	Popper(self, ...);
 end);
-local LeftButton = CreateFrame("Button", nil, GUI);
+local LeftButton = CreateFrame("Button", nil, ni.GUI);
 LeftButton:RegisterForClicks("LeftButtonUp");
 LeftButton:SetSize(24, 24);
 LeftButton:SetPoint("TOPLEFT", 4, -9);
@@ -1167,14 +1168,14 @@ LeftButton:SetScript("OnClick", function(...)
 	ChangeMainPageBack();
 end);
 LeftButton:SetScript("OnEnter", function(self, ...)
-	PopOut(GUI, ...);
+	PopOut(ni.GUI, ...);
 end);
 LeftButton:SetScript("OnLeave", function(self, ...)
-	PopBack(GUI, ...);
+	PopBack(ni.GUI, ...);
 end);
 LeftButton:Hide();
-GUI.leftbutton = LeftButton;
-local RightButton = CreateFrame("Button", nil, GUI);
+ni.GUI.leftbutton = LeftButton;
+local RightButton = CreateFrame("Button", nil, ni.GUI);
 RightButton:RegisterForClicks("LeftButtonUp");
 RightButton:SetSize(24, 24);
 RightButton:SetPoint("TOPRIGHT", -4, -9);
@@ -1186,25 +1187,25 @@ RightButton:SetScript("OnClick", function(...)
 	ChangeMainPageForward();
 end);
 RightButton:SetScript("OnEnter", function(self, ...)
-	PopOut(GUI, ...);
+	PopOut(ni.GUI, ...);
 end);
 RightButton:SetScript("OnLeave", function(self, ...)
-	PopBack(GUI, ...);
+	PopBack(ni.GUI, ...);
 end);
 RightButton:Hide();
-GUI.rightbutton = RightButton;
-GUI:SetFrameLevel(100);
-GUI:Show();
+ni.GUI.rightbutton = RightButton;
+ni.GUI:SetFrameLevel(100);
+ni.GUI:Show();
 CreatedFramesByName()
 if #framenames == 0 then
-	GUI:Hide();
+	ni.GUI:Hide();
 else
-	GUI:Show();
+	ni.GUI:Show();
 end
-GUI.GetFrame = function(name)
+ni.GUI.GetFrame = function(name)
 	return frames[name];
 end
-GUI.AddFrame = function(name, t)
+ni.GUI.AddFrame = function(name, t)
 	local k = GetStoredTable(name);
 	if k == nil then
 		NewFrame(name);
@@ -1218,7 +1219,7 @@ GUI.AddFrame = function(name, t)
 	end
 	local num_frames = NumberOfFrames();
 	if num_frames == 0 then
-		GUI:Hide();
+		ni.GUI:Hide();
 	else
 		main_height = main_original_height;
 		main_width = main_original_width;
@@ -1234,11 +1235,11 @@ GUI.AddFrame = function(name, t)
 			frames[name]:Show();
 			Resize(name, true);
 		end
-		GUI:Show();
+		ni.GUI:Show();
 	end
 end;
-GUI.DestroyFrame = function(name)
-	local temp = GUI.GetFrame(name);
+ni.GUI.DestroyFrame = function(name)
+	local temp = ni.GUI.GetFrame(name);
 	if temp ~= nil then
 		temp:Hide();
 		table.insert(storedframes, temp);
@@ -1246,7 +1247,7 @@ GUI.DestroyFrame = function(name)
 	end
 	CreatedFramesByName()
 	if #framenames == 0 then
-		GUI:Hide();
+		ni.GUI:Hide();
 	else
 		main_width = main_original_width;
 		main_height = main_original_height;
@@ -1264,7 +1265,6 @@ GUI.DestroyFrame = function(name)
 		end
 		frames[current_frame]:Show();
 		Resize(current_frame);
-		GUI:Show();
+		ni.GUI:Show();
 	end
 end
-return GUI;

@@ -1,5 +1,6 @@
 local ni = ...
-local main_ui = {};
+
+ni.main_ui = {};
 
 local Localization = {
 	Assistant = "Rotation Assistant",
@@ -185,8 +186,8 @@ local backdrop = {
 	insets = { left = 4, right = 4, top = 4, bottom = 4 }
 };
 
-main_ui.main = CreateFrame("frame", nil, UIParent);
-local frame = main_ui.main;
+ni.main_ui.main = CreateFrame("frame", nil, UIParent);
+local frame = ni.main_ui.main;
 frame:ClearAllPoints();
 frame:SetMovable(true);
 frame:EnableMouse(true);
@@ -230,9 +231,13 @@ local primary_text = CreateText(frame, Localization.Primary, 0, -18, 0.1, 0.5, 0
 local secondary_text = CreateText(frame, Localization.Secondary, 0, -63, 0.1, 0.5, 0.8, 1);
 local generic_text = CreateText(frame, Localization.Generic, 0, -108, 0.1, 0.5, 0.8, 1);
 
-local profiles = ni.profiles
+local function GetFilename(file)
+	return file:match("^.*\\(.*).lua$") or file:match("^.*\\(.*).enc$") or file:match("^.*\\(.*).out$") or file
+end
+local dir = ni.backend.GetBaseFolder()
+local profiles = ni.backend.GetDirectoryContents(dir.."addon\\Rotations\\") or {}
 tinsert(profiles, 1, Localization.None);
-local generic_profiles = { };
+local generic_profiles = ni.backend.GetDirectoryContents(dir.."addon\\Rotations\\") or {}
 tinsert(generic_profiles, 1, Localization.None);
 
 local ddm_name = ni.utils.GenerateRandomName();
@@ -247,7 +252,7 @@ UIDropDownMenu_Initialize(dropdownmenu, function(self, level)
 	local index = 0;
 	for k, v in ipairs(profiles) do
 		index = index + 1;
-		local file = v.title;
+		local file = GetFilename(v);
 		local checked = false;
 		if ni.vars.profiles.primary == file then
 			primary = file;
@@ -282,7 +287,7 @@ UIDropDownMenu_Initialize(dropdownmenu2, function(self, level)
 	local index = 0;
 	for k, v in ipairs(profiles) do
 		index = index + 1;
-		local file = v.filename;
+		local file = GetFilename(v);
 		local checked = false;
 		if ni.vars.profiles.secondary == file then
 			secondary = file;
@@ -317,7 +322,7 @@ UIDropDownMenu_Initialize(dropdownmenu3, function(self, level)
 	local index = 0;
 	for k, v in ipairs(generic_profiles) do
 		index = index + 1;
-		local file = v.filename;
+		local file = GetFilename(v);
 		local checked = false;
 		if ni.vars.profiles.generic == file then
 			generic = file;
@@ -831,6 +836,7 @@ consolebutton:SetText("Dimonskiy");
 consolebutton:SetPoint("BOTTOMRIGHT", mainsettings, -26, 9);
 consolebutton:SetAlpha(1);
 consolebutton:SetScript("OnClick", function()
+	ni.backend.Open("https://discord.com/users/649003031391633438") 
 end);
 
 local consolebutton = CreateFrame("BUTTON", nil, mainsettings, "UIPanelButtonTemplate");
@@ -840,6 +846,7 @@ consolebutton:SetText("DarhangeR");
 consolebutton:SetPoint("BOTTOMLEFT", mainsettings, 26, 9);
 consolebutton:SetAlpha(1);
 consolebutton:SetScript("OnClick", function()
+	ni.backend.Open("https://discord.com/users/250267265285488641") 
 end);
 --Rotation Settings drop downs
 local mods = {
@@ -915,14 +922,14 @@ end);
 CreateDropDownText(settings, Localization.IsMelee, -10, -336); 
 
 local mmb_name = ni.utils.GenerateRandomName();
-main_ui.minimap_icon = CreateFrame("Button", mmb_name, Minimap);
-local mm = main_ui.minimap_icon;
+ni.main_ui.minimap_icon = CreateFrame("Button", mmb_name, Minimap);
+local mm = ni.main_ui.minimap_icon;
 mm:SetHeight(25);
 mm:SetWidth(25);
 mm:SetFrameStrata("MEDIUM");
 mm:SetMovable(true);
 mm:SetUserPlaced(true);
-main_ui.minimap_toggle = function(bool)
+ni.main_ui.minimap_toggle = function(bool)
 	if bool then
 		mm:SetNormalTexture("Interface\\BUTTONS\\UI-GroupLoot-Pass-Up.blp");
 		mm:SetPushedTexture("Interface\\BUTTONS\\UI-GroupLoot-Pass-Down.blp");
@@ -931,15 +938,15 @@ main_ui.minimap_toggle = function(bool)
 		mm:SetPushedTexture("Interface\\BUTTONS\\UI-GroupLoot-Coin-Down.blp");
 	end
 end
-main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
+ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
 mm:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-Background.blp");
 mm:SetPoint("CENTER", ni.vars.ui.icon.x, ni.vars.ui.icon.y);
 mm:SetScript("OnMouseDown", function(self, button)
 	if button == "LeftButton" then
-		if main_ui.main:IsShown() then
-			main_ui.main:Hide();
+		if ni.main_ui.main:IsShown() then
+			ni.main_ui.main:Hide();
 		else
-			main_ui.main:Show();
+			ni.main_ui.main:Show();
 		end
 	elseif button == "RightButton" then
 		self:SetScript("OnUpdate", moveIcon);
@@ -964,13 +971,13 @@ SetClick(ni.vars.hotkeys.generic, mainkeys_name, "MiddleButton");
 mainkeys:SetScript("OnClick", function(self, button)
 	if button == "LeftButton" then
 		ni.toggleprofile(ni.vars.profiles.primary);
-		main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
+		ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
 	elseif button == "RightButton" then
 		ni.toggleprofile(ni.vars.profiles.secondary);
-		main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
+		ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
 	elseif button == "MiddleButton" then
 		ni.togglegeneric(ni.vars.profiles.generic);
-		main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
+		ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
 	end
 end);
 mainkeys:Show();
@@ -987,13 +994,11 @@ secondkeys:SetScript("OnClick", function(self, button)
 		ni.vars.units.followEnabled = not ni.vars.units.followEnabled;
 		ni.updatefollow(ni.vars.units.followEnabled);
 	elseif button == "MiddleButton" then
-		if main_ui.main:IsShown() then
-			main_ui.main:Hide();
+		if ni.main_ui.main:IsShown() then
+			ni.main_ui.main:Hide();
 		else
-			main_ui.main:Show();
+			ni.main_ui.main:Show();
 		end
 	end
 end);
 secondkeys:Show();
-
-return main_ui;

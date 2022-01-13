@@ -1,5 +1,7 @@
 local ni = ...
-local json = { _version = "0.1.3" }
+ni.json = {}
+
+local json = { _version = "0.1.2" }
 
 -------------------------------------------------------------------------------
 -- Encode
@@ -41,31 +43,22 @@ local function encode_table(val, stack)
   if stack[val] then error("circular reference") end
 
   stack[val] = true
-  -- Check whether to treat as a array or object
-  local array = true
-  local length = 0
-  local nLen = 0
-  for k,v in pairs(val) do
-		if (type(k) ~= "number" or k<=0) and not (k == "n" and type(v) == "number") then
-			array = nil
-			break	-- Treat as object
-		else
-			if k > length then 
-				length = k
-			end
-			if k == "n" and type(v) == "number" then
-				nLen = v
-			end
-		end
-  end
 
-  if array then
-		if nLen > length then
-			length = nLen
-		end
+  if rawget(val, 1) ~= nil or next(val) == nil then
+    -- Treat as array -- check keys are valid and it is not sparse
+    local n = 0
+    for k in pairs(val) do
+      if type(k) ~= "number" then
+        error("invalid table: mixed or invalid key types")
+      end
+      n = n + 1
+    end
+    if n ~= #val then
+      error("invalid table: sparse array")
+    end
     -- Encode
-    for i = 1, length do
-      table.insert(res, encode(val[i], stack))
+    for i, v in ipairs(val) do
+      table.insert(res, encode(v, stack))
     end
     stack[val] = nil
     return "[" .. table.concat(res, ",") .. "]"
@@ -73,11 +66,9 @@ local function encode_table(val, stack)
   else
     -- Treat as an object
     for k, v in pairs(val) do
-	--[[
       if type(k) ~= "string" then
         error("invalid table: mixed or invalid key types")
       end
-	  ]]
       table.insert(res, encode(k, stack) .. ":" .. encode(v, stack))
     end
     stack[val] = nil
@@ -96,7 +87,7 @@ local function encode_number(val)
   if val ~= val or val <= -math.huge or val >= math.huge then
     error("unexpected number value '" .. tostring(val) .. "'")
   end
-  return tostring(val)
+  return string.format("%.14g", val)
 end
 
 
@@ -119,7 +110,7 @@ encode = function(val, stack)
 end
 
 
-function json.encode(val)
+ni.json.encode = function(val)
   return ( encode(val) )
 end
 
@@ -204,7 +195,7 @@ end
 
 
 local function parse_string(str, i)
-  local res = {}
+  local res = ""
   local j = i + 1
   local k = j
 
@@ -215,26 +206,26 @@ local function parse_string(str, i)
       decode_error(str, j, "control character in string")
 
     elseif x == 92 then -- `\`: Escape
-      table.insert(res, str:sub(k, j - 1))
+      res = res .. str:sub(k, j - 1)
       j = j + 1
       local c = str:sub(j, j)
       if c == "u" then
         local hex = str:match("^[dD][89aAbB]%x%x\\u%x%x%x%x", j + 1)
                  or str:match("^%x%x%x%x", j + 1)
                  or decode_error(str, j - 1, "invalid unicode escape in string")
-        table.insert(res, parse_unicode_escape(hex))
+        res = res .. parse_unicode_escape(hex)
         j = j + #hex
       else
         if not escape_chars[c] then
           decode_error(str, j - 1, "invalid escape char '" .. c .. "' in string")
         end
-        table.insert(res, escape_char_map_inv[c])
+        res = res .. escape_char_map_inv[c]
       end
       k = j + 1
 
     elseif x == 34 then -- `"`: End of string
-		table.insert(res, str:sub(k, j - 1))
-		return table.concat(res), j + 1
+      res = res .. str:sub(k, j - 1)
+      return res, j + 1
     end
 
     j = j + 1
@@ -360,7 +351,7 @@ parse = function(str, idx)
 end
 
 
-function json.decode(str)
+ni.json.decode = function(str)
   if type(str) ~= "string" then
     error("expected argument of type string, got " .. type(str))
   end
@@ -371,5 +362,3 @@ function json.decode(str)
   end
   return res
 end
-
-return json;

@@ -1,5 +1,6 @@
 local ni = ...
-local mwcexports = {}
+
+ni.strongrand = {}
 
 local math_floor = math.floor
 
@@ -43,7 +44,6 @@ end
 local c1 = mwc(0)
 c1:randomseed(time())
 
-mwcexports.generate = function(a,b)
+ni.strongrand.generate = function(a,b)
 	return c1:random(a,b)
 end
-return mwcexports

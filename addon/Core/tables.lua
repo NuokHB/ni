@@ -1,5 +1,6 @@
 local ni = ...
-local tables = {
+
+ni.tables = {
 	blacklistedaoeunits = {},
 	blacklisteddispels = {},
 	bosses = {
@@ -96,6 +97,7 @@ local tables = {
 		-- Scarley Monastery: Cathedral
 		[4542] = true, -- High Inquisitor Fairbanks
 		[3976] = true, -- Scarlet Commander Mograine
+		[3977] = true, -- High Inquisitor Whitemane
 		-- Razorfen Downs
 		[7355] = true, -- Tuten'kash
 		[14686] = true, -- Lady Falther'ess (Scourge invasion only)
@@ -201,6 +203,7 @@ local tables = {
 		-- The Blackrock Depths: Inner Blackrock Depths
 		[9156] = true, -- Ambassador Flamelash
 		[8923] = true, -- Panzor the Invincible
+		[17808] = true, -- Anger'rel
 		[9039] = true, -- Doom'rel
 		[9040] = true, -- Dope'rel
 		[9037] = true, -- Gloom'rel
@@ -528,10 +531,18 @@ local tables = {
 		-- Zul'Aman: Animal Bosses
 		[29024] = true, -- Nalorakk
 		[28514] = true, -- Nalorakk
+		[23576] = true, -- Nalorakk
+		[23574] = true, -- Akil'zon
+		[23578] = true, -- Jan'alai
 		[28515] = true, -- Jan'alai
 		[29023] = true, -- Jan'alai
+		[23577] = true, -- Halazzi
 		[28517] = true, -- Halazzi
 		[29022] = true, -- Halazzi
+		[24239] = true, -- Malacrass
+		-- Zul'Aman: Final Bosses
+		[24239] = true, -- Hex Lord Malacrass
+		[23863] = true, -- Zul'jin
 		-- Coilfang Reservoir: Serpentshrine Cavern
 		[21216] = true, -- Hydross the Unstable
 		[21217] = true, -- The Lurker Below
@@ -693,6 +704,7 @@ local tables = {
 		[36658] = true, -- Scourgelord Tyrannus
 		-- Halls of Reflection
 		[38112] = true, -- Falric
+		[38113] = true, -- Marwyn
 		[37226] = true, -- The Lich King
 		[38113] = true, -- Marvyn
 		-- Obsidian Sanctum
@@ -1007,7 +1019,7 @@ local tables = {
 		},
 		warlock = {
 			dispel = {"Magic"}
-		},
+		},		
 		warrior = {}
 	},
 	dr = {
@@ -1360,6 +1372,7 @@ local tables = {
 		[30527] = "Training Dummy",
 		[32541] = "Initiate's Training Dummy",
 		[32545] = "Initiate's Training Dummy",
+		[31146] = "Raider's Training Dummy",
 		[17578] = "Hellfire Training Dummy",
 		[32542] = "Disciple's Training Dummy",
 		[32543] = "Veteran's Training Dummy",
@@ -1371,11 +1384,11 @@ local tables = {
 		[31143] = "Reinforced Training Dummy",
 		[24792] = "Advanced Training Dummy",
 		[67127] = "Training Dummy",
-		[46647] = "Training Dummy"
+		[46647] = "Training Dummy",
 	},
 	mismarkedbosses = {
 		-- Magtheridon's Lair
-		[17256] = true, -- Hellfire Channeler
+		[17256] = true, -- Hellfire Channeler 
 		[18829] = true -- Hellfire Warder
 	},
 	stopcasting = {
@@ -1414,6 +1427,5 @@ local tables = {
 		[56754] = "Azure Serpent",
 		[71407] = "Amber",
 		[36980] = "Ice Tomb"
-	}
+	},
 }
-return tables

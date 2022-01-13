@@ -1,17 +1,5 @@
 local ni = ...
 
-local UnitExists = ni.backend.GetFunction("UnitExists")
-local UnitGUID = ni.backend.GetFunction("UnitGUID")
-local IsMounted = ni.backend.GetFunction("IsMounted")
-local UnitIsUnit = ni.backend.GetFunction("UnitIsUnit")
-local UnitCastingInfo = ni.backend.GetFunction("UnitCastingInfo")
-local UnitChannelInfo = ni.backend.GetFunction("UnitChannelInfo")
-local GetSpellInfo = ni.backend.GetFunction("GetSpellInfo")
-local UnitName = ni.backend.GetFunction("UnitNames")
-local GetTime = ni.backend.GetFunction("GetTime")
-local UnitAffectingCombat = ni.backend.GetFunction("UnitAffectingCombat")
-
-
 ---DR Tracker
 local registeredevents = {
 	["SPELL_AURA_APPLIED"] = true,
@@ -22,18 +10,7 @@ local registeredevents = {
 }
 
 local drtracker_events = function(self, event, ...)
-	local timestamp,
-		eventType,
-		sourceGUID,
-		sourceName,
-		sourceFlags,
-		destGUID,
-		destName,
-		destFlags,
-		spellID,
-		spellName,
-		spellSchool,
-		auraType = ...
+	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName, spellSchool, auraType = ...;
 	if (not registeredevents[eventType]) then
 		return
 	end
@@ -68,98 +45,83 @@ local icdevents = {
 	["SPELL_AURA_APPLIED"] = true
 }
 
-local icdtracker = {}
-icdtracker.timers = {}
-icdtracker.set = function(item, icd)
-	icdtracker.timers[item] = {
+ni.icdtracker = {};
+ni.icdtracker.timers = {};
+ni.icdtracker.set = function(item, icd)
+	ni.icdtracker.timers[item] = {
 		icd = icd,
 		time = 0
 	}
 end
-icdtracker.get = function(item)
-	if icdtracker.timers[item] then
-		local remaining = icdtracker.timers[item].time - GetTime()
+ni.icdtracker.get = function(item)
+	if ni.icdtracker.timers[item] then
+		local remaining = ni.icdtracker.timers[item].time - GetTime();
 		if remaining < 1 then
-			return 0
+			return 0;
 		end
-		return remaining
+		return remaining;
 	end
-	return -1
+	return -1;
 end
 
 local icdtracker_events = function(self, event, ...)
-	local timestamp,
-		eventType,
-		sourceGUID,
-		sourceName,
-		sourceFlags,
-		destGUID,
-		destName,
-		destFlags,
-		spellID,
-		spellName,
-		spellSchool,
-		auraType = ...
+	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName, spellSchool, auraType = ...;
 	if not icdevents[eventType] then
 		return
 	end
 	if sourceGUID == UnitGUID("player") and auraType == "BUFF" then
-		for k, v in pairs(icdtracker.timers) do
+		for k, v in pairs(ni.icdtracker.timers) do
 			if spellName == k then
-				icdtracker.timers[k].time = GetTime() + v.icd
+				ni.icdtracker.timers[k].time = GetTime() + v.icd
 			end
 		end
 	end
 end
 -------------
 
-local lastclick = 0
-local totalelapsed = 0
-local maul, cleave, heroicstrike, runestrike, raptorstrike, shadowcleave =
-	GetSpellInfo(6807),
-	GetSpellInfo(845),
-	GetSpellInfo(78),
-	GetSpellInfo(56815),
-	GetSpellInfo(2973),
-	GetSpellInfo(50581)
+local lastclick = 0;
+local totalelapsed = 0;
+
+local maul, cleave, heroicstrike, runestrike, raptorstrike, shadowcleave = GetSpellInfo(6807), GetSpellInfo(845), GetSpellInfo(78), GetSpellInfo(56815), GetSpellInfo(2973), GetSpellInfo(50581);
 
 local function isspelltoignore(spellname)
-	if
-		spellname == maul or spellname == cleave or spellname == heroicstrike or spellname == raptorstrike or
-			spellname == runestrike or
-			spellname == shadowcleave
-	 then
-		return true
+	if spellname == maul
+	 or spellname == cleave
+	 or spellname == heroicstrike
+	 or spellname == raptorstrike
+	 or spellname == runestrike 
+	 or spellname == shadowcleave then
+		return true;
 	end
-	return false
+	return false;
 end
 
-local events = {}
+local events = {};
 
-local delays = {}
+local delays = {};
 
-local frames = {}
-frames.notification = CreateFrame("frame", nil, UIParent)
-frames.notification:SetSize(ChatFrame1:GetWidth(), 30)
-frames.notification:Hide()
-frames.notification:SetPoint("TOP", ChatFrame1, 0, 90)
-frames.notification.text = frames.notification:CreateFontString(nil, "OVERLAY", "MovieSubtitleFont")
-frames.notification.text:SetAllPoints()
-frames.notification.texture = frames.notification:CreateTexture()
-frames.notification.texture:SetAllPoints()
-frames.notification.texture:SetTexture(0, 0, 0, .50)
-function frames.notification:message(message)
+ni.frames = {};
+ni.frames.notification = CreateFrame("frame", nil, UIParent);
+ni.frames.notification:SetSize(ChatFrame1:GetWidth(), 30)
+ni.frames.notification:Hide()
+ni.frames.notification:SetPoint("TOP", ChatFrame1, 0, 90)
+ni.frames.notification.text = ni.frames.notification:CreateFontString(nil, "OVERLAY", "MovieSubtitleFont")
+ni.frames.notification.text:SetAllPoints()
+ni.frames.notification.texture = ni.frames.notification:CreateTexture()
+ni.frames.notification.texture:SetAllPoints()
+ni.frames.notification.texture:SetTexture(0, 0, 0, .50)
+function ni.frames.notification:message(message)
 	self.text:SetText(message)
 	self:Show()
 end
-frames.spellqueueholder = CreateFrame("Frame")
-frames.spellqueueholder:ClearAllPoints()
-frames.spellqueueholder:SetHeight(30)
-frames.spellqueueholder:SetWidth(275)
-frames.spellqueueholder:SetMovable(true)
-frames.spellqueueholder:EnableMouse(true)
-frames.spellqueueholder:RegisterForDrag("LeftButton")
-frames.spellqueueholder:SetBackdrop(
+ni.frames.spellqueueholder = CreateFrame("Frame")
+ni.frames.spellqueueholder:ClearAllPoints()
+ni.frames.spellqueueholder:SetHeight(30)
+ni.frames.spellqueueholder:SetWidth(275)
+ni.frames.spellqueueholder:SetMovable(true)
+ni.frames.spellqueueholder:EnableMouse(true)
+ni.frames.spellqueueholder:RegisterForDrag("LeftButton")
+ni.frames.spellqueueholder:SetBackdrop(
 	{
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
@@ -169,87 +131,87 @@ frames.spellqueueholder:SetBackdrop(
 		insets = {left = 4, right = 4, top = 4, bottom = 4}
 	}
 )
-frames.spellqueueholder:SetBackdropColor(0, 0, 0, 1)
-frames.spellqueueholder:SetPoint("CENTER", UIParent, "BOTTOM", 0, 130)
-frames.spellqueueholder:Hide()
+ni.frames.spellqueueholder:SetBackdropColor(0, 0, 0, 1)
+ni.frames.spellqueueholder:SetPoint("CENTER", UIParent, "BOTTOM", 0, 130)
+ni.frames.spellqueueholder:Hide()
 
-frames.spellqueue = CreateFrame("Frame", nil, frames.spellqueueholder)
-frames.spellqueue:ClearAllPoints()
-frames.spellqueue:SetHeight(20)
-frames.spellqueue:SetWidth(200)
-frames.spellqueue:Show()
-frames.spellqueue.text = frames.spellqueue:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
-frames.spellqueue.text:SetAllPoints()
-frames.spellqueue.text:SetJustifyV("MIDDLE")
-frames.spellqueue.text:SetJustifyH("CENTER")
-frames.spellqueue.text:SetText("\124cFFFFFFFFQueued Ability: \124cFF15E615None")
-frames.spellqueue:SetPoint("CENTER", frames.spellqueueholder, 0, 0)
-function frames.spellqueue.update(str, bool)
+ni.frames.spellqueue = CreateFrame("Frame", nil, ni.frames.spellqueueholder)
+ni.frames.spellqueue:ClearAllPoints()
+ni.frames.spellqueue:SetHeight(20)
+ni.frames.spellqueue:SetWidth(200)
+ni.frames.spellqueue:Show()
+ni.frames.spellqueue.text = ni.frames.spellqueue:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
+ni.frames.spellqueue.text:SetAllPoints()
+ni.frames.spellqueue.text:SetJustifyV("MIDDLE")
+ni.frames.spellqueue.text:SetJustifyH("CENTER")
+ni.frames.spellqueue.text:SetText("\124cFFFFFFFFQueued Ability: \124cFF15E615None")
+ni.frames.spellqueue:SetPoint("CENTER", ni.frames.spellqueueholder, 0, 0)
+function ni.frames.spellqueue.update(str, bool)
 	bool = true and bool or false
 	if bool then
-		if frames.spellqueueholder:IsShown() == nil then
-			frames.spellqueueholder:Show()
+		if ni.frames.spellqueueholder:IsShown() == nil then
+			ni.frames.spellqueueholder:Show()
 		end
-		frames.spellqueue.text:SetText("\124cFFFFFFFFQueued Ability: \124cFF15E615" .. GetSpellInfo(str))
+		ni.frames.spellqueue.text:SetText("\124cFFFFFFFFQueued Ability: \124cFF15E615" .. GetSpellInfo(str))
 	else
-		frames.spellqueue.text:SetText("\124cFFFFFFFFQueued Ability: \124cFF15E615None")
-		if frames.spellqueueholder:IsShown() == 1 then
-			frames.spellqueueholder:Hide()
+		ni.frames.spellqueue.text:SetText("\124cFFFFFFFFQueued Ability: \124cFF15E615None")
+		if ni.frames.spellqueueholder:IsShown() == 1 then
+			ni.frames.spellqueueholder:Hide()
 		end
 	end
 end
 
-frames.floatingtext = CreateFrame("Frame")
-frames.floatingtext:SetSize(400, 30)
-frames.floatingtext:SetAlpha(0)
-frames.floatingtext:SetPoint("CENTER", 0, 80)
-frames.floatingtext.text = frames.floatingtext:CreateFontString(nil, "OVERLAY", "MovieSubtitleFont")
-frames.floatingtext.text:SetAllPoints()
-frames.floatingtext.texture = frames.floatingtext:CreateTexture()
-frames.floatingtext.texture:SetAllPoints()
-function frames.floatingtext:message(message)
+ni.frames.floatingtext = CreateFrame("Frame")
+ni.frames.floatingtext:SetSize(400, 30)
+ni.frames.floatingtext:SetAlpha(0)
+ni.frames.floatingtext:SetPoint("CENTER", 0, 80)
+ni.frames.floatingtext.text = ni.frames.floatingtext:CreateFontString(nil, "OVERLAY", "MovieSubtitleFont")
+ni.frames.floatingtext.text:SetAllPoints()
+ni.frames.floatingtext.texture = ni.frames.floatingtext:CreateTexture()
+ni.frames.floatingtext.texture:SetAllPoints()
+function ni.frames.floatingtext:message(message)
 	self.text:SetText(message)
 	UIFrameFadeOut(self, 2.5, 1, 0)
 end
 
-local keyevents = {}
-local keypress_events = {}
-keyevents.registerkeyevent = function(name, callback)
+ni.keyevents = {};
+local keypress_events = {};
+ni.keyevents.registerkeyevent = function(name, callback)
 	if not keypress_events[name] then
-		keypress_events[name] = callback
-		return true
+		keypress_events[name] = callback;
+		return true;
 	end
-	return false
-end
+	return false;
+end;
 
-keyevents.unregisterkeyevent = function(name)
-	keypress_events[name] = nil
-end
+ni.keyevents.unregisterkeyevent = function(name)
+	keypress_events[name] = nil;
+end;
 
 local function OnKeyHandler(self, keyType, key)
-	local result = false
+	local result = false;
 	for k, v in pairs(keypress_events) do
 		if v(keyType, key) then
-			result = true
+			result = true;
 		end
 	end
-	return result
-end
+	return result;
+end;
 
-ni.backend.RegisterCallback(keyevents, OnKeyHandler)
-local cf = ni.backend.GetFunction("CreateFrame")
-frames.main = cf("frame")
-frames.main:RegisterAllEvents()
-frames.OnEvent = function(self, event, ...)
+ni.backend.RegisterCallback(ni.keyevents, OnKeyHandler);
+
+ni.frames.main = CreateFrame("frame");
+ni.frames.main:RegisterAllEvents();
+ni.frames.OnEvent = function(self, event, ...)
 	if not ni.functionsregistered() then
 		return
 	end
 	for _, v in pairs(events) do
-		v(event, ...)
+		v(event, ...);
 	end
 	if event == "PLAYER_LEAVING_WORLD" then
-		ni.backend.FreeMaps()
-		ni.utils.savesetting(UnitName("player") .. ".json", ni.utils.json.encode(ni.vars))
+		ni.backend.FreeMaps();
+		ni.utils.savesetting(UnitName("player")..".json", ni.json.encode(ni.vars));
 	end
 	if event == "PLAYER_REGEN_DISABLED" then
 		ni.vars.combat.started = true
@@ -267,13 +229,13 @@ frames.OnEvent = function(self, event, ...)
 			ni.vars.combat.casting = true
 		end
 	end
-	if
-		(event == "UNIT_SPELLCAST_SUCCEEDED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_FAILED_QUIET" or
-			event == "UNIT_SPELLCAST_INTERRUPTED" or
-			event == "UNIT_SPELLCAST_CHANNEL_STOP" or
-			event == "UNIT_SPELLCAST_STOP") and
-			ni.vars.combat.casting == true
-	 then
+	if (event == "UNIT_SPELLCAST_SUCCEEDED"
+	 or event == "UNIT_SPELLCAST_FAILED"
+	 or event == "UNIT_SPELLCAST_FAILED_QUIET"
+	 or event == "UNIT_SPELLCAST_INTERRUPTED"
+	 or event == "UNIT_SPELLCAST_CHANNEL_STOP"
+	 or event == "UNIT_SPELLCAST_STOP")
+	 and ni.vars.combat.casting == true then
 		local unit, spell = ...
 		if unit == "player" and not isspelltoignore(spell) then
 			if ni.vars.combat.casting then
@@ -283,7 +245,7 @@ frames.OnEvent = function(self, event, ...)
 	end
 	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		local _, subevent, _, source, _, _, dest, _, spellID, spellName = ...
-		if source == player then
+		if source == UnitName("player") then
 			if subevent == "SPELL_CAST_SUCCESS" or subevent == "SPELL_CAST_FAILED" and not isspelltoignore(spellName) then
 				if ni.vars.combat.casting then
 					ni.vars.combat.casting = false
@@ -291,20 +253,15 @@ frames.OnEvent = function(self, event, ...)
 			end
 		end
 	end
-	icdtracker_events(self, event, ...)
-	drtracker_events(self, event, ...)
-	if
-		(event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" or event == "GROUP_ROSTER_UPDATE" or
-			event == "PARTY_CONVERTED_TO_RAID" or
-			event == "ZONE_CHANGED" or
-			event == "PLAYER_ENTERING_WORLD")
-	 then
-		ni.members.reset()
+	icdtracker_events(self, event, ...);
+	drtracker_events(self, event, ...);
+	if (event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" or event == "GROUP_ROSTER_UPDATE" or event == "PARTY_CONVERTED_TO_RAID" or event == "ZONE_CHANGED" or event == "PLAYER_ENTERING_WORLD") then
+		ni.members.reset();
 	end
-end
-frames.OnUpdate = function(self, elapsed)
+end;
+ni.frames.OnUpdate = function(self, elapsed)
 	if not ni.functionsregistered() then
-		totalelapsed = 0
+		totalelapsed = 0;
 		return true
 	end
 
@@ -312,65 +269,65 @@ frames.OnUpdate = function(self, elapsed)
 		return true
 	end
 
-	local time = GetTime()
-
+	local time = GetTime();
+	
 	for k, v in pairs(delays) do
 		if k <= time then
-			v()
-			delays[k] = nil
+			v();
+			delays[k] = nil;
 		end
-	end
+	end		
 
 	local Localization = {
 		Enabled = "\124cff00ff00Enabled",
-		Disabled = "\124cffff0000Disabled"
+		Disabled = "\124cffff0000Disabled",
 	}
 	if (GetLocale() == "ruRU") then
 		Localization.Enabled = "\124cff00ff00Включено"
 		Localization.Disabled = "\124cffff0000Выключено"
 	end
 
-	if ni.vars.profiles.enabled then
-		if ni.vars.combat.aoe or ni.vars.combat.cd and not frames.notification:IsShown() then
-			local cd_str = ni.vars.combat.cd and Localization.Enabled or Localization.Disabled
-			local aoe_str = ni.vars.combat.aoe and Localization.Enabled or Localization.Disabled
-			frames.notification:message("\124cffFFC300AoE: " .. aoe_str .. " \124cffFFC300CD: " .. cd_str)
+    if ni.vars.profiles.enabled then
+		if ni.vars.combat.aoe or ni.vars.combat.cd and not ni.frames.notification:IsShown() then
+			local cd_str = ni.vars.combat.cd and Localization.Enabled or Localization.Disabled;
+			local aoe_str = ni.vars.combat.aoe and Localization.Enabled or Localization.Disabled;
+			ni.frames.notification:message("\124cffFFC300AoE: "..aoe_str.." \124cffFFC300CD: "..cd_str);
 		end
 		ni.rotation.aoetoggle()
 		ni.rotation.cdtoggle()
 	else
-		if frames.notification:IsShown() then
-			frames.notification:Hide()
+		if ni.frames.notification:IsShown() then
+		   ni.frames.notification:Hide();
 		end
 	end
 
 	local throttle = ni.vars.latency / 1000
-	totalelapsed = totalelapsed + elapsed
+	totalelapsed = totalelapsed + elapsed;
 	self.st = elapsed + (self.st or 0)
 
 	if self.st > throttle then
-		totalelapsed = totalelapsed - throttle
-		self.st = 0
-
+		totalelapsed = totalelapsed - throttle;
+		self.st = 0;
+		
 		if ni.objects ~= nil then
-			local tmp = ni.objectmanager.get() or {}
+			local tmp = ni.objectmanager.get() or {};
 			for i = 1, #tmp do
-				local ob = ni.objects:new(tmp[i].guid, tmp[i].type, tmp[i].name)
+				local ob = ni.objects:new(tmp[i].guid, tmp[i].type, tmp[i].name);
 				if ob then
-					rawset(ni.objects, tmp[i].guid, ob)
+					rawset(ni.objects, tmp[i].guid, ob);
 				end
 			end
-			ni.objects:updateobjects()
+			ni.objects:updateobjects();
 		end
-
-		ni.drtracker.updateresettime()
-
+		
+		ni.drtracker.updateresettime();
+		
 		if ni.vars.profiles.interrupt then
 			if ni.spell.shouldinterrupt("target") then
-				ni.spell.castinterrupt("target")
+				ni.spell.castinterrupt("target");
 			end
 			if ni.spell.shouldinterrupt("focus") then
-				ni.spell.castinterrupt("focus")
+				ni.spell.castinterrupt("focus");
 			end
 		end
 
@@ -423,9 +380,9 @@ frames.OnUpdate = function(self, elapsed)
 		end
 
 		if ni.vars.profiles.enabled or ni.vars.profiles.genericenabled then
-			ni.player.registermovement(totalelapsed)
+			ni.player.registermovement(totalelapsed);
 			if ni.vars.profiles.delay > GetTime() then
-				return true
+				return true;
 			end
 			if not ni.rotation.started then
 				ni.rotation.started = true
@@ -443,12 +400,9 @@ frames.OnUpdate = function(self, elapsed)
 				local func = tremove(qRec, 1)
 				local args = tremove(qRec, 1)
 				local id, tar = unpack(args)
-				frames.spellqueue.update(id, true)
+				ni.frames.spellqueue.update(id, true)
 
-				if
-					ni.spell.available(id) and ((not ni.spell.isinstant(id) and not ni.player.ismoving()) or ni.spell.isinstant(id)) and
-						not ni.spell.isqueued()
-				 then
+				if ni.spell.available(id) and ((not ni.spell.isinstant(id) and not ni.player.ismoving()) or ni.spell.isinstant(id)) and not ni.spell.isqueued() then
 					count = count - 1
 					func(id, tar)
 				else
@@ -457,7 +411,7 @@ frames.OnUpdate = function(self, elapsed)
 				end
 			end
 			if #ni.spell.queue == 0 then
-				frames.spellqueue.update()
+				ni.frames.spellqueue.update()
 			end
 			if ni.vars.profiles.genericenabled then
 				if ni.vars.profiles.generic ~= "none" and ni.vars.profiles.generic ~= "None" then
@@ -479,30 +433,28 @@ frames.OnUpdate = function(self, elapsed)
 			end
 		end
 	end
-end
+end;
 
-local combatlog = {
+ni.combatlog = {
 	registerhandler = function(name, callback)
 		if not events[name] then
-			events[name] = callback
-			return true
+			events[name] = callback;
+			return true;
 		end
-		return false
+		return false;
 	end,
 	unregisterhandler = function(name)
 		if events[name] then
-			events[name] = nil
-			return true
+			events[name] = nil;
+			return true;
 		end
-		return false
+		return false;
 	end
 }
-local function delayfor(delay, callback)
+ni.delayfor = function(delay, callback)
 	if type(delay) ~= "number" or type(callback) ~= "function" then
 		return false
 	end
-	delays[GetTime() + delay] = callback
+	delays[GetTime() + delay] = callback;
 	return true
 end
-
-return frames, combatlog, delayfor, icdtracker, keyevents

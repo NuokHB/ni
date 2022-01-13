@@ -1,4 +1,5 @@
 local ni = ...
+
 local function start(name, queue, abilities, data, GUI)
 	local profile = { };
 	profile.loaded = false;
@@ -87,7 +88,7 @@ local function startv2(name, queue, abilities, onload, onunload)
 	end
 	return profile;
 end
-local bootstrap = {
+ni.bootstrap = {
 	rotation = function(profile, queue, abilities, data, GUI)
 		GUI = true and GUI or {};
 		data = true and data or {}
@@ -99,4 +100,3 @@ local bootstrap = {
 		ni.rotation.profile[profile] = startv2(profile, queue, abilities, onload, onunload);
 	end
 }
-return bootstrap

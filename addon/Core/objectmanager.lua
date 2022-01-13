@@ -1,11 +1,12 @@
 local ni = ...
+
 local UnitName, UnitGUID, UnitAffectingCombat, GetTime, UnitCanAssist, UnitCanAttack =
-ni.backend.GetFunction("UnitName"),
-ni.backend.GetFunction("UnitGUID"),
-ni.backend.GetFunction("UnitAffectingCombat"),
-ni.backend.GetFunction("GetTime"),
-ni.backend.GetFunction("UnitCanAssist"),
-ni.backend.GetFunction("UnitCanAttack")
+	UnitName,
+	UnitGUID,
+	UnitAffectingCombat,
+	GetTime,
+	UnitCanAssist,
+	UnitCanAttack
 
 local locale = GetLocale()
 local unknown;
@@ -15,18 +16,18 @@ else
 	unknown = "Unknown";
 end
 
-local objects = {}
+ni.objects = {}
 
-local objectmanager = {}
-objectmanager.get = function()
+ni.objectmanager = {}
+ni.objectmanager.get = function()
 	return ni.backend.GetObjects()
 end
-objectmanager.contains = function(o)
+ni.objectmanager.contains = function(o)
 	local tmp = UnitName(o)
 	if tmp ~= nil then
 		o = tmp
 	end
-	for k, v in pairs(objects) do
+	for k, v in pairs(ni.objects) do
 		if type(k) ~= "function" and (type(k) == "string" and type(v) == "table") then
 			if v.name == o then
 				return true
@@ -35,7 +36,7 @@ objectmanager.contains = function(o)
 	end
 	return false
 end
-objectmanager.objectGUID = function(o)
+ni.objectmanager.objectGUID = function(o)
 	if tonumber(o) ~= nil then
 		return o
 	else
@@ -43,7 +44,7 @@ objectmanager.objectGUID = function(o)
 		if tmp ~= nil then
 			o = tmp
 		end
-		for k, v in pairs(objects) do
+		for k, v in pairs(ni.objects) do
 			if type(k) ~= "function" and (type(k) == "string" and type(v) == "table") then
 				if v.name == o then
 					return k
@@ -60,7 +61,7 @@ objectsetup.cache.__index = {
 	type = 0
 }
 setmetatable(
-	objects,
+	ni.objects,
 	{
 		__index = function(t, k)
 			local guid = true and UnitGUID(k) or ni.objectmanager.objectGUID(k) or nil
@@ -70,21 +71,21 @@ setmetatable(
 				end
 				local _, _, _, _, otype = ni.unit.info(guid)
 				local name = UnitName(guid)
-				local ob = objects:get(guid, otype, name)
+				local ob = ni.objects:get(guid, otype, name)
 				return ob
 			end
-			return objects:get(0, 0, unknown)
+			return ni.objects:get(0, 0, unknown)
 		end
 	}
 )
-function objects:get(objguid, objtype, objname)
+function ni.objects:get(objguid, objtype, objname)
 	if objectsetup.cache[objguid] then
 		return objectsetup.cache[objguid]
 	else
-		return objects:create(objguid, objtype, objname)
+		return ni.objects:create(objguid, objtype, objname)
 	end
 end
-function objects:create(objguid, objtype, objname)
+function ni.objects:create(objguid, objtype, objname)
 	local o = {}
 	setmetatable(o, objectsetup);
 	if objguid then
@@ -190,20 +191,20 @@ function objects:create(objguid, objtype, objname)
 	objectsetup.cache[objguid] = o
 	return o
 end
-function objects:new(objguid, objtype, objname)
+function ni.objects:new(objguid, objtype, objname)
 	if objectsetup.cache[objguid] then
 		return false
 	end
-	return objects:create(objguid, objtype, objname)
+	return ni.objects:create(objguid, objtype, objname)
 end
-function objects:updateobjects()
-	for k, v in pairs(objects) do
+function ni.objects:updateobjects()
+	for k, v in pairs(ni.objects) do
 		if type(k) ~= "function" and (type(k) == "string" and type(v) == "table") then
 			if v.lastupdate == nil or GetTime() >= (v.lastupdate + (math.random(1, 12) / 100)) then
 				v.lastupdate = GetTime()
 				if not v:exists() then
 					objectsetup.cache[k] = nil
-					objects[k] = nil
+					ni.objects[k] = nil
 				else
 					v:updateobject()
 				end
@@ -211,4 +212,3 @@ function objects:updateobjects()
 		end
 	end
 end
-return objects, objectmanager

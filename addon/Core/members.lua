@@ -1,14 +1,16 @@
 local ni = ...
-local tinsert, UnitClass, UnitIsDeadOrGhost, UnitHealthMax, UnitName, UnitGUID =
-	tinsert,
-	--ni.backend.GetFunction("tinsert"),
-	ni.backend.GetFunction("UnitClass"),
-	ni.backend.GetFunction("UnitIsDeadOrGhost"),
-	ni.backend.GetFunction("UnitHealthMax"),
-	ni.backend.GetFunction("UnitName"),
-	ni.backend.GetFunction("UnitGUID")
 
-local members = {}
+local GetNumRaidMembers, GetNumPartyMembers, tinsert, UnitClass, UnitIsDeadOrGhost, UnitHealthMax, UnitName, UnitGUID =
+	GetNumRaidMembers,
+	GetNumPartyMembers,
+	tinsert,
+	UnitClass,
+	UnitIsDeadOrGhost,
+	UnitHealthMax,
+	UnitName,
+	UnitGUID
+
+ni.members = {};
 local memberssetup = {}
 memberssetup.cache = {}
 memberssetup.__index = {
@@ -31,36 +33,32 @@ memberssetup.cache.__index = {
 	type = 0
 }
 local membersmt = {}
-setmetatable(members, membersmt)
+setmetatable(ni.members, membersmt)
 membersmt.__call = function(_, ...)
-	if ni.vars.build == 18414 then
-		local IsInRaid, GetNumGroupMembers = ni.backend.GetFunction("IsInRaid"), ni.backend.GetFunction("GetNumGroupMembers")
+	if ni.vars.build == 50400 then
 		local group = IsInRaid() and "raid" or "party"
 		local groupSize = IsInRaid() and GetNumGroupMembers() or GetNumGroupMembers() - 1
 		if group == "party" then
-			tinsert(members, memberssetup:create("player"))
+			tinsert(ni.members, memberssetup:create("player"))
 		end
 		for i = 1, groupSize do
 			local groupUnit = group .. i
 			local groupMember = memberssetup:create(groupUnit)
 			if groupMember then
-				tinsert(members, groupMember)
+				tinsert(ni.members, groupMember)
 			end
 		end
 	else
-		local GetNumRaidMembers, GetNumPartyMembers =
-			ni.backend.GetFunction("GetNumRaidMembers"),
-			ni.backend.GetFunction("GetNumPartyMembers")
 		local group = GetNumRaidMembers() > 0 and "raid" or "party"
 		local groupsize = group == "raid" and GetNumRaidMembers() or GetNumPartyMembers()
 		if group == "party" then
-			tinsert(members, memberssetup:create("player"))
+			tinsert(ni.members, memberssetup:create("player"))
 		end
 		for i = 1, groupsize do
 			local groupunit = group .. i
 			local groupmember = memberssetup:create(groupunit)
 			if groupmember then
-				tinsert(members, groupmember)
+				tinsert(ni.members, groupmember)
 			end
 		end
 	end
@@ -80,17 +78,17 @@ function memberssetup:create(unit)
 		o.unit = unit
 	end
 	function o:calculateistank()
-		local oclass = select(2, UnitClass(o.unit))
+		local oclass = select(2, UnitClass(o.unit));
 		if oclass == "WARRIOR" and ni.unit.aura(o.guid, 71) then
-			return true
-		elseif oclass == "DRUID" and (ni.unit.buff(o.unit, 9634, "EXACT") or ni.unit.buff(o.unit, 5487, "EXACT")) then
-			return true
+			return true;
+		elseif oclass == "DRUID" and (ni.unit.buff(o.unit, 9634, "EXACT") or ni.unit.buff(o.unit, 5487, "EXACT"))	then
+			return true;
 		elseif oclass == "PALADIN" and ni.unit.buff(o.unit, 25780) then
-			return true
+			return true;
 		elseif ni.unit.aura(o.guid, 57340) then
-			return true
+			return true;
 		elseif UnitGroupRolesAssigned(o.guid) == "TANK" then
-			return true
+			return true;
 		end
 		return false
 	end
@@ -140,12 +138,12 @@ function memberssetup:create(unit)
 		if ni.unit.exists(o.guid) and ni.player.los(o.guid) then
 			local dist = ni.player.distance(o.guid)
 			if (dist ~= nil and dist < 40) then
-				return true
+				return true;
 			else
-				return false
+				return false;
 			end
 		end
-		return false
+		return false;
 	end
 	function o:updatemember()
 		o.name = UnitName(o.unit)
@@ -163,25 +161,25 @@ function memberssetup:create(unit)
 	memberssetup.cache[ni.unit.shortguid(o.unit)] = o
 	return o
 end
-local membersrange = {}
-local membersbelow = {}
-local memberswithbuff = {}
-local memberswithbuffbelow = {}
-local memberswithoutbuff = {}
-local memberswithoutbuffbelow = {}
-local memberswithdebuff = {}
-local memberswithdebuffbelow = {}
-local memberswithoutdebuff = {}
-local memberswithoutdebuffbelow = {}
+local membersrange = { };
+local membersbelow = { };
+local memberswithbuff = { };
+local memberswithbuffbelow = { };
+local memberswithoutbuff = { };
+local memberswithoutbuffbelow = { };
+local memberswithdebuff = { };
+local memberswithdebuffbelow = { };
+local memberswithoutdebuff = { };
+local memberswithoutdebuffbelow = { };
 
 memberssetup.set = function()
-	function members:updatemembers()
-		for i = 1, #members do
-			members[i]:updatemember()
+	function ni.members:updatemembers()
+		for i = 1, #ni.members do
+			ni.members[i]:updatemember()
 		end
 
 		table.sort(
-			members,
+			ni.members,
 			function(x, y)
 				if x.range and y.range then
 					return x.hp < y.hp
@@ -195,161 +193,164 @@ memberssetup.set = function()
 			end
 		)
 	end
-	function members.reset()
-		table.wipe(members)
+	function ni.members.reset()
+		table.wipe(ni.members)
 		table.wipe(memberssetup.cache)
 		memberssetup.set()
 	end
-	function members.below(percent)
-		local total = 0
-		for i = 1, #members do
-			if members[i].hp < percent then
-				total = total + 1
+	function ni.members.below(percent)
+		local total = 0;
+		for i = 1, #ni.members do
+			if ni.members[i].hp < percent then
+				total = total + 1;
 			end
 		end
-		return total
+		return total;
 	end
-	function members.average()
-		local count = #members
-		local average = 0
+	function ni.members.average()
+		local count = #ni.members;
+		local average = 0;
 		for i = 1, count do
-			average = average + members[i].hp
+			average = average + ni.members[i].hp;
 		end
-		return average / count
+		return average/count;
 	end
-	function members.averageof(count)
-		local m = count
-		local average = 0
-		if #members < m then
+	function ni.members.averageof(count)
+		local m = count;
+		local average = 0;
+		if #ni.members < m then
 			for i = m, 0, -1 do
-				if #members >= i then
-					m = i
-					break
+				if #ni.members >= i then
+					m = i;
+					break;
 				end
 			end
 		end
 		for i = 1, m do
-			average = average + members[i].hp
+			average = average + ni.members[i].hp;
 		end
-		return average / m
+		return average/m;
 	end
-	function members.inrange(unit, distance)
-		table.wipe(membersrange)
-		for _, v in ipairs(members) do
+	function ni.members.inrange(unit, distance)
+		table.wipe(membersrange);
+		for _, v in ipairs(ni.members) do
 			if not UnitIsUnit(v.unit, unit) then
-				local unitdistance = ni.unit.distance(v.unit, unit)
+				local unitdistance = ni.unit.distance(v.unit, unit);
 				if unitdistance ~= nil and unitdistance <= distance then
-					tinsert(membersrange, v)
+					tinsert(membersrange, v);
 				end
 			end
 		end
-		return membersrange
+		return membersrange;
 	end
-	function members.inrangebelow(unit, distance, hp)
-		table.wipe(membersbelow)
-		members.inrange(unit, distance)
+	function ni.members.inrangebelow(unit, distance, hp)
+		table.wipe(membersbelow);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
 			if v.hp < hp then
-				tinsert(membersbelow, v)
+				tinsert(membersbelow, v);
 			end
 		end
-		return membersbelow
+		return membersbelow;
 	end
-	function members.inrangewithbuff(unit, distance, buff, filter)
-		table.wipe(memberswithbuff)
-		members.inrange(unit, distance)
+	function ni.members.inrangewithbuff(unit, distance, buff, filter)
+		table.wipe(memberswithbuff);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
 			if v:buff(buff, filter) then
-				tinsert(memberswithbuff, v)
+				tinsert(memberswithbuff, v);
 			end
 		end
-		return memberswithbuff
+		return memberswithbuff;
 	end
-	function members.inrangewithbuffbelow(unit, distance, buff, hp, filter)
-		table.wipe(memberswithbuffbelow)
-		members.inrange(unit, distance)
+	function ni.members.inrangewithbuffbelow(unit, distance, buff, hp, filter)
+		table.wipe(memberswithbuffbelow);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
-			if v:buff(buff, filter) and v.hp < hp then
-				tinsert(memberswithbuffbelow, v)
+			if v:buff(buff, filter) 
+			 and v.hp < hp then
+				tinsert(memberswithbuffbelow, v);
 			end
 		end
-		return memberswithbuffbelow
+		return memberswithbuffbelow;
 	end
-	function members.inrangewithoutbuff(unit, distance, buff, filter)
-		table.wipe(memberswithoutbuff)
-		members.inrange(unit, distance)
+	function ni.members.inrangewithoutbuff(unit, distance, buff, filter)
+		table.wipe(memberswithoutbuff);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
 			if not v:buff(buff, filter) then
-				tinsert(memberswithoutbuff, v)
+				tinsert(memberswithoutbuff, v);
 			end
 		end
 		return memberswithoutbuff
 	end
-	function members.inrangewithoutbuffbelow(unit, distance, buff, hp, filter)
-		table.wipe(memberswithoutbuffbelow)
-		members.inrange(unit, distance)
+	function ni.members.inrangewithoutbuffbelow(unit, distance, buff, hp, filter)
+		table.wipe(memberswithoutbuffbelow);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
-			if not v:buff(buff, filter) and v.hp < hp then
-				tinsert(memberswithoutbuffbelow, v)
+			if not v:buff(buff, filter) 
+			 and v.hp < hp then
+				tinsert(memberswithoutbuffbelow, v);
 			end
 		end
 		return memberswithoutbuffbelow
 	end
-	function members.inrangewithdebuff(unit, distance, debuff, filter)
-		table.wipe(memberswithdebuff)
-		members.inrange(unit, distance)
+	function ni.members.inrangewithdebuff(unit, distance, debuff, filter)
+		table.wipe(memberswithdebuff);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
 			if v:debuff(debuff, filter) then
-				tinsert(memberswithdebuff, v)
+				tinsert(memberswithdebuff, v);
 			end
 		end
-		return memberswithdebuff
+		return memberswithdebuff;
 	end
-	function members.inrangewithdebuffbelow(unit, distance, debuff, hp, filter)
-		table.wipe(memberswithdebuffbelow)
-		members.inrange(unit, distance)
+	function ni.members.inrangewithdebuffbelow(unit, distance, debuff, hp, filter)
+		table.wipe(memberswithdebuffbelow);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
-			if v:debuff(debuff, filter) and v.hp < hp then
-				tinsert(memberswithdebuffbelow, v)
+			if v:debuff(debuff, filter) 
+			 and v.hp < hp then
+				tinsert(memberswithdebuffbelow, v);
 			end
 		end
-		return memberswithdebuffbelow
+		return memberswithdebuffbelow;
 	end
-	function members.inrangewithoutdebuff(unit, distance, debuff, filter)
-		table.wipe(memberswithoutdebuff)
-		members.inrange(unit, distance)
+	function ni.members.inrangewithoutdebuff(unit, distance, debuff, filter)
+		table.wipe(memberswithoutdebuff);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
 			if not v:debuff(debuff, filter) then
-				tinsert(memberswithoutdebuff, v)
+				tinsert(memberswithoutdebuff, v);
 			end
 		end
 		return memberswithoutdebuff
 	end
-	function members.inrangewithoutdebuffbelow(unit, distance, debuff, hp, filter)
-		table.wipe(memberswithoutdebuffbelow)
-		members.inrange(unit, distance)
+	function ni.members.inrangewithoutdebuffbelow(unit, distance, debuff, hp, filter)
+		table.wipe(memberswithoutdebuffbelow);
+		ni.members.inrange(unit, distance);
 		for _, v in ipairs(membersrange) do
-			if not v:debuff(debuff, filter) and v.hp < hp then
-				tinsert(memberswithoutdebuffbelow, v)
+			if not v:debuff(debuff, filter) 
+			 and v.hp < hp then
+				tinsert(memberswithoutdebuffbelow, v);
 			end
 		end
 		return memberswithoutdebuffbelow
 	end
-	function members.addcustom(unit)
-		local groupMember = memberssetup:create(unit)
+	function ni.members.addcustom(unit)
+		local groupMember = memberssetup:create(unit);
 		if groupMember then
-			tinsert(members, groupMember)
+			tinsert(ni.members, groupMember);
 		end
 	end
-	function members.removecustom(unit)
-		for k, v in ipairs(members) do
+	function ni.members.removecustom(unit)
+		for k, v in ipairs(ni.members) do
 			if v.unit == unit then
-				memberssetup.cache[ni.unit.shortguid(unit)] = nil
-				tremove(members, k)
+				memberssetup.cache[ni.unit.shortguid(unit)] = nil;
+				tremove(ni.members, k);
 			end
 		end
 	end
-	members()
+	ni.members()
 end
 memberssetup.set()
-return members
