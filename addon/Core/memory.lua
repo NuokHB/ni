@@ -1,5 +1,6 @@
 local ni = ...
-local memory = {
+
+ni.memory = {
 	baseaddress = function()
 		return ni.backend.BaseAddress();
 	end,
@@ -10,4 +11,3 @@ local memory = {
 		return ni.backend.Read(readtype, address, ...);
 	end
 }
-return memory;

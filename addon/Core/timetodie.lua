@@ -1,11 +1,8 @@
 local ni = ...
-local UnitHealth, GetTime, UnitIsDeadOrGhost, UnitHealthMax =
-	ni.backend.GetFunction("UnitHealth"),
-	ni.backend.GetFunction("GetTime"),
-	ni.backend.GetFunction("UnitIsDeadOrGhost"),
-	ni.backend.GetFunction("UnitHealthMax")
 
-local ttd = {
+local UnitHealth, GetTime, UnitIsDeadOrGhost, UnitHealthMax = UnitHealth, GetTime, UnitIsDeadOrGhost, UnitHealthMax
+
+ni.ttd = {
 	calculate = function(o)
 		if (o:unit() or o:player()) and o:canattack() and not UnitIsDeadOrGhost(o.guid) and o:combat() then
 			if o.timeincombat == nil then
@@ -39,4 +36,3 @@ local ttd = {
 		end
 	end
 }
-return ttd

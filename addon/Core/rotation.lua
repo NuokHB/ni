@@ -1,4 +1,5 @@
 local ni = ...
+
 local IsLeftShiftKeyDown,
 	GetCurrentKeyBoardFocus,
 	GetTime,
@@ -7,14 +8,14 @@ local IsLeftShiftKeyDown,
 	IsRightShiftKeyDown,
 	IsRightControlKeyDown,
 	IsRightAltKeyDown =
-	ni.backend.GetFunction("IsLeftShiftKeyDown"),
-	ni.backend.GetFunction("GetCurrentKeyBoardFocus"),
-	ni.backend.GetFunction("GetTime"),
-	ni.backend.GetFunction("IsLeftControlKeyDown"),
-	ni.backend.GetFunction("IsLeftAltKeyDown"),
-	ni.backend.GetFunction("IsRightShiftKeyDown"),
-	ni.backend.GetFunction("IsRightControlKeyDown"),
-	ni.backend.GetFunction("IsRightAltKeyDown")
+	IsLeftShiftKeyDown,
+	GetCurrentKeyBoardFocus,
+	GetTime,
+	IsLeftControlKeyDown,
+	IsLeftAltKeyDown,
+	IsRightShiftKeyDown,
+	IsRightControlKeyDown,
+	IsRightAltKeyDown
 
 local togglemod, cdtogglemod, customtogglemod = 0, 0, 0
 
@@ -30,7 +31,7 @@ if (GetLocale() == "ruRU") then
 	Localization.Disabled = "\124cffff0000Выключено"
 end
 
-local rotation = {
+ni.rotation = {
 	started = false,
 	profile = {},
 	lastprofile = "",
@@ -183,4 +184,3 @@ local rotation = {
 		end
 	end
 }
-return rotation;

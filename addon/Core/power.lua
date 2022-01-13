@@ -1,8 +1,9 @@
 local ni = ...
-local UnitPower, UnitPowerMax = ni.backend.GetFunction("UnitPower"), ni.backend.GetFunction("UnitPowerMax")
 
-local power = {}
-power.types = {
+local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
+
+ni.power = { }
+ni.power.types = {
 	mana = 0,
 	rage = 1,
 	focus = 2,
@@ -20,32 +21,31 @@ power.types = {
 	burningembers = 14,
 	demonicfury = 15
 }
-power.current = function(t, type)
+ni.power.current = function(t, type)
 	if tonumber(type) == nil then
-		type = power.types[type]
+		type = ni.power.types[type]
 	end
 
 	return 100 * UnitPower(t, type) / UnitPowerMax(t, type)
 end
-power.currentraw = function(t, type)
+ni.power.currentraw = function(t, type)
 	if tonumber(type) == nil then
-		type = power.types[type]
+		type = ni.power.types[type]
 	end
 
 	return UnitPower(t, type)
 end
-power.max = function(t, type)
+ni.power.max = function(t, type)
 	if tonumber(type) == nil then
-		type = power.types[type]
+		type = ni.power.types[type]
 	end
 
 	return UnitPowerMax(t, type)
 end
-power.ismax = function(t, type)
+ni.power.ismax = function(t, type)
 	if tonumber(type) == nil then
-		type = power.types[type]
+		type = ni.power.types[type]
 	end
 
 	return UnitPower(t, type) == UnitPowerMax(t, type)
 end
-return power

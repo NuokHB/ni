@@ -1,8 +1,9 @@
 local ni = ...
-local GetSpellInfo, UnitCastingInfo = ni.backend.GetFunction("GetSpellInfo"), ni.backend.GetFunction("UnitCastingInfo")
 
-local stopcastingtracker = {}
-stopcastingtracker.shouldstop = function(spell)
+local GetSpellInfo, UnitCastingInfo = GetSpellInfo, UnitCastingInfo
+
+ni.stopcastingtracker = {}
+ni.stopcastingtracker.shouldstop = function(spell)
 	local spellcasttime = ni.spell.casttime(spell)
 	local bosscast, _, _, _, bosscastend = UnitCastingInfo("boss1")
 	local mycasttime, _, _, _, mycastend = UnitCastingInfo("player")
@@ -40,4 +41,3 @@ stopcastingtracker.shouldstop = function(spell)
 		end
 	end
 end
-return stopcastingtracker

@@ -1,5 +1,6 @@
-local ni = ...
-local vars = {
+local ni = ...;
+
+ni.vars = {
 	latency = 170,
 	interrupt = "all",
 	debug = false,
@@ -55,4 +56,3 @@ local vars = {
 		blacklisted = {}
 	}
 }
-return vars;
