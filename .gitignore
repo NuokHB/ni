@@ -1,3 +1,5 @@
 ni.dll
+addon/Settings/*.json
 Loader.exe
 settings.json
+ni.zip

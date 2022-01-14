@@ -181,6 +181,7 @@ local backdrop = {
 	insets = { left = 4, right = 4, top = 4, bottom = 4 }
 };
 ni.main_ui.main = CreateFrame("frame", nil, UIParent);
+ni.backend.ProtectFrame(ni.main_ui.main, UIParent)
 local frame = ni.main_ui.main;
 frame:ClearAllPoints();
 frame:SetMovable(true);
@@ -225,14 +226,91 @@ local primary_text = CreateText(frame, Localization.Primary, 0, -22, 0.1, 0.5, 0
 local secondary_text = CreateText(frame, Localization.Secondary, 0, -67, 0.1, 0.5, 0.8, 1);
 local generic_text = CreateText(frame, Localization.Generic, 0, -112, 0.1, 0.5, 0.8, 1);
 
-local function GetFilename(file)
-	return file:match("^.*\\(.*).lua$") or file:match("^.*\\(.*).enc$") or file:match("^.*\\(.*).out$") or file
-end
 local dir = ni.backend.GetBaseFolder()
-local profiles = ni.backend.GetDirectoryContents(dir.."addon\\Rotations\\") or {}
-tinsert(profiles, 1, Localization.None);
-local generic_profiles = ni.backend.GetDirectoryContents(dir.."addon\\Rotations\\") or {}
-tinsert(generic_profiles, 1, Localization.None);
+
+local function GetFileExtension(path)
+	return path:match("^.+(%..+)$")
+end
+
+local function GetFilename(path, strip)
+    local start, finish = path:find('[%w%s!-={-|]+[_%.].+')
+	if not start or not finish then
+		return nil
+	end
+  local result = path:sub(start,#path)
+	if strip and result then
+		return result:match("(.+)%..+$")
+	end
+	return result
+end
+
+local function GetProfiles(directory)
+	local ti = ni.backend.GetFunction("tinsert", "insert")
+	if not ti then	
+		ni.backend.Error("Unable to get cached functions for GetProfiles")
+	end
+	local dir = ni.backend.GetBaseFolder()
+	local contents = ni.backend.GetDirectoryContents(dir.."addon\\Rotations\\") or {}
+	local files = {}
+	for i = 1, #contents do
+		if contents[i].is_dir and string.match(contents[i].path:lower(), directory:lower()) then
+			local sub_contents = ni.backend.GetDirectoryContents(contents[i].path) or {}
+			local processed = false
+			for i = 1, #sub_contents do
+				if not sub_contents[i].is_dir then
+					local extension = GetFileExtension(sub_contents[i].path)
+					if extension == ".enc" or extension == ".lua" then
+						ti(files, { title = GetFilename(sub_contents[i].path, true), filename = GetFilename(sub_contents[i].path), path = sub_contents[i].path})
+						if not processed then
+							processed = true
+						end
+					end
+				end
+			end
+			if processed then
+				break
+			end
+		end
+	end
+	return files
+end
+
+local function LoadProfile(entry)
+	local gbi = ni.backend.GetFunction("GetBuildInfo")
+	return ni.backend.ParseFile(entry.path, function(content)
+		local version = string.match(content, "--Version:%s*(%d*)")
+		if not version or version == select(4,gbi()) then
+			local result, err = ni.backend.LoadString(content, string.format("@%s", entry.filename))
+			if result then
+				result(ni)
+				return true
+			end
+			ni.backend.MessageBox(err, filename, 0x10)
+			return false
+		end
+	end)
+end
+
+local profiles = {}
+tinsert(profiles, Localization.None);
+do
+	local entries  = GetProfiles(UnitClass("player"))
+	for _, entry in pairs(entries) do
+		if LoadProfile(entry) then
+			tinsert(profiles, entry.title)
+		end
+	end
+end
+local generic_profiles = {}
+tinsert(generic_profiles, Localization.None);
+do
+	local entries  = GetProfiles("Generic")
+	for _, entry in pairs(entries) do
+		if LoadProfile(entry) then
+			tinsert(generic_profiles, entry.title)
+		end
+	end
+end
 
 local ddm_name = ni.utils.GenerateRandomName();
 local dropdownmenu = CreateFrame("frame", ddm_name, frame, "UIDropDownMenuTemplate");
@@ -244,9 +322,8 @@ local primaryIndex = 1;
 UIDropDownMenu_Initialize(dropdownmenu, function(self, level)
 	local info = UIDropDownMenu_CreateInfo();
 	local index = 0;
-	for k, v in ipairs(profiles) do
+	for _, file in ipairs(profiles) do
 		index = index + 1;
-		local file = GetFilename(v);
 		local checked = false;
 		if ni.vars.profiles.primary == file then
 			primary = file;
@@ -279,9 +356,8 @@ local secondaryIndex = 1;
 UIDropDownMenu_Initialize(dropdownmenu2, function(self, level)
 	local info = UIDropDownMenu_CreateInfo();
 	local index = 0;
-	for k, v in ipairs(profiles) do
+	for _, file in ipairs(profiles) do
 		index = index + 1;
-		local file = GetFilename(v);
 		local checked = false;
 		if ni.vars.profiles.secondary == file then
 			secondary = file;
@@ -314,9 +390,8 @@ local genericIndex = 1;
 UIDropDownMenu_Initialize(dropdownmenu3, function(self, level)
 	local info = UIDropDownMenu_CreateInfo();
 	local index = 0;
-	for k, v in ipairs(generic_profiles) do
+	for _, file in ipairs(generic_profiles) do
 		index = index + 1;
-		local file = GetFilename(v);
 		local checked = false;
 		if ni.vars.profiles.generic == file then
 			generic = file;
@@ -833,6 +908,13 @@ local mods = {
 }
 local latency_name = ni.utils.GenerateRandomName();
 local slider = CreateFrame("Slider", latency_name, settings, "OptionsSliderTemplate");
+local slider_components = {}
+for k, v in pairs(_G) do
+	if type(k) == "string" and string.find(k, latency_name) then
+		slider_components[k] = v
+		_G[k] = nil
+	end
+end
 slider:SetOrientation("HORIZONTAL");
 slider:SetHeight(15);
 slider:SetWidth(160);
@@ -840,11 +922,11 @@ slider:SetPoint("TOP", settings, 0, -25);
 slider:SetMinMaxValues(20, 1000);
 slider:SetValueStep(5);
 slider:SetValue(ni.vars.latency);
-_G[latency_name.."Low"]:SetText(20);
-_G[latency_name.."High"]:SetText(1000);
-_G[latency_name.."Text"]:SetText(Localization.Latency);
+slider_components[latency_name.."Low"]:SetText(20);
+slider_components[latency_name.."High"]:SetText(1000);
+slider_components[latency_name.."Text"]:SetText(Localization.Latency);
 slider:SetScript("OnValueChanged", function(self, value)
-	_G[latency_name.."Text"]:SetText("Latency ("..value.." ms)");	
+	slider_components[latency_name.."Text"]:SetText("Latency ("..value.." ms)");	
 	ni.vars.latency = value;
 end);
 
@@ -896,6 +978,8 @@ CreateDropDownText(settings, Localization.IsMelee, -10, -356);
 
 local mmb_name = ni.utils.GenerateRandomName();
 ni.main_ui.minimap_icon = CreateFrame("Button", mmb_name, Minimap);
+_G[mmb_name] = nil
+ni.backend.ProtectFrame(ni.main_ui.minimap_icon, Minimap)
 local mm = ni.main_ui.minimap_icon;
 mm:SetHeight(25);
 mm:SetWidth(25);
@@ -929,52 +1013,31 @@ mm:SetScript("OnMouseUp", function(self)
 	self:SetScript("OnUpdate", nil);
 end);
 
-local function SetClick(key, frame, button)
-	if key == Localization.None or key == nil then
-		return;
-	end
-	SetBindingClick(key, frame, button)
-end
-
-local mainkeys_name = ni.utils.GenerateRandomName();
-local mainkeys = CreateFrame("BUTTON", mainkeys_name, UIParent);
-mainkeys:SetScript("OnClick", function(self, button)
-	if button == "LeftButton" then
-		ni.toggleprofile(ni.vars.profiles.primary);
-		ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
-	elseif button == "RightButton" then
-		ni.toggleprofile(ni.vars.profiles.secondary);
-		ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
-	elseif button == "MiddleButton" then
-		ni.togglegeneric(ni.vars.profiles.generic);
-		ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
-	end
-end);
-mainkeys:Show();
-local secondkeys_name = ni.utils.GenerateRandomName();
-local secondkeys = CreateFrame("BUTTON", secondkeys_name, UIParent);
-secondkeys:SetScript("OnClick", function(self, button)
-	if button == "LeftButton" then
-		ni.vars.profiles.interrupt = not ni.vars.profiles.interrupt;
-		ni.showintstatus();
-	elseif button == "RightButton" then
-		ni.vars.units.followEnabled = not ni.vars.units.followEnabled;
-		ni.updatefollow(ni.vars.units.followEnabled);
-	elseif button == "MiddleButton" then
-		if ni.main_ui.main:IsShown() then
-			ni.main_ui.main:Hide();
-		else
-			ni.main_ui.main:Show();
+ni.keyevents.registerkeyevent("mainui", function(state, key)
+	local block = false
+	if not GetCurrentKeyBoardFocus() then
+		if state == 260 or state == 256 then
+			if key == 0x70 then
+				ni.toggleprofile(ni.vars.profiles.primary);
+				ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
+				block = true;
+			elseif key == 0x71 then
+				ni.toggleprofile(ni.vars.profiles.secondary);
+				ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);
+				block = true;
+			elseif key == 0x72 then
+				ni.togglegeneric(ni.vars.profiles.generic);
+				ni.main_ui.minimap_toggle(ni.vars.profiles.enabled or ni.vars.profiles.genericenabled);	
+				block = true;
+			elseif key == 0x79 then
+				if ni.main_ui.main:IsShown() then
+					ni.main_ui.main:Hide();
+				else
+					ni.main_ui.main:Show();
+				end
+				block = true;
+			end
 		end
 	end
-end);
-secondkeys:Show();
-ni.main_ui.setupkeys = function()
-	SetClick(ni.vars.hotkeys.interrupt, secondkeys_name, "LeftButton");
-	SetClick(ni.vars.hotkeys.follow, secondkeys_name, "RightButton");
-	SetClick(ni.vars.hotkeys.gui, secondkeys_name, "MiddleButton");
-	SetClick(ni.vars.hotkeys.primary, mainkeys_name, "LeftButton");
-	SetClick(ni.vars.hotkeys.secondary, mainkeys_name, "RightButton");
-	SetClick(ni.vars.hotkeys.generic, mainkeys_name, "MiddleButton");
-end
-ni.main_ui.setupkeys()
+	return block
+end)

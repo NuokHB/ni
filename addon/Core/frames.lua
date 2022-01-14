@@ -114,7 +114,7 @@ function ni.frames.notification:message(message)
 	self.text:SetText(message)
 	self:Show()
 end
-ni.frames.spellqueueholder = CreateFrame("Frame")
+ni.frames.spellqueueholder = CreateFrame("Frame", nil, UIParent)
 ni.frames.spellqueueholder:ClearAllPoints()
 ni.frames.spellqueueholder:SetHeight(30)
 ni.frames.spellqueueholder:SetWidth(275)
@@ -161,7 +161,7 @@ function ni.frames.spellqueue.update(str, bool)
 	end
 end
 
-ni.frames.floatingtext = CreateFrame("Frame")
+ni.frames.floatingtext = CreateFrame("Frame", nil, UIParent)
 ni.frames.floatingtext:SetSize(400, 30)
 ni.frames.floatingtext:SetAlpha(0)
 ni.frames.floatingtext:SetPoint("CENTER", 0, 80)
@@ -188,7 +188,7 @@ ni.keyevents.unregisterkeyevent = function(name)
 	keypress_events[name] = nil;
 end;
 
-local function OnKeyHandler(self, keyType, key)
+local function OnKeyHandler(keyType, key)
 	local result = false;
 	for k, v in pairs(keypress_events) do
 		if v(keyType, key) then
@@ -198,9 +198,9 @@ local function OnKeyHandler(self, keyType, key)
 	return result;
 end;
 
-ni.backend.RegisterCallback(ni.keyevents, OnKeyHandler);
+ni.backend.RegisterCallback(OnKeyHandler);
 
-ni.frames.main = CreateFrame("frame");
+ni.frames.main = CreateFrame("frame", nil, UIParent);
 ni.frames.main:RegisterAllEvents();
 ni.frames.OnEvent = function(self, event, ...)
 	if not ni.functionsregistered() then
@@ -209,9 +209,7 @@ ni.frames.OnEvent = function(self, event, ...)
 	for _, v in pairs(events) do
 		v(event, ...);
 	end
-	if event == "PLAYER_ENTERING_WORLD" then
-		ni.main_ui.setupkeys()
-	elseif event == "PLAYER_LEAVING_WORLD" then
+	if event == "PLAYER_LEAVING_WORLD" then
 		ni.backend.FreeMaps();
 		ni.utils.savesetting(UnitName("player")..".json", ni.json.encode(ni.vars));
 	elseif event == "PLAYER_REGEN_DISABLED" then
@@ -458,3 +456,9 @@ ni.delayfor = function(delay, callback)
 	delays[GetTime() + delay] = callback;
 	return true
 end
+
+ni.backend.ProtectFrame(ni.frames.notification, UIParent);
+ni.backend.ProtectFrame(ni.frames.spellqueueholder, UIParent);
+ni.backend.ProtectFrame(ni.frames.spellqueue)
+ni.backend.ProtectFrame(ni.frames.floatingtext, UIParent);
+ni.backend.ProtectFrame(ni.frames.main, UIParent);
