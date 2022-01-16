@@ -110,7 +110,7 @@ setmetatable(ni.player, {
    __index = function(table, key)
       if ni.unit[key] then
          rawset(table, key, function(...)
-            return ni.unit[k]("player", ...)
+            return ni.unit[key]("player", ...)
          end)
          return table[key]
       end
