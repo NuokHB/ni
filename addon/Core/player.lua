@@ -5,8 +5,8 @@ local ni = ...
 ni.player = {}
 
 -- Localized functions
--- TODO: update with actual localized, or remove if none
-local something
+local setmetatable = ni.client.get_function("setmetatable")
+local rawset = ni.client.get_function("rawset")
 
 --[[--
 Moves the player to the token or coordinates.
@@ -93,3 +93,26 @@ Parameters:
 function ni.player.set_resource_tracking(value)
    return ni.backend.SetResourceTracking(value)
 end
+
+--[[--
+Sets the players target to the token passed
+ 
+Parameters:
+- **target** `string`
+@param target string
+]]
+function ni.player.target(target)
+   return ni.client.call_protected("TargetUnit", target)
+end
+
+-- Set ni.players metatable to allow unit functions.
+setmetatable(ni.player, {
+   __index = function(table, key)
+      if ni.unit[key] then
+         rawset(table, key, function(...)
+            return ni.unit[k]("player", ...)
+         end)
+         return table[key]
+      end
+   end
+})

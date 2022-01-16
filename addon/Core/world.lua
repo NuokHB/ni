@@ -76,3 +76,18 @@ Returns:
 function ni.world.trace_line(x1, y1, z1, x2, y2, z2, hit_flags)
    return ni.backend.LoS(x1, y1, z1, x2, y2, z2, hit_flags)
 end
+
+--[[--
+Gets the xyz coordinates to screen coordinates
+ 
+Parameters:
+- **x** `number`
+- **y** `number`
+- **z** `number`
+@param x number
+@param y number
+@param z number
+]]
+function ni.world.to_screen(x, y, z)
+   return ni.backend.WorldToScreen(x, y, z)
+end

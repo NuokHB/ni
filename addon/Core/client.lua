@@ -4,6 +4,8 @@ local ni = ...
 
 ni.client = {}
 
+local GetTime = ni.backend.GetFunction("GetTime")
+
 --[[--
 Raise a lua error with the specified message.
  
@@ -71,4 +73,25 @@ Sets the last hardware action as if a key was pressed.
 ]]
 function ni.client.reset_last_hardware_action()
    return ni.backend.ResetLastHardwareAction()
+end
+
+--[[--
+Gets the computer uptime in seconds
+ 
+Returns:
+- **uptime** `number`
+]]
+function ni.client.get_time()
+   return GetTime()
+end
+
+--[[--
+Runs macro text securely
+ 
+Parameters:
+- **text** `string`
+@param text string
+]]
+function ni.client.run_text(text)
+   return ni.client.call_protected("RunMacroText", text)
 end
