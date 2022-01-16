@@ -35,6 +35,6 @@ if not ni.loaded then
    end
 
    -- TODO: continue loading files
-   test = ni
+
    ni.loaded = true
 end
