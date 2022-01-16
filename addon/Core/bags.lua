@@ -60,7 +60,7 @@ Parameters:
 @param[opt] target string
 ]]
 function ni.bags.use(item, target)
-   if tonumber(item) then
+   if type(item) == "number" then
       item = GetItemInfo(item)
    end
    return ni.client.call_protected("UseItemByName", item, target)

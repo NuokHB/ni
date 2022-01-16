@@ -7,6 +7,7 @@ ni.player = {}
 -- Localized functions
 local setmetatable = ni.client.get_function("setmetatable")
 local rawset = ni.client.get_function("rawset")
+local GetGlyphSocketInfo = ni.client.get_function("GetGlyphSocketInfo")
 
 --[[--
 Moves the player to the token or coordinates.
@@ -103,6 +104,37 @@ Parameters:
 ]]
 function ni.player.target(target)
    return ni.client.call_protected("TargetUnit", target)
+end
+
+--[[--
+Interacts with the token passed
+ 
+Parameters:
+- **target** `string`
+@param target string
+]]
+function ni.player.interact(target)
+   return ni.client.call_protected("InteractUnit", target)
+end
+
+--[[--
+Checks if the player has the current glyph
+ 
+Parameters:
+- **id** `number`
+ 
+Returns:
+- **has_glyph** `boolean`
+@param id number
+]]
+function ni.player.has_glyph(id)
+   for i = 1, 6 do
+      local enabled, _, glyph_id = GetGlyphSocketInfo(i)
+      if enabled and glyph_id == id then
+         return true
+      end
+   end
+   return false
 end
 
 -- Set ni.players metatable to allow unit functions.
