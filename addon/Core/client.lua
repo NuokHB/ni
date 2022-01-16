@@ -5,6 +5,8 @@ local ni = ...
 ni.client = {}
 
 local GetTime = ni.backend.GetFunction("GetTime")
+local GetBuildInfo = ni.backend.GetFunction("GetBuildInfo")
+local GetNetStats = ni.core.get_function("GetNetStats")
 
 --[[--
 Raise a lua error with the specified message.
@@ -94,4 +96,29 @@ Parameters:
 ]]
 function ni.client.run_text(text)
    return ni.client.call_protected("RunMacroText", text)
+end
+
+--[[--
+Gets the wow client build number
+ 
+Returns:
+- **build** `string`
+ 
+Notes:
+335 is 12340,
+434 is 15595,
+548 is 18414
+]]
+function ni.client.build_info()
+   return select(4, GetBuildInfo())
+end
+
+--[[--
+Gets the average home latence in milliseconds
+ 
+Returns:
+- **lag_home** `number`
+]]
+function ni.client.get_net_stats()
+   return select(4, GetNetStats())
 end

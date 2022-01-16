@@ -24,8 +24,10 @@ if not ni.loaded then
       "navigation.lua",
       "bags.lua",
       "object.lua",
+      "power.lua",
       "unit.lua",
-      "player.lua"
+      "player.lua",
+      "spell.lua"
    }
 
    -- Load each of the above files here
