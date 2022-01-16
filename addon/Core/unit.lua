@@ -6,6 +6,12 @@ ni.unit = {}
 
 -- Localizations to avoid hooks from servers
 local UnitExists = ni.client.get_function("UnitExists")
+local UnitThreatSituation = ni.client.get_function("UnitThreatSituation")
+local UnitGUID = ni.client.get_function("UnitGUID")
+local UnitHealth = ni.client.get_function("UnitHealth")
+local UnitHealthMax = ni.client.get_function("UnitHealthMax")
+local UnitCastingInfo = ni.client.get_function("UnitCastingInfo")
+local UnitChannelInfo = ni.client.get_function("UnitChannelInfo")
 
 --[[--
 Table keys:
@@ -25,7 +31,7 @@ Returns:
 @param target string
 ]]
 function ni.unit.auras(target)
-   return ni.backend.Auras(target)
+   return ni.backend.Auras(target) or {}
 end
 
 --[[--
@@ -143,6 +149,101 @@ function ni.unit.exists(target)
 end
 
 --[[--
+Gets the targets guid
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **guid** `string`
+@param target string
+]]
+function ni.unit.guid(target)
+   return UnitGUID(target)
+end
+
+--[[--
+Gets the short guid
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **short_guid** `string`
+@param target string
+]]
+function ni.unit.short_guid(target)
+   local guid = ni.unit.guid(target)
+   return guid and string.sub(guid, -5, -1) or nil
+end
+
+--[[--
+Gets the targets current health
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **health** `number`
+@param target string
+]]
+function ni.unit.health(target)
+   return UnitHealth(target)
+end
+
+--[[--
+Gets the targets max health
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **max_health** `number`
+@param target string
+]]
+function ni.unit.health_max(target)
+   return UnitHealthMax(target)
+end
+
+--[[--
+Gets the targets health deficit
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **deficit** `number`
+@param target string
+]]
+function ni.unit.health_deficit(target)
+   return ni.unit.health_max(target) - ni.unit.health(target)
+end
+
+--[[--
+Gets the targets health percent
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **health_percent** `number`
+@param target string
+]]
+function ni.unit.health_percent(target)
+   return 100 * ni.unit.health(target) / ni.unit.health_max(target)
+end
+
+--[[--
+Shorthand function for health_percent.
+
+See [ni.unit.health_percent](#ni.unit.health_percent (target))
+@param target string
+]]
+function ni.unit.hp(target)
+   return ni.unit.health_percent(target)
+end
+
+--[[--
 Gets the information of the specified target
  
 Parameters:
@@ -152,13 +253,43 @@ Returns:
 - **x** `number`
 - **y** `number`
 - **z** `number`
-- **facing** `number`
+- **type** `number`
 - **target** `string`
 - **height** `number`
 @param target string
 ]]
 function ni.unit.info(target)
    return ni.backend.ObjectInfo(target)
+end
+
+--[[--
+Gets the units target
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **guid** `string`
+@param target string
+]]
+function ni.unit.target(target)
+   local _, _, _, _, guid = ni.unit.info(target)
+   return guid
+end
+
+--[[--
+Gets the units height
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **height** `number`
+@param target string
+]]
+function ni.unit.height(target)
+   local _, _, _, _, _, height = ni.unit.info(target)
+   return height
 end
 
 --[[--
@@ -212,19 +343,19 @@ function ni.unit.is_behind(target_a, target_b)
 end
 
 --[[--
-Checks if a target has a specific aura id.
+Checks if a target has a specific aura id or name.
  
 Parameters:
 - **target** `string`
-- **id** `number`
+- **aura** `number or string`
  
 Returns:
 - **has_aura** `boolean`
 @param target string
-@param id number
+@param aura
 ]]
-function ni.unit.has_aura(target, id)
-   return ni.backend.HasAura(target, id)
+function ni.unit.has_aura(target, aura)
+   return ni.backend.HasAura(target, aura) or false
 end
 
 --[[--
@@ -306,7 +437,38 @@ Returns:
 @param target string
 ]]
 function ni.unit.type(target)
-   return ni.backend.CreatureType(target)
+   return ni.backend.CreatureType(target) or 0
+end
+
+--[[--
+Checks if the unit is a totem
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_totem** `boolean`
+@param target string
+]]
+function ni.unit.is_totem(target)
+   return ni.unit.type(target) == 11
+end
+
+--[[--
+Checks the units threat to a target
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **threat** `number`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.threat(target_a, target_b)
+   local threat = UnitThreatSituation(target_a, target_b)
+   return threat and threat or -1
 end
 
 --[[--
@@ -387,4 +549,156 @@ Returns:
 ]]
 function ni.unit.descriptor(target, index)
    return ni.object.descriptor(target, index)
+end
+
+--[[--
+Gets the melee range between two units
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **range** `number`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.melee_range(target_a, target_b)
+   local combat_reach_a = ni.unit.combat_reach(target_a)
+   local combat_reach_b = ni.unit.combat_reach(target_b)
+   return math.max(5.0, combat_reach_a + combat_reach_b + (4 / 3))
+end
+
+--[[--
+Checks if unit is in melee range of another target
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **in_melee** `boolean`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.in_melee(target_a, target_b)
+   local distance = ni.unit.distance(target_a, target_b)
+   if not distance then
+      return false
+   end
+   return distance < ni.unit.melee_range(target_a, target_b)
+end
+
+--[[--
+Gets the casting information for the specified target
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **...**
+ 
+Notes:
+See the returns for UnitCastingInfo
+@param target string
+]]
+function ni.unit.casting(target)
+   return UnitCastingInfo(target)
+end
+
+--[[--
+Gets if the target is casting currently
+ 
+Parameters:
+- **target**
+ 
+Returns:
+- **casting** `boolean`
+@param target string
+]]
+function ni.unit.is_casting(target)
+   return ni.unit.casting(target) and true or false
+end
+
+--[[--
+@local
+Helper function to avoid the calculations being typed twice.
+ 
+Parameters:
+- **start_time** `number`
+- **end_time** `number`
+ 
+Returns:
+- **percent_complete** `number`
+@param start_time number
+@param end_time number
+]]
+local function calculate_percentage(start_time, end_time)
+   if not start_time or not end_time then
+      return 0
+   end
+   local time_since_start = (ni.client.get_time() * 1000 - start_time) / 1000
+   local time = end_time - start_time
+   return time_since_start / time * 100000
+end
+
+--[[--
+Gets the targets casting percentage completed
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **percent_complete** `number`
+@param target string
+]]
+function ni.unit.casting_percent(target)
+   local _, _, _, _, start_time, end_time = ni.unit.casting(target)
+   return calculate_percentage(start_time, end_time)
+end
+
+--[[--
+Gets the channel information for the specified target
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **...**
+ 
+Notes:
+See the returns for UnitChannelInfo
+@param target string
+]]
+function ni.unit.channel(target)
+   return UnitChannelInfo(target)
+end
+
+--[[--
+Gets if the target is channeling currently
+ 
+Parameters:
+- **target**
+ 
+Returns:
+- **channeling** `boolean`
+@param target string
+]]
+function ni.unit.is_channeling(target)
+   return ni.unit.channel(target) and true or false
+end
+
+--[[--
+Gets the targets channel percentage completed
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **percent_complete** `number`
+@param target string
+]]
+function ni.unit.channel_percent(target)
+   local _, _, _, _, start_time, end_time = ni.unit.channel(target)
+   return calculate_percentage(start_time, end_time)
 end

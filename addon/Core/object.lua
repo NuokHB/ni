@@ -19,6 +19,49 @@ function ni.object.exists(object)
 end
 
 --[[--
+Gets the objects type.
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **type** `number`
+@param object string
+]]
+function ni.object.type(object)
+   local _, _, _, type = ni.backend.ObjectInfo(object)
+   return type
+end
+
+--[[--
+Gets if the object is a player
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_player** `boolean`
+@param object string
+]]
+function ni.object.is_player(object)
+   return ni.object.type(object) == 4
+end
+
+--[[--
+Gets if the object is a unit
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_unit** `boolean`
+@param object string
+]]
+function ni.object.is_unit(object)
+   return ni.object.type(object) == 3
+end
+
+--[[--
 Gets the object location information
  
 Parameters:
