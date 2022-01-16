@@ -12,6 +12,8 @@ local UnitHealth = ni.client.get_function("UnitHealth")
 local UnitHealthMax = ni.client.get_function("UnitHealthMax")
 local UnitCastingInfo = ni.client.get_function("UnitCastingInfo")
 local UnitChannelInfo = ni.client.get_function("UnitChannelInfo")
+local UnitIsDeadOrGhost = ni.core.get_function("UnitIsDeadOrGhost")
+local UnitCanAttack = ni.core.get_function("UnitCanAttack")
 
 --[[--
 Table keys:
@@ -701,4 +703,34 @@ Returns:
 function ni.unit.channel_percent(target)
    local _, _, _, _, start_time, end_time = ni.unit.channel(target)
    return calculate_percentage(start_time, end_time)
+end
+
+--[[--
+Gets if the target is dead or a ghost
+ 
+Parameters:
+- **target**
+ 
+Returns:
+- **is_unit_is_dead_or_ghost** `boolean`
+@param target string
+]]
+function ni.unit.is_unit_is_dead_or_ghost(target)
+   return UnitIsDeadOrGhost(target)
+end
+
+--[[--
+Checks to see if target_a can attack target_b
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **unit_can_attack** `boolean`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.unit_can_attack(target_a, target_b)
+   return UnitCanAttack(target_a, target_b)
 end
