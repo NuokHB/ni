@@ -17,7 +17,8 @@ if not ni.loaded then
 
    -- As long as the files isn't inserted/removed it'll stay in this order
    local core_files = {
-      "inputhook.lua"
+      "input.lua",
+      "player.lua"
    }
 
    -- Load each of the above files here
