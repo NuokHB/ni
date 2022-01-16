@@ -5,24 +5,41 @@ local ni = ...
 ni.spell = {}
 
 -- Localizations to avoid hooks from servers
-local GetSpellCooldown = ni.core.get_function("GetSpellCooldown")
-local GetSpellInfo = ni.core.get_function("GetSpellInfo")
-local IsSpellInRange = ni.core.get_function("IsSpellInRange")
-local IsSpellKnown = ni.core.get_function("IsSpellKnown")
-local IsPlayerSpell = ni.core.get_function("IsPlayerSpell")
+local GetSpellCooldown = ni.client.get_function("GetSpellCooldown")
+local GetSpellInfo = ni.client.get_function("GetSpellInfo")
+local IsSpellInRange = ni.client.get_function("IsSpellInRange")
+local IsSpellKnown = ni.client.get_function("IsSpellKnown")
+local IsPlayerSpell = ni.client.get_function("IsPlayerSpell")
+
+--[[--
+Gets the spell information
+ 
+Parameters:
+- **spell** `string or number`
+ 
+Returns:
+- **...**
+ 
+Notes:
+Wrapper for GetSpellInfo. See that for appropriate documentation.
+@param spell
+]]
+function ni.spell.info(spell)
+   return GetSpellInfo(spell)
+end
 
 --[[--
 Casts a spell by name or id
  
 Parameters:
-- **spell** `string|number`
-- **target** `token|guid`
+- **spell** `string or number`
+- **target** `string`
 @param spell
 @param[opt] target string
 ]]
 function ni.spell.cast(...)
-   local i = ...
-   if type(i) == "number" then
+   local spell = ...
+   if type(spell) == "number" then
       ni.client.call_protected("CastSpellById", ...)
    else
       ni.client.call_protected("CastSpellByName", ...)
@@ -34,30 +51,56 @@ Gets the spell name from id
  
 Parameters:
 - **name** `string`
-@param spell string
+@param name string
 ]]
 function ni.spell.id(name)
    return ni.backend.GetSpellId(name)
 end
 
 --[[--
-Gets a spells cooldown
+Gets a spells cooldown information
  
 Parameters:
-- **spell** `string|number`
+- **spell** `string or number`
  
 Returns:
+- **start** `number`
 - **duration** `number`
+- **enabled** `number`
 @param spell
 ]]
 function ni.spell.cooldown(spell)
-   local start, duration = GetSpellCooldown(spell)
-   local gcd_start = GetSpellCooldown(61304)
+   return GetSpellCooldown(spell)
+end
 
+--[[--
+Returns if we are are currently on Global Cooldown
+ 
+Returns:
+- **start** `number`
+- **duration** `number`
+- **enabled** `number`
+]]
+function ni.spell.global_cooldown()
+   return ni.spell.cooldown(61304)
+end
+
+--[[--
+Gets the remaining cooldown time
+ 
+Parameters:
+- **spell** `string or number`
+ 
+Returns:
+- **remaining** `number`
+@param spell
+]]
+function ni.spell.cooldown_remaining(spell)
+   local start, duration = ni.spell.cooldown(spell)
    if not start then
-      return -1
+      return 0
    end
-
+   local gcd_start = ni.spell.global_cooldown()
    if (start > 0 and duration > 0 and start ~= gcd_start) then
       return start + duration - ni.client.get_time()
    else
@@ -66,44 +109,57 @@ function ni.spell.cooldown(spell)
 end
 
 --[[--
-Returns if we are are currently on Global Cooldown
+Returns if we are currently on global cooldown
  
 Returns:
-- **gcd** `boolean`
+- **on_gcd** `boolean`
 ]]
-function ni.spell.gcd()
-   local _, duration = GetSpellCooldown(61304)
+function ni.spell.on_global_cooldown()
+   local _, duration = ni.spell.global_cooldown()
    return duration ~= 0
+end
+
+--[[--
+Short hand for on_global_cooldown.
+
+See: [ni.spell.on_global_cooldown](#ni.spell.on_global_cooldown ())
+]]
+function ni.spell.on_gcd()
+   return ni.spell.on_global_cooldown()
 end
 
 --[[--
 Gets a spells cast time
  
 Parameters:
-- **spell** `string|number`
+- **spell** `string or number`
  
 Returns:
 - **duration** `number`
 @param spell
 ]]
 function ni.spell.cast_time(spell)
-   return select(7, GetSpellInfo(spell)) / 1000 + ni.client.get_net_stats() / 1000
+   local _, _, _, _, _, _, cast_time = ni.spell.info(spell)
+   return cast_time / 1000 + ni.client.get_net_stats() / 1000
 end
 
 --[[--
 Returns true if the spell is instant cast
  
 Parameters:
-- **spell** `string|number`
+- **spell** `string or number`
  
 Returns:
-- **isinstant** `boolean`
+- **is_instant** `boolean`
 @param spell
 ]]
 function ni.spell.is_instant(spell)
-   return select(7, GetSpellInfo(spell)) == 0
+   local _, _, _, _, _, _, cast_time = ni.spell.info(spell)
+   return cast_time == 0
 end
 
+-- TODO: Re visit to clean up for easier readability.
+-- Currently does not conform to the style guidelines.
 --[[--
 Checks if a spell is valid to be cast on a unit
  
@@ -137,7 +193,7 @@ function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
    local name, _, _, cost, _, powertype = GetSpellInfo(spell)
 
    if ni.unit.exists(target) and
-         ((not is_facing and (not ni.unit.is_unit_is_dead_or_ghost(target) and ni.player.unit_can_attack(target) == 1)) or is_facing) and
+         ((not is_facing and (not ni.unit.is_dead_or_ghost(target) and ni.player.can_attack(target) == 1)) or is_facing) and
          IsSpellInRange(name, target) == 1 and
          (IsSpellKnown(spell) or (ni.client.build() >= "50400" and IsPlayerSpell(spell))) and
          ni.power.current_raw("player ",powertype) >= cost and

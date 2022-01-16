@@ -4,21 +4,6 @@ local ni = ...
 
 ni.client = {}
 
-local GetTime = ni.backend.GetFunction("GetTime")
-local GetBuildInfo = ni.backend.GetFunction("GetBuildInfo")
-local GetNetStats = ni.core.get_function("GetNetStats")
-
---[[--
-Raise a lua error with the specified message.
- 
-Parameters:
-- **message** `string`
-@param message string
-]]
-function ni.client.error(message)
-   return ni.backend.Error(message)
-end
-
 --[[--
 Gets the client C function for the specified string.
  
@@ -38,6 +23,67 @@ is just 'insert'. This function can return nil if a funciton isn't found.
 ]]
 function ni.client.get_function(name, binary_name)
    return ni.backend.GetFunction(name, binary_name)
+end
+
+-- localize functions here for below use
+local GetTime = ni.client.get_function("GetTime")
+local GetBuildInfo = ni.client.get_function("GetBuildInfo")
+local GetNetStats = ni.client.get_function("GetNetStats")
+local select = ni.client.get_function("select")
+
+--[[--
+Gets the current client build information
+ 
+Returns:
+- **version** `string`
+- **build** `string`
+- **date** `string`
+]]
+function ni.client.build_info()
+   -- The first GetBuildInfo that is found is for the GlueXML which has 2
+   -- returns prior
+   return select(3, GetBuildInfo())
+end
+
+--[[--
+Gets the current client version
+ 
+Returns:
+- **version** `string`
+]]
+function ni.client.version()
+   local version = ni.client.build_info()
+   return version
+end
+
+--[[--
+Gets the current client build number
+ 
+Returns:
+- **build** `string`
+ 
+Notes:
+3.3.5 is 12340,
+4.3.4 is 15595,
+5.4.8 is 18414
+]]
+function ni.client.build()
+   local _, build = ni.client.build_info()
+   return build
+end
+
+-- localize the build here for use below
+local build = ni.client.build()
+
+--[[--
+Raise a lua error with the specified message.
+ 
+Parameters:
+- **message** `string`
+@param message string
+]]
+function ni.client.error(message)
+   return ni.backend.Error(message)
 end
 
 --[[--
@@ -99,26 +145,40 @@ function ni.client.run_text(text)
 end
 
 --[[--
-Gets the wow client build number
- 
+Gets the current client network statistics
+
 Returns:
-- **build** `string`
+- **down** `number`
+- **up** `number`
+- **latency** `number`
+ 
+Or:
+- **down** `number`
+- **up** `number`
+- **latency_home** `number`
+- **latency_world** `number`
  
 Notes:
-335 is 12340,
-434 is 15595,
-548 is 18414
+3.3.5 network statistics didn't differentiate between latency home and world.
+Latency home is the connection between computer to server in milliseconds and
+latency world is the connection between computer and server including TCP
+overhead.
 ]]
-function ni.client.build_info()
-   return select(4, GetBuildInfo())
+function ni.client.get_net_stats()
+   return GetNetStats()
 end
 
 --[[--
 Gets the average home latence in milliseconds
  
 Returns:
-- **lag_home** `number`
+- **latency** `number`
 ]]
-function ni.client.get_net_stats()
-   return select(4, GetNetStats())
+function ni.client.latency()
+   local _, _, home_latency, world_latency = ni.client.get_net_stats()
+   if build == "12340" then
+      return home_latency
+   else
+      return world_latency
+   end
 end

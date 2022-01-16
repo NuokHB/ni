@@ -12,8 +12,8 @@ local UnitHealth = ni.client.get_function("UnitHealth")
 local UnitHealthMax = ni.client.get_function("UnitHealthMax")
 local UnitCastingInfo = ni.client.get_function("UnitCastingInfo")
 local UnitChannelInfo = ni.client.get_function("UnitChannelInfo")
-local UnitIsDeadOrGhost = ni.core.get_function("UnitIsDeadOrGhost")
-local UnitCanAttack = ni.core.get_function("UnitCanAttack")
+local UnitIsDeadOrGhost = ni.client.get_function("UnitIsDeadOrGhost")
+local UnitCanAttack = ni.client.get_function("UnitCanAttack")
 
 --[[--
 Table keys:
@@ -26,7 +26,7 @@ Table keys:
 Gets the auras on the specified target.
  
 Parameters:
-- **target** `token|guid`
+- **target** `string`
  
 Returns:
 - **auras** `aura table`
@@ -40,7 +40,7 @@ end
 Gets the best location that meets the criteria passed.
  
 Parameters:
-- **target** `token|guid`
+- **target** `string`
 - **distance** `number`
 - **radius** `number`
 - **score** `number`
@@ -70,7 +70,7 @@ end
 Wrapper for best_location for friendly target
  
 Parameters:
-- **target** `token|guid`
+- **target** `string`
 - **distance** `number`
 - **radius** `number`
 - **score** `number`
@@ -98,7 +98,7 @@ end
 Wrapper for best_location for enemy target
  
 Parameters:
-- **target** `token|guid`
+- **target** `string`
 - **distance** `number`
 - **radius** `number`
 - **score** `number`
@@ -709,13 +709,13 @@ end
 Gets if the target is dead or a ghost
  
 Parameters:
-- **target**
+- **target** `string`
  
 Returns:
-- **is_unit_is_dead_or_ghost** `boolean`
+- **is_dead_or_ghost** `boolean`
 @param target string
 ]]
-function ni.unit.is_unit_is_dead_or_ghost(target)
+function ni.unit.is_dead_or_ghost(target)
    return UnitIsDeadOrGhost(target)
 end
 
@@ -731,6 +731,6 @@ Returns:
 @param target_a string
 @param target_b string
 ]]
-function ni.unit.unit_can_attack(target_a, target_b)
+function ni.unit.can_attack(target_a, target_b)
    return UnitCanAttack(target_a, target_b)
 end
