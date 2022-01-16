@@ -125,22 +125,24 @@ do
    end
 end
 
-----------
--- @local
--- Gets the key string from key code
--- 
--- Returns:
--- - **key** `string`
--- @param key number
+--[[--
+@local
+Gets the key string from key code
+
+Returns:
+- **key** `string`
+@param key number
+]]
 local function key_to_string(key)
    return keys[key]
 end
 
-----------
--- @local
--- Sets the input state to true for down, or false for up
--- @param key
--- @param down
+--[[--
+@local
+Sets the input state to true for down, or false for up
+@param key
+@param down
+]]
 local function update_input_state(key, down)
    -- We only care about tracking the keys listed above for now
    local key_string = key_to_string(key)
@@ -152,14 +154,15 @@ end
 --- registered input callbacks
 local registered_callbacks = {}
 
-----------
--- @local
--- Main callback registered to the backend for input processing
--- 
--- Returns:
--- - **block_input** `boolean`
--- @param state number
--- @param key number
+--[[--
+@local
+Main callback registered to the backend for input processing
+
+Returns:
+- **block_input** `boolean`
+@param state number
+@param key number
+]]
 local function input_callback(state, key)
    -- State of 0x100 and 0x104 is for down on keys or system keys
    if state == 0x100 or state == 0x104 then
@@ -179,12 +182,13 @@ local function input_callback(state, key)
    return block_input
 end
 
-----------
--- Gets if a virtual key is down or up
--- 
--- Returns:
--- - **down** `boolean`
--- @param key string
+--[[--
+Gets if a virtual key is down or up
+
+Returns:
+- **down** `boolean`
+@param key string
+]]
 function ni.input.key_down(key)
    if not contains_key(input_down, key) then
       return false
@@ -192,13 +196,14 @@ function ni.input.key_down(key)
    return input_down[key]
 end
 
-----------
--- Registers a callback to the input main callback
--- 
--- Returns:
--- - **success** `boolean`
--- @param title string
--- @param func function
+--[[--
+Registers a callback to the input main callback
+
+Returns:
+- **success** `boolean`
+@param title string
+@param func function
+]]
 function ni.input.register_callback(title, func)
    if registered_callbacks[title] then
       return false
@@ -207,9 +212,10 @@ function ni.input.register_callback(title, func)
    return true
 end
 
-----------
--- Unregister a callback to from the input main calllback
--- @param title string
+--[[--
+Unregister a callback to from the input main calllback
+@param title string
+]]
 function ni.input.unregister_callback(title)
    registered_callbacks[title] = nil
 end

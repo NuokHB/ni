@@ -7,36 +7,40 @@ ni.utilities = {}
 -- Localization to avoid hooks
 local tinsert = ni.backend.GetFunction("tinsert", "insert")
 
-----------
--- Table keys:
--- - **extension** `string`
--- - **filename** `string`
--- - **stem** `string`
--- - **path** `string`
--- @table entry
+--[[--
+Table keys:
+- **extension** `string`
+- **filename** `string`
+- **stem** `string`
+- **path** `string`
+@table entry
+]]
 
-----------
--- Table keys:
--- - **path** `string`
--- - **is_directory** `boolean`
--- @table content
+--[[--
+Table keys:
+- **path** `string`
+- **is_directory** `boolean`
+@table content
+]]
 
-----------
--- Gets the base path for ni, which is the location the loader resides.
--- 
--- Returns:
--- - **path** `string`
+--[[--
+Gets the base path for ni, which is the location the loader resides.
+
+Returns:
+- **path** `string`
+]]
 function ni.utilities.get_base_path()
    return ni.backend.GetBaseFolder()
 end
 
-----------
--- @local
--- Gets the file extension
--- 
--- Returns:
--- - **extension** `string`
--- @param path string
+--[[--
+@local
+Gets the file extension
+
+Returns:
+- **extension** `string`
+@param path string
+]]
 local function get_extension(path)
    if not path then
       return nil
@@ -44,13 +48,14 @@ local function get_extension(path)
    return path:match("^.+(%..+)$")
 end
 
-----------
--- @local
--- Gets the filename from the path specified.
--- 
--- Returns:
--- - **filename** `string`
--- @param path string
+--[[--
+@local
+Gets the filename from the path specified.
+
+Returns:
+- **filename** `string`
+@param path string
+]]
 local function get_filename(path)
    if not path then
       return nil
@@ -62,13 +67,14 @@ local function get_filename(path)
    return path:sub(start, #path)
 end
 
-----------
--- @local
--- Returns the stem path component. This is the filename without the extension.
--- 
--- Returns:
--- - **stem** `string`
--- @param path string
+--[[--
+@local
+Returns the stem path component. This is the filename without the extension.
+
+Returns:
+- **stem** `string`
+@param path string
+]]
 local function get_stem(path)
    if not path then
       return nil
@@ -80,12 +86,13 @@ local function get_stem(path)
    return filename:match("(.+)%..+$")
 end
 
-----------
--- Split the path into an entry table.
--- 
--- Returns:
--- - [`entry table`](#entry)
--- @param path string
+--[[--
+Split the path into an entry table.
+
+Returns:
+- [`entry table`](#entry)
+@param path string
+]]
 function ni.utilities.split_path(path)
    return {
       filename = get_filename(path),
@@ -95,15 +102,16 @@ function ni.utilities.split_path(path)
    }
 end
 
-----------
--- This function will load the selected file into the lua state.
--- 
--- Returns:
--- - **success** `boolean`
--- - **error** `string`
--- @param path string
--- @param[opt] chunk string
--- @param[opt] parser func
+--[[--
+This function will load the selected file into the lua state.
+
+Returns:
+- **success** `boolean`
+- **error** `string`
+@param path string
+@param[opt] chunk string
+@param[opt] parser func
+]]
 function ni.utilities.load_file(path, chunk, parser)
    return ni.backend.ParseFile(path, function(content)
       if not parser or parser(content) then
@@ -119,25 +127,27 @@ function ni.utilities.load_file(path, chunk, parser)
    end)
 end
 
-----------
--- @local
--- Checks if an entry is valid
--- 
--- Returns:
--- - **valid** `boolean`
--- @param entry @{entry}
+--[[--
+@local
+Checks if an entry is valid
+
+Returns:
+- **valid** `boolean`
+@param entry @{entry}
+]]
 local function valid_entry(entry)
    return entry and entry.path and entry.filename
 end
 
-----------
--- Loads the entry into the lua state
--- 
--- Returns:
--- - **success** `boolean`
--- - **error** `string`
--- @param entry @{entry}
--- @param[opt] parser function
+--[[--
+Loads the entry into the lua state
+
+Returns:
+- **success** `boolean`
+- **error** `string`
+@param entry @{entry}
+@param[opt] parser function
+]]
 function ni.utilities.load_entry(entry, parser)
    if not valid_entry(entry) then
       return false, "Invalid entry table"
@@ -145,24 +155,26 @@ function ni.utilities.load_entry(entry, parser)
    return ni.utilities.load_file(entry.path, entry.filename, parser)
 end
 
-----------
--- Gets contents from directory
--- 
--- Returns:
--- - **content** `content table`
--- - **error** `string`
--- @param directory string
+--[[--
+Gets contents from directory
+
+Returns:
+- **content** `content table`
+- **error** `string`
+@param directory string
+]]
 function ni.utilities.get_contents(directory)
    return ni.backend.GetDirectoryContents(directory)
 end
 
-----------
--- Gets the folders within a directory
--- 
--- Returns:
--- - **folders** `string table`
--- - **error** `string`
--- @param directory string
+--[[--
+Gets the folders within a directory
+
+Returns:
+- **folders** `string table`
+- **error** `string`
+@param directory string
+]]
 function ni.utilities.get_folders(directory)
    local contents, error = ni.utilities.get_contents(directory)
    if error then
@@ -180,12 +192,13 @@ function ni.utilities.get_folders(directory)
    return folders
 end
 
-----------
--- Gets entries from directory
--- 
--- Returns:
--- - **entries** `entry table`
--- @param directory string
+--[[--
+Gets entries from directory
+
+Returns:
+- **entries** `entry table`
+@param directory string
+]]
 function ni.utilities.get_entries(directory)
    local contents, error = ni.utilities.get_contents(directory)
    if error then
@@ -206,24 +219,26 @@ function ni.utilities.get_entries(directory)
    return entries
 end
 
-----------
--- Checks if a table contains a key.
--- 
--- Returns:
--- - **contains** `boolean`
--- @param table table
--- @param key
+--[[--
+Checks if a table contains a key.
+
+Returns:
+- **contains** `boolean`
+@param table table
+@param key
+]]
 function ni.utilities.table_contains_key(table, key)
    return table[key] ~= nil
 end
 
-----------
--- Checks if a table contains a value.
--- 
--- Returns:
--- - **contains** `boolean`
--- @param table table
--- @param value
+--[[--
+Checks if a table contains a value.
+
+Returns:
+- **contains** `boolean`
+@param table table
+@param value
+]]
 function ni.utilities.table_contains_value(table, value)
    for _, v in pairs(table) do
       if v == value then
