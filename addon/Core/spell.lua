@@ -15,7 +15,7 @@ local IsPlayerSpell = ni.core.get_function("IsPlayerSpell")
 Casts a spell by name or id
  
 Parameters:
-- **spell** `name|id`
+- **spell** `string|number`
 - **target** `token|guid`
 @param spell
 @param[opt] target string
@@ -44,7 +44,7 @@ end
 Gets a spells cooldown
  
 Parameters:
-- **spell** `name|id`
+- **spell** `string|number`
  
 Returns:
 - **duration** `number`
@@ -80,7 +80,7 @@ end
 Gets a spells cast time
  
 Parameters:
-- **spell** `name|id`
+- **spell** `string|number`
  
 Returns:
 - **duration** `number`
@@ -94,7 +94,7 @@ end
 Returns true if the spell is instant cast
  
 Parameters:
-- **spell** `name|id`
+- **spell** `string|number`
  
 Returns:
 - **isinstant** `boolean`
@@ -108,7 +108,7 @@ end
 Checks if a spell is valid to be cast on a unit
  
 Parameters:
-- **spell** `name|id`
+- **spell** `string|number`
 - **target** `token|guid`
 - **is_facing** `boolean`
 - **line_of_sight** `boolean`
