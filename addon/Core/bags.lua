@@ -1,3 +1,5 @@
+-------------------
+-- bag functions for ni
 local ni = ...
 
 ni.bags = {}
@@ -25,7 +27,7 @@ Gets the item count for an item
  
 Parameters:
 - **item** `number or string`
-
+ 
 Returns:
 - **count** `number`
 @param item number 
@@ -71,7 +73,7 @@ Parameters:
 - **item** `number`
  
 Returns:
--- **cooldown** `number`
+- **cooldown** `number`
 @param item number
 ]]
 function ni.bags.cooldown(item)
