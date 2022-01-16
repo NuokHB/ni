@@ -6,7 +6,7 @@ ni.client = {}
 
 --[[--
 Raise a lua error with the specified message.
-
+ 
 Parameters:
 - **message** `string`
 @param message string
@@ -17,14 +17,14 @@ end
 
 --[[--
 Gets the client C function for the specified string.
-
+ 
 Parameters:
 - **name** `string`
 - **binary_name** `string`
-
+ 
 Returns:
 - **function** `function`
-
+ 
 Notes:
 Not all binary functions are registered with the function string passed.
 Some may require the binary name to be specified. I.E. tinsert in the binary
@@ -38,10 +38,10 @@ end
 
 --[[--
 Registers a frame to be protected from enumeration with the games Lua.
-
+ 
 Parameters:
 - **frame** `frame`
-
+ 
 Returns:
 - **success** `boolean`
 @param frame
@@ -52,11 +52,11 @@ end
 
 --[[--
 Calls a function with the game taint triggering.
-
+ 
 Parameters:
 - **name** `string`
 - **...** `functions args`
-
+ 
 Returns:
 - **...** `functions returns`
 @param name string

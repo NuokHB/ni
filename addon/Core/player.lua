@@ -10,10 +10,10 @@ local something
 
 --[[--
 Moves the player to the token or coordinates.
-
+ 
 Parameters:
 - **target** `token|guid`
-
+ 
 Or
 - **x** `number`
 - **y** `number`
@@ -26,10 +26,10 @@ end
 
 --[[--
 Clicks at the location of the target, or coordinates.
-
+ 
 Parameters:
 - **target** `token|guid`
-
+ 
 Or
 - **x** `number`
 - **y** `number`
@@ -42,7 +42,7 @@ end
 
 --[[--
 Gets the current map information for the player.
-
+ 
 Returns:
 - **map_id** `number`
 - **tile_x** `number`
@@ -54,7 +54,7 @@ end
 
 --[[--
 Turns the player to a target, or away from it.
-
+ 
 Parameters:
 - **target** `token|guid`
 - **away** `boolean`
@@ -74,7 +74,7 @@ end
 
 --[[--
 Sets the player creature tracking value.
-
+ 
 Parameters:
 - **value** `number`
 @param value
@@ -85,7 +85,7 @@ end
 
 --[[--
 Sets the player resource tracking value.
-
+ 
 Parameters:
 - **value** `number`
 @param value

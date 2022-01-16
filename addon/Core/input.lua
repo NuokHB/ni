@@ -128,7 +128,7 @@ end
 --[[--
 @local
 Gets the key string from key code
-
+ 
 Returns:
 - **key** `string`
 @param key number
@@ -157,7 +157,7 @@ local registered_callbacks = {}
 --[[--
 @local
 Main callback registered to the backend for input processing
-
+ 
 Returns:
 - **block_input** `boolean`
 @param state number
@@ -184,7 +184,7 @@ end
 
 --[[--
 Gets if a virtual key is down or up
-
+ 
 Returns:
 - **down** `boolean`
 @param key string
@@ -198,7 +198,7 @@ end
 
 --[[--
 Registers a callback to the input main callback
-
+ 
 Returns:
 - **success** `boolean`
 @param title string

@@ -14,7 +14,7 @@ Table keys:
 
 --[[--
 Gets a path from start to end point with navigation mesh.
-
+ 
 Parameters:
 - **x1** `number`
 - **y1** `number`
@@ -24,7 +24,7 @@ Parameters:
 - **z2** `number`
 - **includes** `number`
 - **excludes** `number`
-
+ 
 Returns:
 - **path** `xyz table`
 @param x1 number

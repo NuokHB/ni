@@ -6,13 +6,13 @@ ni.world = {}
 
 --[[--
 Calculates the distance between two 2D points
-
+ 
 Parameters:
 - **x1** `number`
 - **y1** `number`
 - **x2** `number`
 - **y2** `number`
-
+ 
 Returns:
 - **distance** `number`
 @param x1 number
@@ -26,7 +26,7 @@ end
 
 --[[--
 Calculates the distance between two 3D points
-
+ 
 Parameters:
 - **x1** `number`
 - **y1** `number`
@@ -34,7 +34,7 @@ Parameters:
 - **x2** `number`
 - **y2** `number`
 - **z2** `number`
-
+ 
 Returns:
 - **distance** `number`
 @param x1 number
@@ -50,7 +50,7 @@ end
 
 --[[--
 Performs a trace line between points to check if line of sight is present.
-
+ 
 Parameters:
 - **x1** `number`
 - **y1** `number`
@@ -59,7 +59,7 @@ Parameters:
 - **y2** `number`
 - **z2** `number`
 - **hit_flags** `number`
-
+ 
 Returns:
 - **success** `boolean`
 - **intersection_x** `number`

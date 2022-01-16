@@ -16,10 +16,10 @@ Table keys:
 
 --[[--
 Gets the auras on the specified target.
-
+ 
 Parameters:
 - **target** `token|guid`
-
+ 
 Returns:
 - **auras** `aura table`
 @param target string
@@ -30,7 +30,7 @@ end
 
 --[[--
 Gets the best location that meets the criteria passed.
-
+ 
 Parameters:
 - **target** `token|guid`
 - **distance** `number`
@@ -40,7 +40,7 @@ Parameters:
 - **friendly** `boolean`
 - **height_max** `number`
 - **max_distance** `number`
-
+ 
 Returns:
 - **x** `number`
 - **y** `number`
@@ -60,7 +60,7 @@ end
 
 --[[--
 Wrapper for best_location for friendly target
-
+ 
 Parameters:
 - **target** `token|guid`
 - **distance** `number`
@@ -69,7 +69,7 @@ Parameters:
 - **callback** `function`
 - **height_max** `number`
 - **max_distance** `number`
-
+ 
 Returns:
 - **x** `number`
 - **y** `number`
@@ -88,7 +88,7 @@ end
 
 --[[--
 Wrapper for best_location for enemy target
-
+ 
 Parameters:
 - **target** `token|guid`
 - **distance** `number`
@@ -97,7 +97,7 @@ Parameters:
 - **callback** `function`
 - **height_max** `number`
 - **max_distance** `number`
-
+ 
 Returns:
 - **x** `number`
 - **y** `number`
@@ -116,10 +116,10 @@ end
 
 --[[--
 Gets the combat reach for the specified target.
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **combat_reach** `number`
 @param target string
@@ -130,10 +130,10 @@ end
 
 --[[--
 Checks if the unit exists.
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **exists** `boolean`
 @param target string
@@ -144,10 +144,10 @@ end
 
 --[[--
 Gets the information of the specified target
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **x** `number`
 - **y** `number`
@@ -163,10 +163,10 @@ end
 
 --[[--
 Gets the location of the specified target.
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **x** `number`
 - **y** `number`
@@ -179,12 +179,12 @@ end
 
 --[[--
 Checks if one target is facing another.
-
+ 
 Parameters:
 - **target_a** `string`
 - **target_b** `string`
 - **field_of_view** `number`
-
+ 
 Returns:
 - **facing** `boolean`
 @param target_a string
@@ -197,11 +197,11 @@ end
 
 --[[--
 Checks if one target is behind another.
-
+ 
 Parameters:
 - **target_a** `string`
 - **target_b** `string`
-
+ 
 Returns:
 - **behind** `boolean`
 @param target_a string
@@ -213,11 +213,11 @@ end
 
 --[[--
 Checks if a target has a specific aura id.
-
+ 
 Parameters:
 - **target** `string`
 - **id** `number`
-
+ 
 Returns:
 - **has_aura** `boolean`
 @param target string
@@ -229,11 +229,11 @@ end
 
 --[[--
 Gets the distance between two targets.
-
+ 
 Parameters:
 - **target_a** `string`
 - **target_b** `string`
-
+ 
 Returns:
 - **distance** `number`
 @param target_a string
@@ -245,10 +245,10 @@ end
 
 --[[--
 Gets the GUID of the units creator.
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **guid** `string`
 @param target string
@@ -259,13 +259,13 @@ end
 
 --[[--
 Gets the units dynamic flags.
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **flags** `boolean`
-
+ 
 Notes:
 This function will return 9 different values which are all booleans for the
 dynamic flags 1 - 9. (Dynamic flag titles may be different for expansions)
@@ -278,13 +278,13 @@ end
 
 --[[--
 Gets the units flags.
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **flags** `boolean`
-
+ 
 Notes:
 This function will return 32 different values which are all booleans for the
 dynamic flags 1 - 32. (Flag titles may be different for expansions)
@@ -297,10 +297,10 @@ end
 
 --[[--
 Gets the units creature type.
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **creature_type** `number`
 @param target string
@@ -311,12 +311,12 @@ end
 
 --[[--
 Checks if two units are in line of sight of each other.
-
+ 
 Parameters:
 - **target_a** `string`
 - **target_b** `string`
 - **hit_flags** `number`
-
+ 
 Returns:
 - **success** `boolean`
 - **intersection_x** `number`
@@ -332,10 +332,10 @@ end
 
 --[[--
 Gets the units pointer
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **pointer** `number`
 - **hex_pointer** `string`
@@ -347,10 +347,10 @@ end
 
 --[[--
 Gets the units transport guid
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **guid** `string`
 @param target string
@@ -361,10 +361,10 @@ end
 
 --[[--
 Gets the units facing in radians
-
+ 
 Parameters:
 - **target** `string`
-
+ 
 Returns:
 - **direction** `number`
 @param target string
@@ -375,11 +375,11 @@ end
 
 --[[--
 Gets the unit descriptor value for the given index
-
+ 
 Parameters:
 - **target** `string`
 - **index** `number`
-
+ 
 Returns:
 - **descriptor** `number`
 @param target string

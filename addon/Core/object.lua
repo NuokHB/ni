@@ -6,10 +6,10 @@ ni.object = {}
 
 --[[--
 Checks if the given object is within game memory
-
+ 
 Parameters:
 - **object** `string`
-
+ 
 Returns:
 - **exists** `boolean`
 @param object string
@@ -20,10 +20,10 @@ end
 
 --[[--
 Gets the object location information
-
+ 
 Parameters:
 - **token** `string`
-
+ 
 Returns:
 - **x** `number`
 - **y** `number`
@@ -39,10 +39,10 @@ end
 
 --[[--
 Gets the GUID of the objects creator.
-
+ 
 Parameters:
 - **object** `string`
-
+ 
 Returns:
 - **guid** `string`
 @param object string
@@ -53,10 +53,10 @@ end
 
 --[[--
 Gets the objects pointer
-
+ 
 Parameters:
 - **object** `string`
-
+ 
 Returns:
 - **pointer** `number`
 - **hex_pointer** `string`
@@ -68,10 +68,10 @@ end
 
 --[[--
 Gets the objects transport guid
-
+ 
 Parameters:
 - **object** `string`
-
+ 
 Returns:
 - **guid** `string`
 @param object string
@@ -82,11 +82,11 @@ end
 
 --[[--
 Gets the object descriptor value for the given index
-
+ 
 Parameters:
 - **object** `string`
 - **index** `number`
-
+ 
 Returns:
 - **descriptor** `number`
 @param object string
