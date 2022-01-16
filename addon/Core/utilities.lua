@@ -25,7 +25,7 @@ Table keys:
 
 --[[--
 Gets the base path for ni, which is the location the loader resides.
-
+ 
 Returns:
 - **path** `string`
 ]]
@@ -36,7 +36,7 @@ end
 --[[--
 @local
 Gets the file extension
-
+ 
 Returns:
 - **extension** `string`
 @param path string
@@ -51,7 +51,7 @@ end
 --[[--
 @local
 Gets the filename from the path specified.
-
+ 
 Returns:
 - **filename** `string`
 @param path string
@@ -70,7 +70,7 @@ end
 --[[--
 @local
 Returns the stem path component. This is the filename without the extension.
-
+ 
 Returns:
 - **stem** `string`
 @param path string
@@ -88,7 +88,7 @@ end
 
 --[[--
 Split the path into an entry table.
-
+ 
 Returns:
 - [`entry table`](#entry)
 @param path string
@@ -104,7 +104,7 @@ end
 
 --[[--
 This function will load the selected file into the lua state.
-
+ 
 Returns:
 - **success** `boolean`
 - **error** `string`
@@ -130,7 +130,7 @@ end
 --[[--
 @local
 Checks if an entry is valid
-
+ 
 Returns:
 - **valid** `boolean`
 @param entry @{entry}
@@ -141,7 +141,7 @@ end
 
 --[[--
 Loads the entry into the lua state
-
+ 
 Returns:
 - **success** `boolean`
 - **error** `string`
@@ -157,7 +157,7 @@ end
 
 --[[--
 Gets contents from directory
-
+ 
 Returns:
 - **content** `content table`
 - **error** `string`
@@ -169,7 +169,7 @@ end
 
 --[[--
 Gets the folders within a directory
-
+ 
 Returns:
 - **folders** `string table`
 - **error** `string`
@@ -194,7 +194,7 @@ end
 
 --[[--
 Gets entries from directory
-
+ 
 Returns:
 - **entries** `entry table`
 @param directory string
@@ -221,7 +221,7 @@ end
 
 --[[--
 Checks if a table contains a key.
-
+ 
 Returns:
 - **contains** `boolean`
 @param table table
@@ -233,7 +233,7 @@ end
 
 --[[--
 Checks if a table contains a value.
-
+ 
 Returns:
 - **contains** `boolean`
 @param table table
