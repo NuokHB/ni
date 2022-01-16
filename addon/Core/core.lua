@@ -18,6 +18,11 @@ if not ni.loaded then
    -- As long as the files isn't inserted/removed it'll stay in this order
    local core_files = {
       "input.lua",
+      "client.lua",
+      "world.lua",
+      "navigation.lua",
+      "object.lua",
+      "unit.lua",
       "player.lua"
    }
 
@@ -30,6 +35,6 @@ if not ni.loaded then
    end
 
    -- TODO: continue loading files
-
+   test = ni
    ni.loaded = true
 end
