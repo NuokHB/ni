@@ -10,6 +10,8 @@ local GetSpellInfo = ni.client.get_function("GetSpellInfo")
 local IsSpellInRange = ni.client.get_function("IsSpellInRange")
 local IsSpellKnown = ni.client.get_function("IsSpellKnown")
 local IsPlayerSpell = ni.client.get_function("IsPlayerSpell")
+local IsUsableSpell = ni.client.get_function("IsUsableSpell")
+local IsCurrentSpell = ni.client.get_function("IsCurrentSpell")
 local type = ni.client.get_function("type")
 local build = ni.client.build()
 
@@ -204,6 +206,36 @@ function ni.spell.is_instant(spell)
 end
 
 --[[--
+Determines whether a spell can be used by the player character
+ 
+Parameters:
+- **spell** `string or number`
+ 
+Returns:
+- **usable** `boolean`
+- **no_mana** `boolean`
+@param spell
+]]
+function ni.spell.is_usable_spell(spell)
+   return IsUsableSpell(spell)
+end
+
+--[[--
+Determines if a spell is currently being cast or qued by the player
+ 
+Parameters:
+- **spell** `string or number`
+ 
+Returns:
+- **usable** `boolean`
+- **no_mana** `boolean`
+@param spell
+]]
+function ni.spell.is_current_spell(spell)
+   return IsCurrentSpell(spell)
+end
+
+--[[--
 Checks if a spell is valid to be cast on a unit
  
 Parameters:
@@ -249,10 +281,10 @@ function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
    if ni.player.power(power_type) < cost then
       return false
    end
-   if facing and not ni.player.facing(target) then
+   if is_facing and not ni.player.facing(target) then
       return false
    end
-   if los and not ni.player.los(target) then
+   if line_of_sight and not ni.player.los(target) then
       return false
    end
    return true
