@@ -30,6 +30,7 @@ local GetTime = ni.client.get_function("GetTime")
 local GetBuildInfo = ni.client.get_function("GetBuildInfo")
 local GetNetStats = ni.client.get_function("GetNetStats")
 local select = ni.client.get_function("select")
+local tonumber = ni.client.get_function("tonumber")
 
 --[[--
 Gets the current client build information
@@ -176,7 +177,7 @@ Returns:
 ]]
 function ni.client.latency()
    local _, _, home_latency, world_latency = ni.client.get_net_stats()
-   if build == "12340" then
+   if build == 12340 then
       return home_latency
    else
       return world_latency

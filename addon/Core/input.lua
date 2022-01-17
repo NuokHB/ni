@@ -245,9 +245,9 @@ Parameters:
 @param title string
 ]]
 function ni.input.unregister_callback(title)
-   for key, handler in pairs(input_handlers) do
-      if handler.name == title then
-         tremove(input_handlers, key)
+   for i = 1, #input_handlers do
+      if input_handlers[i].name == title then
+         tremove(input_handlers, i)
          return
       end
    end

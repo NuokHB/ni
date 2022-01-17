@@ -10,6 +10,7 @@ local GetSpellInfo = ni.client.get_function("GetSpellInfo")
 local IsSpellInRange = ni.client.get_function("IsSpellInRange")
 local IsSpellKnown = ni.client.get_function("IsSpellKnown")
 local IsPlayerSpell = ni.client.get_function("IsPlayerSpell")
+local type = ni.client.get_function("type")
 local build = ni.client.build()
 
 --[[--
@@ -202,14 +203,12 @@ function ni.spell.is_instant(spell)
    return cast_time == 0
 end
 
--- TODO: Re visit to clean up for easier readability.
--- Currently does not conform to the style guidelines.
 --[[--
 Checks if a spell is valid to be cast on a unit
  
 Parameters:
-- **spell** `string|number`
-- **target** `token|guid`
+- **spell** `string or number`
+- **target** `string`
 - **is_facing** `boolean`
 - **line_of_sight** `boolean`
 - **is_friendly** `boolean`
