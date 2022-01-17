@@ -29,6 +29,7 @@ if not ni.loaded then
    local core_files = {
       "utilities.lua",
       "input.lua",
+      "events.lua",
       "world.lua",
       "navigation.lua",
       "item.lua",
@@ -37,8 +38,7 @@ if not ni.loaded then
       "power.lua",
       "unit.lua",
       "player.lua",
-      "spell.lua",
-      "events.lua"
+      "spell.lua"
    }
 
    -- Load each of the above files here
