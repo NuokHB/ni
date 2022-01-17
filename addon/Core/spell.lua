@@ -216,7 +216,7 @@ Returns:
 - **no_mana** `boolean`
 @param spell
 ]]
-function ni.spell.is_usable_spell(spell)
+function ni.spell.is_usable(spell)
    return IsUsableSpell(spell)
 end
 
@@ -231,7 +231,7 @@ Returns:
 - **no_mana** `boolean`
 @param spell
 ]]
-function ni.spell.is_current_spell(spell)
+function ni.spell.is_current(spell)
    return IsCurrentSpell(spell)
 end
 
