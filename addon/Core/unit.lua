@@ -14,6 +14,8 @@ local UnitCastingInfo = ni.client.get_function("UnitCastingInfo")
 local UnitChannelInfo = ni.client.get_function("UnitChannelInfo")
 local UnitIsDeadOrGhost = ni.client.get_function("UnitIsDeadOrGhost")
 local UnitCanAttack = ni.client.get_function("UnitCanAttack")
+local UnitBuff = ni.client.get_function("UnitBuff")
+local UnitDebuff = ni.client.get_function("UnitDebuff")
 
 --[[--
 Table keys:
@@ -797,4 +799,111 @@ Returns:
 ]]
 function ni.unit.power_deficit(target, power_type)
    return ni.power.deficit(target, power_type)
+end
+
+local function aura_handler(target, aura, filter, func)
+   local aura_name = aura
+   if type(aura) == "number" then
+      aura_name = ni.spell.info(aura)
+   end
+   if not filter then
+      return func(target, aura_name)
+   else
+      if strfind(strupper(filter), "EXACT") then
+         local caster = strfind(strupper(filter), "PLAYER")
+         local i = 1
+         local name, _, _, _, _, _, _, aura_caster, _, _, aura_id = func(t, i)
+         while name do
+            if not caster or aura_caster == "player" then
+               if aura_id and aura_id == aura then
+                  return func(t, i)
+               end
+            end
+            i = i + 1
+            name, _, _, _, _, _, _, aura_caster, _, _, aura_id = func(t, i)
+         end
+      else
+         return func(target, aura_name, nil, filter)
+      end
+   end
+end
+
+--[[--
+Gets information about the buff on a unit
+ 
+Parameters:
+- **target** `string`
+- **buff** `number or string`
+- **filter** `string`
+ 
+Returns:
+- **...**
+ 
+Notes:
+See the returns for UnitBuff as this is a wrapper for that.
+@param target string
+@param buff
+@param[opt] filter
+]]
+function ni.unit.buff(target, buff, filter)
+   return aura_handler(target, buff, filter, UnitBuff)
+end
+
+--[[--
+Gets information about the debuff on a unit
+ 
+Parameters:
+- **target** `string`
+- **debuff** `number or string`
+- **filter** `string`
+ 
+Returns:
+- **...**
+ 
+Notes:
+See the returns for UnitDebuff as this is a wrapper for that.
+@param target string
+@param debuff
+@param[opt] filter
+]]
+function ni.unit.debuff(target, debuff, filter)
+   return aura_handler(target, debuff, filter, UnitDebuff)
+end
+
+--[[--
+Gets information about the buff on a unit by specific buff index.
+ 
+Parameters:
+- **target** `string`
+- **index** `number`
+ 
+Returns:
+- **...**
+ 
+Notes:
+See the returns for UnitBuff as this is a wrapper for that.
+@param target string
+@param index number
+]]
+function ni.unit.index_buff(target, index)
+   return UnitBuff(target, index)
+end
+
+--[[--
+Gets information about the debuff on a unit by specific debuff index
+ 
+Parameters:
+- **target** `string`
+- **index** `number`
+ 
+Returns:
+- **...**
+ 
+Notes:
+See the returns for UnitDebuff as this is a wrapper for that.
+@param target string
+@param index number
+]]
+function ni.unit.index_debuff(target, index)
+   return UnitDebuff(target, index)
 end

@@ -6,6 +6,8 @@ ni.input = {}
 
 -- Localization to avoid hooks
 local contains_key = ni.utilities.table_contains_key
+local tinsert = ni.client.get_function("tinsert", "insert")
+local tremove = ni.client.get_function("tremove", "remove")
 
 --- virtual key to string table
 local keys = {
@@ -129,6 +131,9 @@ end
 @local
 Gets the key string from key code
  
+Parameters:
+- **key** `number`
+ 
 Returns:
 - **key** `string`
 @param key number
@@ -140,6 +145,10 @@ end
 --[[--
 @local
 Sets the input state to true for down, or false for up
+ 
+Parameters:
+- **key** `number`
+- **down** `boolean`
 @param key
 @param down
 ]]
@@ -151,19 +160,23 @@ local function update_input_state(key, down)
    end
 end
 
---- registered input callbacks
-local registered_callbacks = {}
+--- registered input handlers
+local input_handlers = {}
 
 --[[--
 @local
 Main callback registered to the backend for input processing
+ 
+Parameters:
+- **state** `number`
+- **key** `number`
  
 Returns:
 - **block_input** `boolean`
 @param state number
 @param key number
 ]]
-local function input_callback(state, key)
+local function input_handler(state, key)
    -- State of 0x100 and 0x104 is for down on keys or system keys
    if state == 0x100 or state == 0x104 then
       update_input_state(key, true)
@@ -173,8 +186,8 @@ local function input_callback(state, key)
    end
    local block_input = false
    -- Run each of the registered callbacks to see if we should block input
-   for _, callback in pairs(registered_callbacks) do
-      local result = callback(state, key)
+   for i = 1, #input_handlers do
+      local result = input_handlers[i].handler(state, key)
       if result and not block_input then
          block_input = result
       end
@@ -184,6 +197,9 @@ end
 
 --[[--
 Gets if a virtual key is down or up
+ 
+Parameters:
+- **key** `string`
  
 Returns:
 - **down** `boolean`
@@ -199,26 +215,43 @@ end
 --[[--
 Registers a callback to the input main callback
  
-Returns:
-- **success** `boolean`
+Parameters:
+- **title** `string`
+- **func** `function`
 @param title string
 @param func function
 ]]
 function ni.input.register_callback(title, func)
-   if registered_callbacks[title] then
-      return false
+   local contains = false
+   for i = 1, #input_handlers do
+      if input_handlers[i].name == title then
+         contains = true
+         break
+      end
    end
-   registered_callbacks[title] = func
-   return true
+   if not contains then
+      tinsert(input_handlers, {
+         name = title,
+         handler = func
+      })
+   end
 end
 
 --[[--
 Unregister a callback to from the input main calllback
+ 
+Parameters:
+- **title** `string`
 @param title string
 ]]
 function ni.input.unregister_callback(title)
-   registered_callbacks[title] = nil
+   for key, handler in pairs(input_handlers) do
+      if handler.name == title then
+         tremove(input_handlers, key)
+         return
+      end
+   end
 end
 
 -- Finish up with registering our callback
-ni.backend.RegisterCallback(input_callback)
+ni.backend.RegisterCallback(input_handler)

@@ -4,10 +4,15 @@ local ni = ...
 if not ni.loaded then
    local base_path = ni.backend.GetBaseFolder()
    local core_path = base_path.."addon\\core\\"
+   local initial_files = {
+      "io.lua",
+      "client.lua"
+   }
 
    -- Load the utilities table for use
-   do
-      local func, err = ni.backend.LoadFile(core_path.."io.lua", "io.lua")
+   for i = 1, #initial_files do
+      local file = initial_files[i]
+      local func, err = ni.backend.LoadFile(core_path..file, file)
       if func then
          func(ni)
       else
@@ -15,19 +20,25 @@ if not ni.loaded then
       end
    end
 
+   -- Setup the main frame for functions used later
+   ni.frame = ni.client.get_function("CreateFrame")("frame", nil, UIParent)
+   ni.frame:RegisterAllEvents()
+   ni.backend.ProtectFrame(ni.frame, UIParent)
+
    -- As long as the files isn't inserted/removed it'll stay in this order
    local core_files = {
       "utilities.lua",
       "input.lua",
-      "client.lua",
       "world.lua",
       "navigation.lua",
-      "bags.lua",
+      "item.lua",
+      "gear.lua",
       "object.lua",
       "power.lua",
       "unit.lua",
       "player.lua",
-      "spell.lua"
+      "spell.lua",
+      "events.lua"
    }
 
    -- Load each of the above files here
@@ -38,6 +49,7 @@ if not ni.loaded then
       end
    end
 
+   ni.events.initialize()
    -- TODO: continue after loading files
 
    ni.loaded = true

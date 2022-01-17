@@ -3,8 +3,8 @@
 local ni = ...
 
 -- Localizations
-local UnitPower = ni.utilities.get_function("UnitPower")
-local UnitPowerMax = ni.utilities.get_function("UnitPowerMax")
+local UnitPower = ni.client.get_function("UnitPower")
+local UnitPowerMax = ni.client.get_function("UnitPowerMax")
 
 ni.power = {}
 

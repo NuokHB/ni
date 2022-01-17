@@ -1,12 +1,29 @@
 -------------------
--- bag functions for ni
+-- Item functions
 local ni = ...
 
-ni.bags = {}
+ni.item = {}
 
+-- Localizations
+local GetItemSpell = ni.client.get_function("GetItemSpell")
 local GetItemCount = ni.client.get_function("GetItemCount")
 local GetItemInfo = ni.client.get_function("GetItemInfo")
 local GetItemCooldown = ni.client.get_function("GetItemCooldown")
+
+--[[--
+Checks if an item has a cast ability
+ 
+Parameters:
+- **item** `number or string`
+ 
+Returns:
+- **spell_name** `string`
+- **spell_id** `number`
+@param item
+]]
+function ni.item.spell(item)
+   return GetItemSpell(item)
+end
 
 --[[--
 Gets the items charges
@@ -18,7 +35,7 @@ Returns:
 - **charges** `number`
 @param item
 ]]
-function ni.bags.charges(item)
+function ni.item.charges(item)
    return GetItemCount(item, false, true)
 end
 
@@ -32,7 +49,7 @@ Returns:
 - **count** `number`
 @param item number 
 ]]
-function ni.bags.count(item)
+function ni.item.count(item)
    return GetItemCount(item, false, false)
 end
 
@@ -46,8 +63,8 @@ Returns:
 - **has_item** `boolean`
 @param item number
 ]]
-function ni.bags.has(item)
-   return ni.bags.count(item) > 0
+function ni.item.is_present(item)
+   return ni.item.count(item) > 0
 end
 
 --[[--
@@ -59,7 +76,7 @@ Parameters:
 @param item
 @param[opt] target string
 ]]
-function ni.bags.use(item, target)
+function ni.item.use(item, target)
    if type(item) == "number" then
       item = GetItemInfo(item)
    end
@@ -67,7 +84,23 @@ function ni.bags.use(item, target)
 end
 
 --[[--
-Gets the cooldown time of an item
+Gets the cooldown information of an item
+ 
+Parameters:
+- **item** `number`
+ 
+Returns:
+- **start_time** `number`
+- **duration** `number`
+- **enabled** `number`
+@param item number
+]]
+function ni.item.cooldown(item)
+   return GetItemCooldown(item)
+end
+
+--[[--
+Gets the cooldown time remaining of an item
  
 Parameters:
 - **item** `number`
@@ -76,8 +109,8 @@ Returns:
 - **cooldown** `number`
 @param item number
 ]]
-function ni.bags.cooldown(item)
-   local start, duration, enabled = GetItemCooldown(item)
+function ni.item.cooldown_remaining(item)
+   local start, duration, enabled = ni.item.cooldown(item)
    if start > 0 and duration > 0 then
       return start + duration - ni.client.get_time()
    end
