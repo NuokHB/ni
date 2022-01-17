@@ -2,16 +2,16 @@
 -- Power functions
 local ni = ...
 
--- Localizations to avoid hooks from servers
+-- Localizations
 local UnitPower = ni.utilities.get_function("UnitPower")
 local UnitPowerMax = ni.utilities.get_function("UnitPowerMax")
 
 ni.power = {}
 
 --[[--
-WoW Power types with there respective ingame value
+Power types with there associated numerical value
 ]]
-ni.power.power_types = {
+local power_types = {
    mana = 0,
    rage = 1,
    focus = 2,
@@ -31,81 +31,104 @@ ni.power.power_types = {
 }
 
 --[[--
-Returns the power type value for a target as a percentage
+@local
+Translates the power type string to number
  
 Parameters:
-- **target** `token|guid`
 - **power_type** `string`
  
 Returns:
-- **current power** `number`
-@param target string
+- **value** `number`
 @param power_type string
 ]]
-function ni.power.current_percent(target, power_type)
+local function power_type_to_value(power_type)
    if type(power_type) == "string" then
-      power_type = ni.power.power_types[power_type]
+      return power_types[power_type]
    end
-
-   return 100 * UnitPower(target, power_type) / UnitPowerMax(target, power_type)
+   return power_type
 end
 
 --[[--
-Returns the power type value for a target as raw value
+Returns the power type current value for a target
  
 Parameters:
-- **target** `token|guid`
-- **power_type** `string`
+- **target** `string`
+- **power_type** `string or number`
  
 Returns:
-- **current power** `number`
+- **current** `number`
 @param target string
-@param power_type string
+@param[opt] power_type
 ]]
 function ni.power.current(target, power_type)
-   if type(power_type) == "string" then
-      power_type = ni.power.power_types[power_type]
-   end
-
+   power_type = power_type_to_value(power_type)
    return UnitPower(target, power_type)
 end
 
 --[[--
-Returns the power type maximum value
+Returns the power type max value for a target
  
 Parameters:
-- **target** `token|guid`
-- **power_type** `string`
+- **target** `string`
+- **power_type** `string or number`
  
 Returns:
 - **max** `number`
 @param target string
-@param power_type string
+@param[opt] power_type
 ]]
 function ni.power.max(target, power_type)
-   if type(power_type) == "string" then
-      power_type = ni.power.power_types[power_type]
-   end
-
+   power_type = power_type_to_value(power_type)
    return UnitPowerMax(target, power_type)
+end
+
+--[[--
+Returns the power type value for a target as a percentage
+ 
+Parameters:
+- **target** `string`
+- **power_type** `string or number`
+ 
+Returns:
+- **power_percent** `number`
+@param target string
+@param[opt] power_type
+]]
+function ni.power.percent(target, power_type)
+   power_type = power_type_to_value(power_type)
+   return 100 * ni.power.current(target, power_type) / ni.power.max(target, power_type)
 end
 
 --[[--
 Returns if the power type is at maximum or full
  
 Parameters:
-- **target** `token|guid`
-- **type** `string`
+- **target** `string`
+- **power_type** `string or number`
  
 Returns:
-- **ismax** `boolean`
+- **is_max** `boolean`
 @param target string
-@param type string
+@param[opt] power_type
 ]]
 function ni.power.is_max(target, power_type)
-   if type(power_type) == "string" then
-      power_type = ni.power.power_types[power_type]
-   end
+   power_type = power_type_to_value(power_type)
+   return ni.power.current(target, power_type) == ni.power.max(target, power_type)
+end
 
-   return UnitPower(target, power_type) == UnitPowerMax(target, power_type)
+--[[--
+Returns the deficit from the power of a target
+ 
+Parameters:
+- **target** `string`
+- **power_type** `string or number`
+ 
+Returns:
+- **deficit** `number`
+@param target string
+@param[opt] power_type
+]]
+function ni.power.deficit(target, power_type)
+   power_type = power_type_to_value(power_type)
+   return ni.power.max(target, power_type) - ni.power.current(target, power_type)
 end

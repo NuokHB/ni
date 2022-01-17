@@ -734,3 +734,67 @@ Returns:
 function ni.unit.can_attack(target_a, target_b)
    return UnitCanAttack(target_a, target_b)
 end
+
+--[[--
+Gets the current power value for a unit
+ 
+Parmeters:
+- **target** `string`
+- **power_type** `string or number`
+ 
+Returns:
+- **current**
+@param target string
+@param[opt] power_type
+]]
+function ni.unit.power(target, power_type)
+   return ni.power.current(target, power_type)
+end
+
+--[[--
+Gets the max power value for a unit
+ 
+Parameters:
+- **target** `string`
+- **power_type** `string or number`
+ 
+Returns:
+- **max**
+@param target string
+@param[opt] power_type
+]]
+function ni.unit.power_max(target, power_type)
+   return ni.power.max(target, power_type)
+end
+
+--[[--
+Gets the power percentage for a unit
+ 
+Parameters:
+- **target** `string`
+- **power_type** `string or number`
+ 
+Returns:
+- **percent**
+@param target string
+@param[opt] power_type
+]]
+function ni.unit.power_percent(target, power_type)
+   return ni.power.percent(target, power_type)
+end
+
+--[[--
+Gets the power deficit for a unit
+ 
+Parameters:
+- **target** `string`
+- **power_type** `string or number`
+ 
+Returns:
+- **deficit** `number`
+@param target
+@param[opt] power_type
+]]
+function ni.unit.power_deficit(target, power_type)
+   return ni.power.deficit(target, power_type)
+end

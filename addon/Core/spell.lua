@@ -10,6 +10,7 @@ local GetSpellInfo = ni.client.get_function("GetSpellInfo")
 local IsSpellInRange = ni.client.get_function("IsSpellInRange")
 local IsSpellKnown = ni.client.get_function("IsSpellKnown")
 local IsPlayerSpell = ni.client.get_function("IsPlayerSpell")
+local build = ni.client.build()
 
 --[[--
 Gets the spell information
@@ -26,6 +27,27 @@ Wrapper for GetSpellInfo. See that for appropriate documentation.
 ]]
 function ni.spell.info(spell)
    return GetSpellInfo(spell)
+end
+
+--[[--
+Checks if spell is in range to target
+ 
+Parameters:
+- **spell** `string or number`
+- **target** `string`
+ 
+Returns:
+- **in_range** `boolean`
+]]
+function ni.spell.in_range(spell, target)
+   if type(spell) == "number" then
+      spell = ni.spell.info(spell)
+   end
+   local in_range = IsSpellInRange(spell, target)
+   if not in_range then
+      return false
+   end
+   return in_range == 1
 end
 
 --[[--
@@ -55,6 +77,28 @@ Parameters:
 ]]
 function ni.spell.id(name)
    return ni.backend.GetSpellId(name)
+end
+
+--[[--
+Check if the spell is known
+ 
+Parameters:
+- **spell** `string or number`
+- **pet** `boolean`
+ 
+Returns:
+- **known** `boolean`
+@param spell number
+@param[opt] pet boolean
+]]
+function ni.spell.known(spell, pet)
+   if type(spell) == "string" then
+      spell = ni.spell.id(spell)
+   end
+   if build >= 50400 and not pet then
+      return IsPlayerSpell(spell)
+   end
+   return IsSpellKnown(spell, pet)
 end
 
 --[[--
@@ -179,27 +223,38 @@ Returns:
 @param[opt] is_friendly boolean
 ]]
 function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
-   is_friendly = true and is_friendly or false
-   line_of_sight = true and line_of_sight or false
-   is_facing = true and is_facing or false
-
-   if type(spell) =="string" then
+   if not ni.unit.exists(target) then
+      return false
+   end
+   if not is_friendly then
+      if not ni.player.can_attack(target) then
+         return false
+      end
+      if ni.unit.is_dead_or_ghost(target) then
+         return false
+      end
+   end
+   local name, _, _, cost, _, power_type = ni.spell.info(spell)
+   if type(spell) == "string" then
       spell = ni.spell.id(spell)
       if spell == 0 then
          return false
       end
    end
-
-   local name, _, _, cost, _, powertype = GetSpellInfo(spell)
-
-   if ni.unit.exists(target) and
-         ((not is_facing and (not ni.unit.is_dead_or_ghost(target) and ni.player.can_attack(target) == 1)) or is_facing) and
-         IsSpellInRange(name, target) == 1 and
-         (IsSpellKnown(spell) or (ni.client.build() >= "50400" and IsPlayerSpell(spell))) and
-         ni.power.current_raw("player ",powertype) >= cost and
-         ((is_facing and ni.player.facing(target)) or not is_facing) and
-         ((line_of_sight and ni.player.los(target)) or not line_of_sight)
-    then
-      return true
+   if not ni.spell.in_range(name, target) then
+      return false
    end
+   if not ni.spell.known(spell) then
+      return false
+   end
+   if ni.player.power(power_type) < cost then
+      return false
+   end
+   if facing and not ni.player.facing(target) then
+      return false
+   end
+   if los and not ni.player.los(target) then
+      return false
+   end
+   return true
 end

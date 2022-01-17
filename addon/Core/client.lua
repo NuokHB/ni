@@ -69,7 +69,7 @@ Notes:
 ]]
 function ni.client.build()
    local _, build = ni.client.build_info()
-   return build
+   return tonumber(build)
 end
 
 -- localize the build here for use below
