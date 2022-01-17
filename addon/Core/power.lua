@@ -5,6 +5,7 @@ local ni = ...
 -- Localizations
 local UnitPower = ni.client.get_function("UnitPower")
 local UnitPowerMax = ni.client.get_function("UnitPowerMax")
+local type = ni.client.get_function("type")
 
 ni.power = {}
 

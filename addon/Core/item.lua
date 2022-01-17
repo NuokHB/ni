@@ -9,6 +9,7 @@ local GetItemSpell = ni.client.get_function("GetItemSpell")
 local GetItemCount = ni.client.get_function("GetItemCount")
 local GetItemInfo = ni.client.get_function("GetItemInfo")
 local GetItemCooldown = ni.client.get_function("GetItemCooldown")
+local type = ni.client.get_function("type")
 
 --[[--
 Checks if an item has a cast ability
