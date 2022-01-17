@@ -16,6 +16,7 @@ local UnitIsDeadOrGhost = ni.client.get_function("UnitIsDeadOrGhost")
 local UnitCanAttack = ni.client.get_function("UnitCanAttack")
 local UnitBuff = ni.client.get_function("UnitBuff")
 local UnitDebuff = ni.client.get_function("UnitDebuff")
+local select = ni.client.get_function("select")
 
 --[[--
 Table keys:
@@ -431,6 +432,258 @@ function ni.unit.flags(target)
 end
 
 --[[--
+Checks if the unit can perform action
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **can_perform_action** `boolean`
+@param target string
+]]
+function ni.unit.can_perform_action(target)
+   return select(1, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is not attackable
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_not_attackable** `boolean`
+@param target string
+]]
+function ni.unit.is_not_attackable(target)
+   return select(2, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is player controlled
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_player_controlled** `boolean`
+@param target string
+]]
+function ni.unit.is_player_controlled(target)
+   return select(4, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is preparation
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_preparation** `boolean`
+@param target string
+]]
+function ni.unit.is_preparation(target)
+   return select(6, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is looting
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_looting** `boolean`
+@param target string
+]]
+function ni.unit.is_looting(target)
+   return select(11, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is pet in combat
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_pet_in_combat** `boolean`
+@param target string
+]]
+function ni.unit.is_pet_in_combat(target)
+   return select(12, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is pvp flagged
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_pvp_flagged** `boolean`
+@param target string
+]]
+function ni.unit.is_pvp_flagged(target)
+   return select(13, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is silenced
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_silenced** `boolean`
+@param target string
+]]
+function ni.unit.is_silenced(target)
+   return select(14, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is pacified
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_pacified** `boolean`
+@param target string
+]]
+function ni.unit.is_pacified(target)
+   return select(18, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is stunned
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_stunned** `boolean`
+@param target string
+]]
+function ni.unit.is_stunned(target)
+   return select(19, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is disarmed
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_disarmed** `boolean`
+@param target string
+]]
+function ni.unit.is_disarmed(target)
+   return select(22, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is confused
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_confused** `boolean`
+@param target string
+]]
+function ni.unit.is_confused(target)
+   return select(23, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is fleeing
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_fleeing** `boolean`
+@param target string
+]]
+function ni.unit.is_fleeing(target)
+   return select(24, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is possessed
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_possessed** `boolean`
+@param target string
+]]
+function ni.unit.is_possessed(target)
+   return select(25, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is not selectable
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_not_selectable** `boolean`
+@param target string
+]]
+function ni.unit.is_not_selectable(target)
+   return select(26, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is skinnable
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_skinnable** `boolean`
+@param target string
+]]
+function ni.unit.is_skinnable(target)
+   return select(27, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is mounted
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_mounted** `boolean`
+@param target string
+]]
+function ni.unit.is_mounted(target)
+   return select(28, ni.unit.flags(target)) or false
+end
+
+--[[--
+Checks if the unit is immune
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_immune** `boolean`
+@param target string
+]]
+function ni.unit.is_immune(target)
+   return select(32, ni.unit.flags(target)) or false
+end
+
+--[[--
 Gets the units creature type.
  
 Parameters:
@@ -456,6 +709,34 @@ Returns:
 ]]
 function ni.unit.is_totem(target)
    return ni.unit.type(target) == 11
+end
+
+--[[--
+Checks if the unit is a undead
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_undead** `boolean`
+@param target string
+]]
+function ni.unit.is_undead(target)
+   return ni.unit.type(target) == 6
+end
+
+--[[--
+Checks if the unit is a demon
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_demon** `boolean`
+@param target string
+]]
+function ni.unit.is_demon(target)
+   return ni.unit.type(target) == 3
 end
 
 --[[--
