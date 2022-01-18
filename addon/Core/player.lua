@@ -142,7 +142,7 @@ end
 Gets the current shapeshift form id
  
 Returns:
-- **form_ids** `boolean`
+- **form_id** `number`
 @param id number
 ]]
 function ni.player.shapeshift_form_id()
