@@ -8,6 +8,7 @@ ni.player = {}
 local setmetatable = ni.client.get_function("setmetatable")
 local rawset = ni.client.get_function("rawset")
 local GetGlyphSocketInfo = ni.client.get_function("GetGlyphSocketInfo")
+local GetShapeshiftFormID = ni.client.get_function("GetShapeshiftFormID")
 
 --[[--
 Moves the player to the token or coordinates.
@@ -135,6 +136,17 @@ function ni.player.has_glyph(id)
       end
    end
    return false
+end
+
+--[[--
+Gets the current shapeshift form id
+ 
+Returns:
+- **form_ids** `boolean`
+@param id number
+]]
+function ni.player.shapeshift_form_id()
+    return GetShapeshiftFormID()
 end
 
 -- Set ni.players metatable to allow unit functions.

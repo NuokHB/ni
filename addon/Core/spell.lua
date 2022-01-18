@@ -215,7 +215,7 @@ Returns:
 - **no_mana** `boolean`
 @param spell
 ]]
-function ni.spell.is_usable_spell(spell)
+function ni.spell.is_usable(spell)
    return IsUsableSpell(spell)
 end
 
@@ -226,12 +226,18 @@ Parameters:
 - **spell** `string or number`
  
 Returns:
-- **usable** `boolean`
-- **no_mana** `boolean`
+- **is_current** `boolean`
 @param spell
 ]]
-function ni.spell.is_current_spell(spell)
+function ni.spell.is_current(spell)
    return IsCurrentSpell(spell)
+end
+
+--[[--
+Stops the current spellcasting. Doesn't work for channeled spells.
+]]
+function ni.spell.stop_casting()
+    return ni.client.call_protected("SpellStopCasting")
 end
 
 -- TODO: Re visit to clean up for easier readability.
