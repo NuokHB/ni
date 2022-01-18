@@ -12,6 +12,23 @@ local GetItemCooldown = ni.client.get_function("GetItemCooldown")
 local type = ni.client.get_function("type")
 
 --[[--
+Gets the item information
+ 
+Parameters:
+- **item** `string or number`
+ 
+Returns:
+- **...**
+ 
+Notes:
+Wrapper for GetItemInfo. See that for appropriate documentation.
+@param item
+]]
+function ni.item.info(item)
+   return GetItemInfo(item)
+end
+
+--[[--
 Checks if an item has a cast ability
  
 Parameters:
@@ -79,7 +96,7 @@ Parameters:
 ]]
 function ni.item.use(item, target)
    if type(item) == "number" then
-      item = GetItemInfo(item)
+      item = ni.item.info(item)
    end
    return ni.client.call_protected("UseItemByName", item, target)
 end
