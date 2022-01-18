@@ -34,6 +34,54 @@ function ni.utilities.table_contains_value(table, value)
 end
 
 --[[--
+Implementation of ipairs.
+ 
+Parameters:
+- **table** `table`
+ 
+Returns:
+- **key** `number`
+- **value**
+@param table table
+]]
+function ni.utilities.ipairs(table)
+   local function iterator(table, i)
+      i = i + 1
+      local v = table[i]
+      -- Explicitly checking it's not nil, because it could be false
+      if v ~= nil then 
+         return i, v
+      end
+   end
+   return iterator, table, 0
+end
+
+--[[--
+Implementation of pairs.
+ 
+Parameters:
+- **table** `table`
+ 
+Returns:
+- **key**
+- **value**
+@param table table
+]]
+function ni.utilities.pairs(table)
+   local function iterator(table, k)
+      local v
+      k, v = ni.backend.Next(table, k)
+      -- Explicitly checking it's not nil, because it could be false
+      if v ~= nil then
+         return k, v
+      end
+   end
+   return iterator, table, nil
+end
+
+-- TODO: Objects iterator
+
+--[[--
 Gets the HWID for the current users computer base64 encoded.
  
 Returns:
