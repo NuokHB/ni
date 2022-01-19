@@ -23,7 +23,6 @@ ni.rune.available = function()
 			runes_available = runes_available + 1
 		end
 	end
-
 	return runes_available
 end
 
