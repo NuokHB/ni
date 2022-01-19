@@ -70,40 +70,40 @@ ni.rune.cd = function(rune_type)
 end
 
 --[[--
-Returns the number of death runes on cd
+Returns the numbers of death runes on cd and off cd
  
 Returns:
-- **death_cd** `number`
+- **death_cd** `number`, `number` 
 ]]
 ni.rune.death_cd = function()
 	return ni.rune.cd(4)
 end
 
 --[[--
-Returns the number of frost runes on cd
+Returns the numbers of frost runes on cd and off cd
  
 Returns:
-- **frost_cd** `number`
+- **frost_cd** `number`, `number` 
 ]]
 ni.rune.frost_cd = function()
 	return ni.rune.cd(3)
 end
 
 --[[--
-Returns the number of unholy runes on cd
+Returns the numbers of unholy runes on cd and off cd
  
 Returns:
-- **unholy_cd** `number`
+- **unholy_cd** `number`, `number` 
 ]]
 ni.rune.unholy_cd = function()
 	return ni.rune.cd(2)
 end
 
 --[[--
-Returns the number of blood runes on cd
+Returns the numbers of blood runes on cd and off cd
  
 Returns:
-- **blood_cd** `number`
+- **blood_cd** `number`, `number` 
 ]]
 ni.rune.blood_cd = function()
 	return ni.rune.cd(1)
