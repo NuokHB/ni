@@ -1143,7 +1143,7 @@ Returns:
 ]]
 function ni.unit.buff_remaining(target, buff, filter)
    	local expires = select(7, ni.unit.buff(target, spell, filter))
-	if expires ~= nil then
+	if expires then
 		return expires - ni.client.get_time() 
 	else
 		return 0
@@ -1163,7 +1163,7 @@ Returns:
 ]]
 function ni.unit.buff_stacks(target, buff, filter)
    	local stacks = select(4, ni.unit.buff(target, spell, filter))
-	if stacks ~= nil then
+	if stacks then
 		return stacks
 	else
 		return 0
@@ -1204,7 +1204,7 @@ Returns:
 ]]
 function ni.unit.debuff_remaining(target, buff, filter)
    	local expires = select(7, ni.unit.debuff(target, spell, filter))
-	if expires ~= nil then
+	if expires then
 		return expires - ni.client.get_time() 
 	else
 		return 0
@@ -1224,7 +1224,7 @@ Returns:
 ]]
 function ni.unit.debuff_stacks(target, buff, filter)
    	local stacks = select(4, ni.unit.debuff(target, spell, filter))
-	if stacks ~= nil then
+	if stacks then
 		return stacks
 	else
 		return 0
