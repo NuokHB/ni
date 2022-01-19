@@ -238,11 +238,9 @@ end
 Stops the current spellcasting. Doesn't work for channeled spells.
 ]]
 function ni.spell.stop_casting()
-    return ni.client.call_protected("SpellStopCasting")
+   return ni.client.call_protected("SpellStopCasting")
 end
 
--- TODO: Re visit to clean up for easier readability.
--- Currently does not conform to the style guidelines.
 --[[--
 Checks if a spell is valid to be cast on a unit
  
