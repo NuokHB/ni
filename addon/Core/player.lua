@@ -149,6 +149,19 @@ function ni.player.shapeshift_form_id()
     return GetShapeshiftFormID()
 end
 
+--[[--
+Canceles a specific buff on the player
+ 
+Parameters:
+- **spell** `string`
+- **filter** `string`
+@param spell string
+@param filter[opt] string
+]]
+function ni.player.cancel_buff(spell, filter)
+   return ni.client.call_protected("CancelUnitBuff", "player", spell, filter)
+end
+
 -- Set ni.players metatable to allow unit functions.
 setmetatable(ni.player, {
    __index = function(table, key)
