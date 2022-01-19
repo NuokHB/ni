@@ -40,7 +40,7 @@ Parameters:
 function ni.events.register_callback(title, func)
    local contains = false
    for i = 1, #event_handlers do
-      if event_handlers[i].name == name then
+      if event_handlers[i].name == title then
          contains = true
          break
       end
