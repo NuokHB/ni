@@ -141,7 +141,7 @@ Returns:
 - **frost_on_cooldown** `number`
 - **frost_off_cooldown** `number` 
 ]]
-function ni.rune.frost.status()
+function ni.runes.frost.status()
 	return ni.runes.status(3)
 end
 
@@ -152,7 +152,7 @@ Returns:
 - **unholy_on_cooldown** `number`
 - **unholy_off_cooldown** `number` 
 ]]
-function ni.rune.unholy.status()
+function ni.runes.unholy.status()
 	return ni.runes.status(2)
 end
 
