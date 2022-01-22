@@ -2,25 +2,105 @@
 -- Rune functions
 local ni = ...
 
-local ni.rune = {};
+ni.rune = {}
+ni.runes = {
+   frost = {},
+   death = {},
+   unholy = {},
+   blood = {}
+}
 
 -- Localizations
 local GetRuneCooldown = ni.client.get_function("GetRuneCooldown")
 local GetRuneType = ni.client.get_function("GetRuneType")
 
 --[[--
-Returns the number of available runes to use
+Returns the rune cooldown information for selected rune index.
+ 
+Parameters:
+- **index** `number`
  
 Returns:
-- **available** `number`
+- **start** `number`
+- **duration** `number`
+- **enabled** `number`
+@param index number
 ]]
-ni.rune.available = function()
-	local runes_available = 0
-	local cur_time = ni.client.get_time();
+function ni.rune.cooldown(index)
+   return GetRuneCooldown(index)
+end
+
+--[[--
+Gets the rune type by index
+ 
+Parameters:
+- **index** `number`
+ 
+Returns:
+- **rune_type** `number`
+@param index number
+]]
+function ni.rune.type(index)
+   return GetRuneType(index)
+end
+
+--[[--
+Checks if a rune index is currently on cooldown
+ 
+Parameters:
+- **index** `number`
+ 
+Returns:
+- **on_cooldown** `boolean`
+@param index number
+]]
+function ni.rune.on_cooldown(index)
+   local start, duration = ni.rune.cooldown(index)
+   if start == 0 then
+      return false
+   end
+   if ni.client.get_time() - start > duration then
+      return false
+   end
+   return true
+end
+
+--[[--
+Returns the numbers of runes on cooldown and off cooldown for a specific type
+ 
+Parameters:
+- **rune_type** `number`
+ 
+Returns:
+- **on_cooldown** `number`
+- **off_cooldown** `number`
+]]
+function ni.runes.status(rune_type)
+	local runes_on_cooldown = 0
+	local runes_off_cooldown = 0
 	for i = 1, 6 do
-		local start, duration, ready = GetRuneCooldown(i);
-		if start == 0 or cur_time - start > duration then
-			runes_available = runes_available + 1
+		if ni.rune.type(i) == rune_type then
+			if ni.rune.on_cooldown(i) then
+				runes_on_cooldown = runes_on_cooldown + 1
+			else
+				runes_off_cooldown = runes_off_cooldown + 1
+			end
+		end
+	end
+	return runes_on_cooldown, runes_off_cooldown
+end
+
+--[[--
+Returns the number of available runes
+ 
+Returns:
+- **runes_available** `number`
+]]
+function ni.runes.available()
+	local runes_available = 0
+	for i = 1, 6 do
+      if not ni.rune.on_cooldown(i) then
+   		runes_available = runes_available + 1
 		end
 	end
 	return runes_available
@@ -30,81 +110,59 @@ end
 Returns the number of death runes
  
 Returns:
-- **death** `number`
+- **death_runes** `number`
 ]]
-ni.rune.death = function()
+function ni.runes.death.count()
 	local death_runes = 0;
 	for i = 1, 6 do
-		if GetRuneType(i) == 4 then
+		if ni.rune.type(i) == 4 then
 			death_runes = death_runes + 1;
 		end
 	end
 	return death_runes;
 end
 
---[[--
-Returns the numbers of runes on cd and runes off cd
- 
-Parameters:
-- **rune_type** `number`
- 
-Returns:
-- **cd** `number`, `number`
-]]
-ni.rune.cd = function(rune_type)
-	local runes_on_cd = 0
-	local runes_off_cd = 0
-	local cur_time = ni.client.get_time();
-	
-	for i = 1, 6 do
-		local start, duration, ready = GetRuneCooldown(i);
-		if GetRuneType(i) == rune_type then
-			if start ~= 0 and cur_time - start <= duration then
-				runes_on_cd = runes_on_cd + 1
-			else
-				runes_off_cd = runes_off_cd + 1
-			end
-		end
-	end
-	return runes_on_cd, runes_off_cd
-end
 
 --[[--
-Returns the numbers of death runes on cd and off cd
+Returns the numbers of death runes on cooldown and off cooldown
  
 Returns:
-- **death_cd** `number`, `number` 
+- **death_on_cooldown** `number`
+- **death_off_cooldown** `number` 
 ]]
-ni.rune.death_cd = function()
-	return ni.rune.cd(4)
+function ni.runes.death.status()
+	return ni.runes.status(4)
 end
 
 --[[--
 Returns the numbers of frost runes on cd and off cd
  
 Returns:
-- **frost_cd** `number`, `number` 
+- **frost_on_cooldown** `number`
+- **frost_off_cooldown** `number` 
 ]]
-ni.rune.frost_cd = function()
-	return ni.rune.cd(3)
+function ni.rune.frost.status()
+	return ni.runes.status(3)
 end
 
 --[[--
-Returns the numbers of unholy runes on cd and off cd
+Returns the numbers of unholy runes on cooldown and off cooldown
  
 Returns:
-- **unholy_cd** `number`, `number` 
+- **unholy_on_cooldown** `number`
+- **unholy_off_cooldown** `number` 
 ]]
-ni.rune.unholy_cd = function()
-	return ni.rune.cd(2)
+function ni.rune.unholy.status()
+	return ni.runes.status(2)
 end
 
 --[[--
-Returns the numbers of blood runes on cd and off cd
+Returns the numbers of blood runes on ccooldown and off cooldown
  
 Returns:
-- **blood_cd** `number`, `number` 
+- **blood_on_cooldown** `number`
+- **blood_off_cooldown** `number` 
 ]]
-ni.rune.blood_cd = function()
-	return ni.rune.cd(1)
+function ni.runes.blood.status()
+	return ni.runes.status(1)
 end

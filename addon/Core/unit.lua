@@ -1140,9 +1140,12 @@ Parameters:
  
 Returns:
 - **buff_remaining** `number`
+@param target string
+@param buff
+@param[opt] filter string
 ]]
 function ni.unit.buff_remaining(target, buff, filter)
-   	local expires = select(7, ni.unit.buff(target, spell, filter))
+  	local expires = select(7, ni.unit.buff(target, buff, filter))
 	if expires then
 		return expires - ni.client.get_time() 
 	else
@@ -1160,9 +1163,12 @@ Parameters:
  
 Returns:
 - **buff_stacks** `number`
+@param target string
+@param buff
+@param[opt] filter string
 ]]
 function ni.unit.buff_stacks(target, buff, filter)
-   	local stacks = select(4, ni.unit.buff(target, spell, filter))
+  	local stacks = select(4, ni.unit.buff(target, buff, filter))
 	if stacks then
 		return stacks
 	else
@@ -1196,14 +1202,17 @@ Get unit debuff remaining
  
 Parameters:
 - **target** `string`
-- **buff** `number or string`
+- **debuff** `number or string`
 - **filter** `string`
  
 Returns:
 - **debuff_remaining** `number`
+@param target string
+@param debuff
+@param[opt] filter string
 ]]
-function ni.unit.debuff_remaining(target, buff, filter)
-   	local expires = select(7, ni.unit.debuff(target, spell, filter))
+function ni.unit.debuff_remaining(target, debuff, filter)
+   local expires = select(7, ni.unit.debuff(target, debuff, filter))
 	if expires then
 		return expires - ni.client.get_time() 
 	else
@@ -1216,14 +1225,17 @@ Get unit debuff stacks
  
 Parameters:
 - **target** `string`
-- **buff** `number or string`
+- **debuff** `number or string`
 - **filter** `string`
  
 Returns:
 - **buff_stacks** `number`
+@param target string
+@param debuff
+@param[opt] filter string
 ]]
-function ni.unit.debuff_stacks(target, buff, filter)
-   	local stacks = select(4, ni.unit.debuff(target, spell, filter))
+function ni.unit.debuff_stacks(target, debuff, filter)
+   local stacks = select(4, ni.unit.debuff(target, debuff, filter))
 	if stacks then
 		return stacks
 	else

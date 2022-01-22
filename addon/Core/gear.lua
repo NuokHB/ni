@@ -6,7 +6,6 @@ ni.gear = {}
 
 -- Localizations
 local GetInventoryItemID = ni.client.get_function("GetInventoryItemID")
-local IsEquippableItem = ni.client.get_function("IsEquippableItem")
 
 --[[--
 Uses the inventory item by slot id.
@@ -50,20 +49,6 @@ function ni.gear.is_equipped(id)
       end
    end
    return false
-end
-
---[[--
-Checks if an item is equippable
- 
-Parameters:
-- **item** `string or number`
- 
-Returns:
-- **is_equippable** `boolean`
-@param item
-]]
-function ni.gear.is_equippable(item)
-   return IsEquippableItem(item) == 1
 end
 
 --[[--

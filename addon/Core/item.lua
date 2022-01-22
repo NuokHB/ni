@@ -9,6 +9,7 @@ local GetItemSpell = ni.client.get_function("GetItemSpell")
 local GetItemCount = ni.client.get_function("GetItemCount")
 local GetItemInfo = ni.client.get_function("GetItemInfo")
 local GetItemCooldown = ni.client.get_function("GetItemCooldown")
+local IsEquippableItem = ni.client.get_function("IsEquippableItem")
 local type = ni.client.get_function("type")
 
 --[[--
@@ -133,4 +134,18 @@ function ni.item.cooldown_remaining(item)
       return start + duration - ni.client.get_time()
    end
    return 0
+end
+
+--[[--
+Checks if an item is equippable
+ 
+Parameters:
+- **item** `string or number`
+ 
+Returns:
+- **is_equippable** `boolean`
+@param item
+]]
+function ni.item.is_equippable(item)
+   return IsEquippableItem(item) ~= nil
 end
