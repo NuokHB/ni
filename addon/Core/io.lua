@@ -103,6 +103,27 @@ function ni.io.split_path(path)
 end
 
 --[[--
+Loads a string into buffer to be executed.
+ 
+Parameters:
+- **string** `string`
+- **chunk** `string`
+ 
+Returns:
+- **func** `function`
+- **err** `string`
+@param string string
+@param[opt] chunk string
+]]
+function ni.io.load_string(string, chunk)
+   return ni.backend.LoadString(string, chunk)
+end
+
+function ni.io.load_buffer(string, chunk)
+   return ni.backend.LoadFile(string, chunk)
+end
+
+--[[--
 This function will load the selected file into the lua state.
  
 Returns:
@@ -116,7 +137,7 @@ function ni.io.load_file(path, chunk, parser)
    return ni.backend.ParseFile(path, function(content)
       if not parser or parser(content) then
          chunk = chunk or get_filename(path)
-         local func, err = ni.backend.LoadString(content, string.format("@%s", chunk))
+         local func, err = ni.io.load_string(content, string.format("@%s", chunk))
          if func then
             func(ni)
             return true

@@ -86,6 +86,16 @@ function ni.player.set_creature_tracking(value)
 end
 
 --[[--
+Gets the player creature tracking value.
+ 
+Returns:
+- **value** `number`
+]]
+function ni.player.get_creature_tracking()
+   return ni.backend.GetCreatureTracking()
+end
+
+--[[--
 Sets the player resource tracking value.
  
 Parameters:
@@ -94,6 +104,16 @@ Parameters:
 ]]
 function ni.player.set_resource_tracking(value)
    return ni.backend.SetResourceTracking(value)
+end
+
+--[[--
+Gets the player resource tracking value.
+ 
+Returns:
+- **value** `number`
+]]
+function ni.player.get_resource_tracking()
+   return ni.backend.GetResourceTracking()
 end
 
 --[[--

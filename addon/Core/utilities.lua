@@ -101,3 +101,27 @@ Parameters:
 function ni.utilities.log(message)
    ni.backend.Log(message)
 end
+
+--[[--
+Checks if a bit is set on an integer
+ 
+Parameters:
+- **item** `number`
+- **bit** `number`
+ 
+Returns:
+- **has_bit** `boolean`
+@param item number
+@param bit number
+]]
+function ni.utilities.has_bit(item, bit)
+   return item % (bit + bit) >= bit
+end
+
+function ni.utilities.set_bit(item, bit)
+   return ni.utilities.has_bit(item, bit) and item or item + bit
+end
+
+function ni.utilities.clear_bit(item, bit)
+   return ni.utilities.has_bit(item, bit) and item - bit or item
+end

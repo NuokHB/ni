@@ -147,3 +147,10 @@ Returns:
 function ni.ui.tab_manager(parent)
    return ni.ui.new("TabSelector", parent)
 end
+
+--[[--
+Creates a new element separator in the window.
+]]
+function ni.ui.separator()
+   return ni.ui.new("Separator")
+end
