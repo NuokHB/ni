@@ -108,5 +108,4 @@ if ni.window then
       end
       return false
    end)
-   ni.window.Open = true
 end
