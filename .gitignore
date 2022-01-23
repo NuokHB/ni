@@ -4,3 +4,5 @@ Loader.exe
 settings.json
 ni.zip
 generate.bat
+logs
+logs/*

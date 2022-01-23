@@ -9,6 +9,8 @@ local tremove = ni.client.get_function("tremove", "remove")
 
 -- Table to store the registered event handlers
 local event_handlers = {}
+-- Creating for count to prevent lookup time of the table length
+local items_in_table = 0
 
 --[[--
 @local
@@ -23,7 +25,7 @@ Parameters:
 @param[opt] ...
 ]]
 local function event_handler(self, event, ...)
-   for i = 1, #event_handlers do
+   for i = 1, items_in_table do
       event_handlers[i].handler(event, ...)
    end
 end
@@ -50,6 +52,7 @@ function ni.events.register_callback(title, func)
          name = title,
          handler = func
       })
+      items_in_table = #event_handlers
    end
 end
 
@@ -64,6 +67,7 @@ function ni.events.unregister_callback(title)
    for key, handler in pairs(event_handlers) do
       if handler.name == title then
          tremove(event_handlers, key)
+         items_in_table = #event_handlers
          return
       end
    end

@@ -162,6 +162,8 @@ end
 
 --- registered input handlers
 local input_handlers = {}
+-- Creating for count to prevent lookup time of the table length
+local items_in_table = 0
 
 --[[--
 @local
@@ -186,7 +188,7 @@ local function input_handler(state, key)
    end
    local block_input = false
    -- Run each of the registered callbacks to see if we should block input
-   for i = 1, #input_handlers do
+   for i = 1, items_in_table do
       local result = input_handlers[i].handler(state, key)
       if result and not block_input then
          block_input = result
@@ -234,6 +236,7 @@ function ni.input.register_callback(title, func)
          name = title,
          handler = func
       })
+      items_in_table = #input_handlers
    end
 end
 
@@ -248,6 +251,7 @@ function ni.input.unregister_callback(title)
    for i = 1, #input_handlers do
       if input_handlers[i].name == title then
          tremove(input_handlers, i)
+         items_in_table = #input_handlers
          return
       end
    end

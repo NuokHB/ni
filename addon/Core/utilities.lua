@@ -90,3 +90,14 @@ Returns:
 function ni.utilities.get_hwid()
    return ni.backend.GetHWID()
 end
+
+--[[--
+Logs a message to the lua log file
+ 
+Parameters:
+- **message** `string`
+@param message string
+]]
+function ni.utilities.log(message)
+   ni.backend.Log(message)
+end
