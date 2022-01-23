@@ -37,6 +37,7 @@ if not ni.loaded then
       "object.lua",
       "power.lua",
       "rune.lua",
+      "runes.lua",
       "unit.lua",
       "player.lua",
       "spell.lua",
