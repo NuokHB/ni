@@ -34,17 +34,31 @@ function ni.object.type(object)
 end
 
 --[[--
-Gets if the object is a player
+Gets if the object is a item
  
 Parameters:
 - **object** `string`
  
 Returns:
-- **is_player** `boolean`
+- **is_item** `boolean`
 @param object string
 ]]
-function ni.object.is_player(object)
-   return ni.object.type(object) == 4
+function ni.object.is_item(object)
+   return ni.object.type(object) == 1
+end
+
+--[[--
+Gets if the object is a container
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_container** `boolean`
+@param object string
+]]
+function ni.object.is_container(object)
+   return ni.object.type(object) == 2
 end
 
 --[[--
@@ -59,6 +73,62 @@ Returns:
 ]]
 function ni.object.is_unit(object)
    return ni.object.type(object) == 3
+end
+
+--[[--
+Gets if the object is a player
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_player** `boolean`
+@param object string
+]]
+function ni.object.is_player(object)
+   return ni.object.type(object) == 4
+end
+
+--[[--
+Gets if the object is a game object
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_game_object** `boolean`
+@param object string
+]]
+function ni.object.is_game_object(object)
+   return ni.object.type(object) == 5
+end
+
+--[[--
+Gets if the object is a dynamic object
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_dynamic_object** `boolean`
+@param object string
+]]
+function ni.object.is_dynamic_object(object)
+   return ni.object.type(object) == 6
+end
+
+--[[--
+Gets if the object is a dynamic object
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_dynamic_object** `boolean`
+@param object string
+]]
+function ni.object.is_corpse(object)
+   return ni.object.type(object) == 7
 end
 
 --[[--
@@ -137,4 +207,25 @@ Returns:
 ]]
 function ni.object.descriptor(object, index)
    return ni.backend.ObjectDescriptor(object, index)
+end
+
+--[[
+Gets all of the objects currently in the object manager.
+ 
+Returns:
+- **objects** `table`
+ 
+Table keys:
+- **index** `number`
+- **object** `table`
+@table objects
+ 
+Table keys:
+- **guid** `string`
+- **type** `number`
+- **name** `string`
+@table object
+]]
+function ni.object.get_objects()
+   return ni.backend.GetObjects()
 end
