@@ -58,7 +58,7 @@ if not ni.loaded then
 
    do
       local window_init = core_path.."components\\main_window\\init.lua"
-      func, err = ni.io.load_buffer(window_init, string.format("@%s", window_init))
+      local func, err = ni.io.load_buffer(window_init, string.format("@%s", window_init))
       if err then
          ni.backend.Error(err)
       else
