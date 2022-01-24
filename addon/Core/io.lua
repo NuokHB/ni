@@ -37,6 +37,9 @@ end
 @local
 Gets the file extension
  
+Parameters:
+- **path** `string`
+ 
 Returns:
 - **extension** `string`
 @param path string
@@ -51,6 +54,9 @@ end
 --[[--
 @local
 Gets the filename from the path specified.
+ 
+Parameters:
+- **path** `string`
  
 Returns:
 - **filename** `string`
@@ -71,6 +77,9 @@ end
 @local
 Returns the stem path component. This is the filename without the extension.
  
+Parameters:
+- **path** `string`
+ 
 Returns:
 - **stem** `string`
 @param path string
@@ -88,6 +97,9 @@ end
 
 --[[--
 Split the path into an entry table.
+ 
+Parameters:
+- **path** `string`
  
 Returns:
 - [`entry table`](#entry)
@@ -119,12 +131,30 @@ function ni.io.load_string(string, chunk)
    return ni.backend.LoadString(string, chunk)
 end
 
-function ni.io.load_buffer(string, chunk)
-   return ni.backend.LoadFile(string, chunk)
+--[[--
+Loads a file into the lua buffer to be executed.
+ 
+Parameters:
+- **file** `string`
+- **chunk** `string`
+ 
+Returns:
+- **func** `function`
+- **error** `string`
+@param file string
+@param[opt] chunk string
+]]
+function ni.io.load_buffer(file, chunk)
+   return ni.backend.LoadFile(file, chunk)
 end
 
 --[[--
 This function will load the selected file into the lua state.
+ 
+Parameters:
+- **path** `string`
+- **chunk** `string`
+- **parser** `function`
  
 Returns:
 - **success** `boolean`
@@ -152,6 +182,9 @@ end
 @local
 Checks if an entry is valid
  
+Parameters:
+- **entry** `entry table`
+ 
 Returns:
 - **valid** `boolean`
 @param entry @{entry}
@@ -162,6 +195,10 @@ end
 
 --[[--
 Loads the entry into the lua state
+ 
+Parameters:
+- **entry** `entry table`
+- **parser** `function`
  
 Returns:
 - **success** `boolean`
@@ -179,6 +216,9 @@ end
 --[[--
 Gets contents from directory
  
+Parameters:
+- **directory** `string`
+ 
 Returns:
 - **content** `content table`
 - **error** `string`
@@ -190,6 +230,9 @@ end
 
 --[[--
 Gets the folders within a directory
+ 
+Parameters:
+- **directory** `string`
  
 Returns:
 - **folders** `string table`
@@ -215,6 +258,9 @@ end
 
 --[[--
 Gets entries from directory
+ 
+Parameters:
+- **directory** `string`
  
 Returns:
 - **entries** `entry table`
