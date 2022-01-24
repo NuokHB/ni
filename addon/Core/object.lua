@@ -208,24 +208,3 @@ Returns:
 function ni.object.descriptor(object, index)
    return ni.backend.ObjectDescriptor(object, index)
 end
-
---[[
-Gets all of the objects currently in the object manager.
- 
-Returns:
-- **objects** `table`
- 
-Table keys:
-- **index** `number`
-- **object** `table`
-@table objects
- 
-Table keys:
-- **guid** `string`
-- **type** `number`
-- **name** `string`
-@table object
-]]
-function ni.object.get_objects()
-   return ni.backend.GetObjects()
-end
