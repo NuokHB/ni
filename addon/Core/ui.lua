@@ -150,7 +150,11 @@ end
 
 --[[--
 Creates a new element separator in the window.
+ 
+Parameters:
+- **parent** `userdata`
+@param parent userdata
 ]]
-function ni.ui.separator()
-   return ni.ui.new("Separator")
+function ni.ui.separator(parent)
+   return ni.ui.new("Separator", parent)
 end
