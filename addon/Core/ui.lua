@@ -151,6 +151,6 @@ end
 --[[--
 Creates a new element separator in the window.
 ]]
-function ni.ui.separator()
-   return ni.ui.new("Separator")
+function ni.ui.separator(parent)
+   return ni.ui.new("Separator", parent)
 end
