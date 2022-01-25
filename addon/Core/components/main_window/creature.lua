@@ -190,8 +190,9 @@ local creature_settings = {
    }
 }
 
+-- Doing it this way because we made the function local above
 update_creatures = function()
-   for k, v in ni.utilities.ipairs(creature_settings) do
+   for k, v in ni.table.ipairs(creature_settings) do
       if current_creatures == -1 and v.value ~= 0 then
          v.element.Checked = true
       elseif current_creatures == 0 and v.value == 0 then
@@ -205,7 +206,7 @@ update_creatures = function()
    ni.player.set_creature_tracking(current_creatures)
 end
 
-for key, value in ni.utilities.ipairs(creature_settings) do
+for key, value in ni.table.ipairs(creature_settings) do
    local box = ni.ui.checkbox(tab, key % 2 == 0)
    box.Text = value.name
    if value.offset then

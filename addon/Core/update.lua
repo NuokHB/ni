@@ -64,7 +64,7 @@ Parameters:
 @param title string
 ]]
 function ni.update.unregister_callback(title)
-   for key, handler in ni.utilities.pairs(update_callbacks) do
+   for key, handler in ni.table.pairs(update_callbacks) do
       if handler.name == title then
          tremove(update_callbacks, key)
          items_in_table = #update_callbacks

@@ -5,7 +5,7 @@ local ni = ...
 ni.input = {}
 
 -- Localization to avoid hooks
-local contains_key = ni.utilities.table_contains_key
+local contains_key = ni.table.contains_key
 local tinsert = ni.client.get_function("tinsert", "insert")
 local tremove = ni.client.get_function("tremove", "remove")
 
@@ -122,7 +122,7 @@ local keys = {
 local input_down = {}
 do
    -- Initialize this table with each key as false
-   for _, key in pairs(keys) do
+   for _, key in ni.table.pairs(keys) do
       input_down[key] = false
    end
 end

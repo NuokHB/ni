@@ -245,7 +245,7 @@ function ni.io.get_folders(directory)
       return nil, error
    end
    local folders = {}
-   for _, content in ni.utilities.pairs(contents) do
+   for _, content in ni.table.pairs(contents) do
       if content.is_directory then
          tinsert(folders, content.path)
       end
@@ -272,7 +272,7 @@ function ni.io.get_entries(directory)
       return nil, error
    end
    local entries = {}
-   for _, content in ni.utilities.pairs(contents) do
+   for _, content in ni.table.pairs(contents) do
       if not content.is_directory then
          local entry = ni.io.split_path(content.path)
          if valid_entry(entry) then

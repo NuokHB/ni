@@ -7,7 +7,8 @@ if not ni.loaded then
    local initial_files = {
       "io.lua",
       "client.lua",
-      "utilities.lua"
+      "utilities.lua",
+      "table.lua"
    }
 
    -- Load the utilities table for use
@@ -42,11 +43,12 @@ if not ni.loaded then
       "player.lua",
       "spell.lua",
       "update.lua",
+      "objects.lua",
       "ui.lua"
    }
 
    -- Load each of the above files here
-   for _, file in ni.utilities.pairs(core_files) do
+   for _, file in ni.table.pairs(core_files) do
       local _, error = ni.io.load_file(core_path..file, file)
       if error then
          ni.backend.Error(error)

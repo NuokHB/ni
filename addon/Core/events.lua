@@ -64,7 +64,7 @@ Parameters:
 @param title string
 ]]
 function ni.events.unregister_callback(title)
-   for key, handler in ni.utilities.pairs(event_handlers) do
+   for key, handler in ni.table.pairs(event_handlers) do
       if handler.name == title then
          tremove(event_handlers, key)
          items_in_table = #event_handlers

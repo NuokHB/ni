@@ -288,8 +288,9 @@ local resource_settings = {
    }
 }
 
+-- Doing it this way because we made the function local above
 update_resources = function()
-   for k, v in ni.utilities.ipairs(resource_settings) do
+   for k, v in ni.table.ipairs(resource_settings) do
       if current_resources == -1 and v.value ~= 0 then
          v.element.Checked = true
       elseif current_resources == 0 and v.value == 0 then
@@ -303,7 +304,7 @@ update_resources = function()
    ni.player.set_resource_tracking(current_resources)
 end
 
-for key, value in ni.utilities.ipairs(resource_settings) do
+for key, value in ni.table.ipairs(resource_settings) do
    local box = ni.ui.checkbox(tab, key % 2 == 0)
    box.Text = value.name
    if value.offset then
