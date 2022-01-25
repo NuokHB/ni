@@ -98,7 +98,7 @@ function ni.spell.known(spell, pet)
    if type(spell) == "string" then
       spell = ni.spell.id(spell)
    end
-   if build >= 50400 and not pet then
+   if build >= 18414 and not pet then
       return IsPlayerSpell(spell)
    end
    return IsSpellKnown(spell, pet)
