@@ -16,6 +16,7 @@ local UnitIsDeadOrGhost = ni.client.get_function("UnitIsDeadOrGhost")
 local UnitCanAttack = ni.client.get_function("UnitCanAttack")
 local UnitBuff = ni.client.get_function("UnitBuff")
 local UnitDebuff = ni.client.get_function("UnitDebuff")
+local UnitCanAssist = ni.client.get_function("UnitCanAssist")
 local select = ni.client.get_function("select")
 
 --[[--
@@ -1016,6 +1017,22 @@ Returns:
 ]]
 function ni.unit.can_attack(target_a, target_b)
    return UnitCanAttack(target_a, target_b)
+end
+
+--[[--
+Checks to see if target_a can assist target_b
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **unit_can_attack** `boolean`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.can_assist(target_a, target_b)
+   return UnitCanAssist(target_a, target_b)
 end
 
 --[[--
