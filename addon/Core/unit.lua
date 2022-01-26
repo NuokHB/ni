@@ -1306,7 +1306,9 @@ Table keys:
 - **type** `number`
 - **name** `string`
 - **distance** `number`
-@table in_range]]
+@table in_range
+]]
+
 
 --[[--
 @local
