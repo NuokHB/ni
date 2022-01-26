@@ -7,12 +7,14 @@ ni.window = ni.ui.window("ni", false)
 if ni.window then
    local label = ni.ui.label(ni.window)
    label.Text = "Version: "..ni.__version
+   ni.ui.separator(ni.window)
    local tab_manager = ni.ui.tab_manager(ni.window)
    local main_tab = tab_manager:AddTab("Main")
    local toggle_key = "F10"
    local primary_key = "F1"
    local secondary_key = "F2"
    local generic_key = "F3"
+   local latency = 200
    local main_tab_manager = ni.ui.tab_manager(main_tab)
    do
       -- Setup the main window portion
@@ -47,10 +49,25 @@ if ni.window then
    end
    do
       local settings_tab = main_tab_manager:AddTab("Settings")
-      local function_keys = {}
-      for i = 1, 12 do
-         function_keys[i] = string.format("F%d", i)
-      end
+      do 
+         local function_keys = {}
+         for i = 1, 12 do
+            function_keys[i] = string.format("F%d", i)
+         end
+
+         local latency_label = ni.ui.label(settings_tab)
+         latency_label.Text = "Latency"
+         latency_label.Centered = true
+         local latency_slider = ni.ui.slider(settings_tab)
+         latency_slider.Min = 20
+         latency_slider.Max = 1000
+         latency_slider.Value = latency
+         latency_slider.Width = -1
+         latency_slider.Text = "##latency"
+         ni.ui.separator(settings_tab)
+         local key_label = ni.ui.label(settings_tab)
+         key_label.Text = "Toggle Keys"
+         key_label.Centered = true
          -- Helper function to avoid typing all this 3 times
          local function setup_toggles(label_text, combo_text, x_offset, combo_selected, combo_items, combo_callback)
             local label = ni.ui.label(settings_tab)
@@ -80,7 +97,6 @@ if ni.window then
          setup_toggles("Generic Toggle:", "##generictoggle", 14, generic_key, function_keys, function(selected)
             generic_key = selected
          end)
-      do 
       end
    end
    local tracker_tab = tab_manager:AddTab("Tracker")
