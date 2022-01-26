@@ -16,7 +16,10 @@ local UnitIsDeadOrGhost = ni.client.get_function("UnitIsDeadOrGhost")
 local UnitCanAttack = ni.client.get_function("UnitCanAttack")
 local UnitBuff = ni.client.get_function("UnitBuff")
 local UnitDebuff = ni.client.get_function("UnitDebuff")
+local UnitCanAssist = ni.client.get_function("UnitCanAssist")
 local select = ni.client.get_function("select")
+local tinsert = ni.client.get_function("tinsert", "insert")
+
 
 --[[--
 Table keys:
@@ -1019,6 +1022,22 @@ function ni.unit.can_attack(target_a, target_b)
 end
 
 --[[--
+Checks to see if target_a can assist target_b
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **unit_can_attack** `boolean`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.can_assist(target_a, target_b)
+   return UnitCanAssist(target_a, target_b)
+end
+
+--[[--
 Gets the current power value for a unit
  
 Parmeters:
@@ -1279,4 +1298,60 @@ See the returns for UnitDebuff as this is a wrapper for that.
 ]]
 function ni.unit.index_debuff(target, index)
    return UnitDebuff(target, index)
+end
+
+--[[--
+Gets a table of enemy units of a target within the given range
+ 
+Parameters:
+- **target** `string`
+- **distance** `number`
+ 
+Returns:
+- **enemies_table** `table`  keys: `number`, values: `table`; subkeys: guid [`string`], type [`number`], name [`string`], distance [`number`]
+@param target string
+@param distance number
+]]
+ni.unit.enemies_in_range = function(target, distance)
+   local enemies_table = {}
+   target = true and ni.unit.guid(target) or target
+   if target then
+      for k, v in ni.table.opairs(ni.objects) do
+         if k ~= target and ni.player.can_attack(k) and not ni.unit.is_dead_or_ghost(k) and ni.unit.type(k) ~= 8 then
+            local d = ni.unit.distance(target, k)
+            if d ~= nil and d <= distance then
+               enemies_table[k] = {guid = k, type = v.type, name = v.name, distance = d}
+            end
+         end
+      end
+   end
+   return enemies_table
+end
+
+--[[--
+Gets a table of friendly units of a target within the given range
+ 
+Parameters:
+- **target** `string`
+- **distance** `number`
+ 
+Returns:
+- **friends_table** `table`  keys: `number`, values: `table`; subkeys: guid [`string`], type [`number`], name [`string`], distance [`number`]
+@param target string
+@param distance number
+]]
+ni.unit.friends_in_range = function(target, distance)
+   local friends_table = {}
+   target = true and ni.unit.guid(target) or target
+   if target then
+      for k, v in ni.table.opairs(ni.objects) do
+         if k ~= target and ni.player.can_assist(k) and not ni.unit.is_dead_or_ghost(k) and ni.unit.type(k) ~= 8 then
+            local d = ni.unit.distance(target, k)
+            if d ~= nil and d <= distance then
+               friends_table[k] = {guid = k, type = v.type, name = v.name, distance = d}
+            end
+         end
+      end
+   end
+   return friends_table
 end
