@@ -17,9 +17,9 @@ local UnitCanAttack = ni.client.get_function("UnitCanAttack")
 local UnitBuff = ni.client.get_function("UnitBuff")
 local UnitDebuff = ni.client.get_function("UnitDebuff")
 local UnitCanAssist = ni.client.get_function("UnitCanAssist")
+local UnitClass = ni.client.get_function("UnitClass")
+local UnitName = ni.client.get_function("UnitName")
 local select = ni.client.get_function("select")
-local tinsert = ni.client.get_function("tinsert", "insert")
-
 
 --[[--
 Table keys:
@@ -314,6 +314,36 @@ Returns:
 ]]
 function ni.unit.location(target)
    return ni.object.location(target)
+end
+
+--[[--
+Gets the the class of the unit, Locale-independent
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **class_name** `string`
+@param target string
+]]
+ni.unit.class = function(target)
+   local _, class_name = UnitClass(target)
+   return class_name
+end
+
+--[[--
+Gets the the name of the unit
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **class_name** `string`
+@param target string
+]]
+ni.unit.name = function(target)
+   local _, class_name = UnitName(target)
+   return class_name
 end
 
 --[[--
