@@ -72,6 +72,48 @@ function ni.spell.cast(...)
 end
 
 --[[--
+Casts a spell by name or id at the specified location.
+ 
+Parameters:
+- **spell** `string or number`
+- **x** `number`
+- **y** `number`
+- **z** `number`
+- **offset** `number`
+@param spell
+@param x number
+@param y number
+@param z number
+@param[opt] offset number
+]]
+function ni.spell.cast_at(spell, x, y, z, offset)
+   x, y = ni.utilities.randomize_point(x, y, offset)
+   ni.spell.cast(spell)
+   ni.player.click_at(x, y, z)
+end
+
+--[[--
+Casts a spell by name or id on the specified target.
+ 
+Parameters:
+- **spell** `string or number`
+- **target** `string`
+- **offset** `number`
+@param spell
+@param target string
+@param[opt] offset number
+]]
+function ni.spell.cast_on(spell, target, offset)
+   if target == "mouse" then
+      ni.spell.cast(spell)
+      ni.player.click_at(target)
+   else
+      local x, y, z = ni.unit.info(target)
+      ni.spell.cast_at(spell, x, y, z, offset)
+   end
+end
+
+--[[--
 Gets the spell name from id
  
 Parameters:

@@ -15,6 +15,62 @@ function ni.utilities.get_hwid()
 end
 
 --[[--
+Sets the seed for the random generator.
+ 
+Parameters:
+- **seed** `number`
+@param seed number
+]]
+function ni.utilities.randomseed(seed)
+   ni.backend.RandSeed(seed)
+end
+
+--[[--
+Generates a random number.
+ 
+Parameters:
+- **l** `number`
+- **u** `number`
+ 
+Returns:
+- **value** `number`
+ 
+Notes:
+When called without arguments, the number returned is between 0 and 1.
+When called with 1 argument (n), the range is between 1 and n.
+When called with 2 arguments (l, u), the range is between l and u.
+@param[opt] l number
+@param[opt] u number
+]]
+function ni.utilities.random(l, u)
+   return ni.backend.Rand(l, u)
+end
+
+--[[--
+Gets a random point within range of specified location based off the offset (or random if none specified)
+ 
+Parameters:
+- **x** `number`
+- **y** `number`
+- **offset** `number`
+ 
+Returns:
+- **new_x** `number`
+- **new_y** `number`
+@param x number
+@param y number
+@param[opt] offset
+]]
+function ni.utilities.randomize_point(x, y, offset)
+   offset = offset or ni.utilities.random()
+   local r = offset * ni.utilities.random()
+   local theta = ni.utilities.random() * 360
+   local new_x = x + r * cos(theta)
+   local new_y = y + r * sin(theta)
+   return new_x, new_y
+end
+
+--[[--
 Logs a message to the lua log file
  
 Parameters:

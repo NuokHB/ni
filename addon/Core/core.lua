@@ -22,6 +22,9 @@ if not ni.loaded then
       end
    end
 
+   -- Seed the random number generator
+   ni.utilities.randomseed(ni.client.get_time())
+
    -- Setup the main frame for functions used later
    ni.frame = ni.client.get_function("CreateFrame")("frame", nil, UIParent)
    ni.frame:RegisterAllEvents()
