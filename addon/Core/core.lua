@@ -47,6 +47,7 @@ if not ni.loaded then
       "spell.lua",
       "update.lua",
       "objects.lua",
+      "group.lua",
       "ui.lua"
    }
 
