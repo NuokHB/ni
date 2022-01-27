@@ -1332,7 +1332,7 @@ local function in_range_helper(target, distance, func)
       return in_range
    end
    for k, v in ni.table.opairs(ni.objects) do
-      if k ~= target and func(k) and not ni.unit.is_dead_or_ghost(k) and v.type ~= 8 then
+      if k ~= target and (v.type == 3 or v.type == 4) and func(k) and not ni.unit.is_dead_or_ghost(k) then
          local d = ni.unit.distance(target, k)
          if d and d < distance then
             in_range[k] = {
