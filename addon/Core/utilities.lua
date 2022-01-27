@@ -62,7 +62,7 @@ Returns:
 @param[opt] offset
 ]]
 function ni.utilities.randomize_point(x, y, offset)
-   offset = offset or ni.utilities.random()
+   offset = offset or 1
    local r = offset * ni.utilities.random()
    local theta = ni.utilities.random() * 360
    local new_x = x + r * cos(theta)

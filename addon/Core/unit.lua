@@ -18,7 +18,6 @@ local UnitBuff = ni.client.get_function("UnitBuff")
 local UnitDebuff = ni.client.get_function("UnitDebuff")
 local UnitCanAssist = ni.client.get_function("UnitCanAssist")
 local select = ni.client.get_function("select")
-local tinsert = ni.client.get_function("tinsert", "insert")
 
 
 --[[--
