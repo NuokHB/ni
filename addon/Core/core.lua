@@ -48,6 +48,7 @@ if not ni.loaded then
       "update.lua",
       "objects.lua",
       "group.lua",
+      "members.lua",
       "ui.lua"
    }
 
