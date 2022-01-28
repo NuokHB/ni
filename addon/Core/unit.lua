@@ -342,8 +342,7 @@ Returns:
 @param target string
 ]]
 ni.unit.name = function(target)
-   local _, class_name = UnitName(target)
-   return class_name
+   return UnitName(target)
 end
 
 --[[--

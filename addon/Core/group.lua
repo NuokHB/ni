@@ -79,7 +79,7 @@ Check to see if the player is in a raid group
 Returns:
 - **in_raid** `boolean`
 ]]
-ni.group.is_in_raid = function ()
+ni.group.in_raid = function ()
    return (build == 18414 and IsInRaid()) or GetNumRaidMembers() > 0
 end
 
@@ -119,7 +119,7 @@ Returns:
 ]]
 ni.group.members = function ()
    local members = {}
-   local group = ni.group.is_in_raid() and "raid" or "party"
+   local group = ni.group.in_raid() and "raid" or "party"
    for i=1, ni.group.size() do
       local unit_id = group..i
       local guid = ni.unit.guid(unit_id)
