@@ -80,7 +80,10 @@ Returns:
 - **in_raid** `boolean`
 ]]
 ni.group.in_raid = function ()
-   return (build == 18414 and IsInRaid()) or GetNumRaidMembers() > 0
+   if build == 18414 then
+      return IsInRaid
+   end
+   return GetNumRaidMembers() > 0
 end
 
 --[[
