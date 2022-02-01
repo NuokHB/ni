@@ -121,7 +121,7 @@ Parameters:
 @param name string
 ]]
 function ni.spell.id(name)
-   return ni.backend.GetSpellId(name)
+   return ni.backend.GetSpellID(name)
 end
 
 --[[--
@@ -205,6 +205,17 @@ Returns:
 ]]
 function ni.spell.on_global_cooldown()
    local _, duration = ni.spell.global_cooldown()
+   return duration ~= 0
+end
+
+--[[--
+Returns if the spell is currently on cooldown
+ 
+Returns:
+- **on_cooldown** `boolean`
+]]
+function ni.spell.on_cooldown(spell)
+   local _, duration = ni.spell.cooldown(spell)
    return duration ~= 0
 end
 
@@ -327,6 +338,9 @@ function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
       return false
    end
    if ni.player.power(power_type) < cost then
+      return false
+   end
+   if ni.spell.on_cooldown(spell) then
       return false
    end
    if is_facing and not ni.player.facing(target) then
