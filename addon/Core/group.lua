@@ -96,7 +96,7 @@ ni.group.size = function ()
    if build == 18414 then
       return GetNumGroupMembers()
    end
-   if ni.group.is_in_raid() then
+   if ni.group.in_raid() then
       return GetNumRaidMembers()
    end
    return GetNumPartyMembers()
