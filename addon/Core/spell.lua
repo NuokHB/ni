@@ -65,9 +65,9 @@ Parameters:
 function ni.spell.cast(...)
    local spell = ...
    if type(spell) == "number" then
-      ni.client.call_protected("CastSpellById", ...)
+      return ni.client.call_protected("CastSpellByID", ...)
    else
-      ni.client.call_protected("CastSpellByName", ...)
+      return ni.client.call_protected("CastSpellByName", ...)
    end
 end
 
@@ -292,6 +292,31 @@ Stops the current spellcasting. Doesn't work for channeled spells.
 ]]
 function ni.spell.stop_casting()
    return ni.client.call_protected("SpellStopCasting")
+end
+
+--[[--
+Checks if a spell is avalible to be cast
+ 
+Parameters:
+- **spell** `string or number`
+  
+Returns:
+- **available** `boolean`
+@param spell
+]]
+function ni.spell.available(spell)
+   local name, _, _, cost, _, power_type = ni.spell.info(spell)
+
+   if not ni.spell.known(spell) then
+      return false
+   end
+   if ni.player.power(power_type) < cost then
+      return false
+   end
+   if ni.spell.on_cooldown(spell) then
+      return false
+   end
+   return true
 end
 
 --[[--
