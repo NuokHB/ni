@@ -6,6 +6,8 @@ ni.gear = {}
 
 -- Localizations
 local GetInventoryItemID = ni.client.get_function("GetInventoryItemID")
+local GetWeaponEnchantInfo = ni.client.get_function("GetWeaponEnchantInfo")
+
 
 --[[--
 Uses the inventory item by slot id.
@@ -100,4 +102,11 @@ Returns:
 function ni.gear.cooldown_remaining(slot)
    local id = ni.gear.id(slot)
    return ni.item.cooldown_remaining(id)
+end
+
+--[[--
+Returns information about the player's current temporary enchants
+]]
+function ni.gear.weapon_enchant_info()
+   return GetWeaponEnchantInfo()
 end
