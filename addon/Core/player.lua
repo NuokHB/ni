@@ -9,6 +9,7 @@ local setmetatable = ni.client.get_function("setmetatable")
 local rawset = ni.client.get_function("rawset")
 local GetGlyphSocketInfo = ni.client.get_function("GetGlyphSocketInfo")
 local GetShapeshiftFormID = ni.client.get_function("GetShapeshiftFormID")
+local IsMounted = ni.client.get_function("IsMounted")
 
 --[[--
 Moves the player to the token or coordinates.
@@ -167,6 +168,16 @@ Returns:
 ]]
 function ni.player.shapeshift_form_id()
     return GetShapeshiftFormID()
+end
+
+--[[--
+Returns if the player is mounted
+ 
+Returns:
+- **mounted** `boolean`
+]]
+function ni.player.mounted()
+   return IsMounted()
 end
 
 --[[--
