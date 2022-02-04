@@ -43,15 +43,15 @@ Returns:
 ]]
 ni.group.is_tank = function(target)
    local class = ni.unit.class(target)
-   if class == "WARRIOR" and ni.unit.aura(target, 71) then
+   if class == "WARRIOR" and ni.unit.has_aura(target, 71) then
       return true;
    elseif class == "DRUID" and (ni.unit.buff(target, 9634, "EXACT") or ni.unit.buff(target, 5487, "EXACT"))	then
       return true;
    elseif class == "PALADIN" and ni.unit.buff(target, 25780) then
       return true;
-   elseif ni.unit.aura(target, 57340) then
+   elseif ni.unit.has_aura(target, 57340) then
       return true;
-   elseif ni.unit.roles_assigned(target) == "TANK" then
+   elseif ni.group.roles_assigned(target) == "TANK" then
       return true;
    end
    return false
