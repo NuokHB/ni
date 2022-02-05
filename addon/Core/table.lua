@@ -62,7 +62,7 @@ function ni.table.ipairs(table)
       i = i + 1
       local v = table[i]
       -- Explicitly checking it's not nil, because it could be false
-      if v ~= nil then 
+      if v ~= nil then
          return i, v
       end
    end
@@ -120,4 +120,17 @@ function ni.table.contains_value(table, value)
       end
    end
    return false
+end
+
+--[[--
+Gets the tables length
+ 
+Returns:
+- **length** `number`
+@param table table
+]]
+function ni.table.length(table)
+   local count = 0
+   for _ in ni.table.pairs(table) do count = count + 1 end
+   return count
 end
