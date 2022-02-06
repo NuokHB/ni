@@ -1262,7 +1262,7 @@ Returns:
 function ni.unit.debuff_remaining(target, debuff, filter)
    local expires = select(7, ni.unit.debuff(target, debuff, filter))
 	if expires then
-		return expires - ni.client.get_time() 
+		return expires - ni.client.get_time()
 	else
 		return 0
 	end
@@ -1406,4 +1406,41 @@ Returns:
 ]]
 function ni.unit.friends_in_range(target, distance)
    return in_range_helper(target, distance, ni.player.can_assist)
+end
+
+--[[
+Check if a cast can be interupted on an enemy unit
+ 
+Parameters:
+- **target** `string`
+- **interupt_percent** `number`
+ 
+Returns:
+- **can_interupt** `boolean`
+- **interruptable_spell** `string`
+@param target string
+@param[opt] interupt_percent number
+]]
+function ni.unit.can_interupt(target, interupt_percent)
+   interupt_percent = interupt_percent and interupt_percent or 100
+   if not ni.player.can_attack(target) then
+      return false, nil
+   end
+   local cast_name, _, _, _, cast_start, cast_end, _, _, cast_interruptable = ni.unit.casting(target)
+	local channel_name, _, _, _, channel_start, channel_end, _, channel_interruptable = ni.unit.channel(target)
+   if cast_name and cast_interruptable then
+      local completed_percent = calculate_percentage(cast_start, cast_end)
+      if completed_percent >= interupt_percent then
+         return true, cast_name
+      end
+      return false, cast_name
+   end
+   if channel_name and channel_interruptable then
+      local completed_percent = calculate_percentage(channel_start, channel_end)
+      if completed_percent >= interupt_percent then
+         return true, cast_name
+      end
+      return false, cast_name
+   end
+   return false, nil
 end
