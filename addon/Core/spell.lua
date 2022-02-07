@@ -295,7 +295,7 @@ function ni.spell.stop_casting()
 end
 
 --[[--
-Checks if a spell is avalible to be cast
+Checks if a spell is available to be cast
  
 Parameters:
 - **spell** `string or number`
