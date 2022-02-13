@@ -955,7 +955,7 @@ local function calculate_percentage(start_time, end_time)
       return 0
    end
    local time_since_start = (ni.client.get_time() * 1000 - start_time) / 1000
-   local time = end_time - start_time
+   local time = end_time - start_time - ni.client.latency()
    return time_since_start / time * 100000
 end
 
@@ -1409,7 +1409,7 @@ function ni.unit.friends_in_range(target, distance)
 end
 
 --[[
-Check if a cast can be interupted on an enemy unit
+Check if a unit cast can be interupted by the player
  
 Parameters:
 - **target** `string`
@@ -1419,28 +1419,27 @@ Returns:
 - **can_interupt** `boolean`
 - **interruptable_spell** `string`
 @param target string
-@param[opt] interupt_percent number
+@param interupt_percent number
 ]]
 function ni.unit.can_interupt(target, interupt_percent)
-   interupt_percent = interupt_percent and interupt_percent or 100
    if not ni.player.can_attack(target) then
       return false, nil
    end
-   local cast_name, _, _, _, cast_start, cast_end, _, _, cast_interruptable = ni.unit.casting(target)
-	local channel_name, _, _, _, channel_start, channel_end, _, channel_interruptable = ni.unit.channel(target)
-   if cast_name and cast_interruptable then
+   local cast_name, _, _, _, cast_start, cast_end, _, _, cast_not_interruptable = ni.unit.casting(target)
+	local channel_name, _, _, _, channel_start, channel_end, _, channel_not_interruptable = ni.unit.channel(target)
+   if cast_name ~= nil and not cast_not_interruptable then
       local completed_percent = calculate_percentage(cast_start, cast_end)
-      if completed_percent >= interupt_percent then
+      if completed_percent > interupt_percent then
          return true, cast_name
       end
       return false, cast_name
    end
-   if channel_name and channel_interruptable then
+   if channel_name ~= nil and not channel_not_interruptable then
       local completed_percent = calculate_percentage(channel_start, channel_end)
-      if completed_percent >= interupt_percent then
-         return true, cast_name
+      if completed_percent > interupt_percent then
+         return true, channel_name
       end
-      return false, cast_name
+      return false, channel_name
    end
    return false, nil
 end
