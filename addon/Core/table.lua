@@ -96,6 +96,10 @@ end
 --[[--
 Checks if a table contains a key.
  
+Parameters:
+- **table** `table`
+- **key** `table`
+ 
 Returns:
 - **contains** `boolean`
 @param table table
@@ -133,4 +137,17 @@ function ni.table.length(table)
    local count = 0
    for _ in ni.table.pairs(table) do count = count + 1 end
    return count
+end
+
+--[[--
+Wipes a table
+ 
+Parameters:
+- **table** `table`
+@param table table
+]]
+function ni.table.wipe(table)
+   for k, v in ni.table.pairs(table) do
+      table[k] = nil
+   end
 end
