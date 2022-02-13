@@ -285,3 +285,37 @@ function ni.io.get_entries(directory)
    end
    return entries
 end
+
+--[[--
+Gets the content of a file
+ 
+Parameters:
+- **file** `string`
+- **key** `string`
+ 
+Returns:
+- **content** `string`
+- **error** `string`
+@param file string
+@param key string
+]]
+function ni.io.get_content(file, key)
+   return ni.backend.GetContent(file, key)
+end
+
+--[[--
+Saves the content to a file
+ 
+Parameters:
+- **file** `string`
+- **content** `string`
+ 
+Returns:
+- **content** `string`
+- **error** `string`
+@param file string
+@param content string
+]]
+function ni.io.save_content(file, content)
+   return ni.backend.SaveContent(file, content)
+end
