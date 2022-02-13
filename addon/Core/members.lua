@@ -16,10 +16,8 @@ ni.members = {}
 Updates the members table on call.
 ]]
 function ni.members.update()
-   for k, v in ni.table.pairs(ni.members) do
-      if type(v) ~= "function" then
-         ni.members[k] = nil
-      end
+   for k, v in ni.table.opairs(ni.members) do
+      ni.members[k] = nil
    end
    local group = ni.group.in_raid() and "raid" or "party"
    for i=1, ni.group.size() do
