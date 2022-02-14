@@ -8,8 +8,11 @@ ni.player = {}
 local setmetatable = ni.client.get_function("setmetatable")
 local rawset = ni.client.get_function("rawset")
 local GetGlyphSocketInfo = ni.client.get_function("GetGlyphSocketInfo")
+local GetNumGlyphSockets = ni.client.get_function("GetNumGlyphSockets")
 local GetShapeshiftFormID = ni.client.get_function("GetShapeshiftFormID")
 local IsMounted = ni.client.get_function("IsMounted")
+local build = ni.client.build()
+
 
 --[[--
 Moves the player to the token or coordinates.
@@ -150,8 +153,13 @@ Returns:
 @param id number
 ]]
 function ni.player.has_glyph(id)
-   for i = 1, 6 do
-      local enabled, _, glyph_id = GetGlyphSocketInfo(i)
+   for slot = 1, GetNumGlyphSockets() do
+      local enabled, glyph_id
+      if build >= 15595 then
+         enabled, _, _, glyph_id = GetGlyphSocketInfo(slot)
+      else
+         enabled, _, glyph_id = GetGlyphSocketInfo(slot)
+      end
       if enabled and glyph_id == id then
          return true
       end
