@@ -19,6 +19,7 @@ local UnitDebuff = ni.client.get_function("UnitDebuff")
 local UnitCanAssist = ni.client.get_function("UnitCanAssist")
 local UnitClass = ni.client.get_function("UnitClass")
 local UnitName = ni.client.get_function("UnitName")
+local GetUnitSpeed = ni.client.get_function("GetUnitSpeed")
 local select = ni.client.get_function("select")
 
 --[[--
@@ -904,6 +905,20 @@ function ni.unit.in_melee(target_a, target_b)
       return false
    end
    return distance < ni.unit.melee_range(target_a, target_b)
+end
+
+--[[--
+Checks if unit is moving
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_moving** `boolean`
+@param target string
+]]
+function ni.unit.is_moving(target)
+   return GetUnitSpeed(target) ~= 0
 end
 
 --[[--
