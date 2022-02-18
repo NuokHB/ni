@@ -151,3 +151,16 @@ function ni.table.wipe(table)
       table[k] = nil
    end
 end
+
+--[[--
+Wipes a object table
+ 
+Parameters:
+- **table** `table`
+@param table table
+]]
+function ni.table.owipe(table)
+   for k, v in ni.table.opairs(table) do
+      table[k] = nil
+   end
+end
