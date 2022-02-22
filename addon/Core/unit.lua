@@ -1345,6 +1345,54 @@ function ni.unit.index_debuff(target, index)
 end
 
 --[[--
+Gets a table of buffs on a target
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **buffs** `table`
+ 
+Notes:
+See the returns for UnitBuff as this is a wrapper for that.
+@param target string
+]]
+function ni.unit.buffs(target)
+   local buffs, i = {}, 1
+   local name, rank, icon, count, buffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = ni.unit.index_buff(target, i)
+   while name do
+      buffs[i] = {name, rank, icon, count, buffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId}
+      i = i + 1;
+      name, rank, icon, count, buffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = ni.unit.index_buff(target, i)
+   end
+   return buffs
+end
+
+--[[--
+Gets a table of buffs on a target
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **buffs** `table`
+ 
+Notes:
+See the returns for UnitBuff as this is a wrapper for that.
+@param target string
+]]
+function ni.unit.debuffs(target)
+   local buffs, i = {}, 1
+   local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = ni.unit.index_debuff(target, i)
+   while name do
+      buffs[i] = {name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId}
+      i = i + 1;
+      name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = ni.unit.index_debuff(target, i)
+   end
+   return buffs
+end
+
+--[[--
 Table keys:
 - **guid** `string`
 - **type** `number`
