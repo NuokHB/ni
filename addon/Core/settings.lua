@@ -54,6 +54,7 @@ Default main settings
 ]]
 ni.settings.main = {
    latency = 200,
+   debug_tab = false,
    keys ={
       toggle = "F10",
       primary = "F1",
