@@ -311,8 +311,8 @@ Parameters:
 - **content** `string`
  
 Returns:
-- **content** `string`
-- **error** `string`
+- **on_fail** `nil`
+- **on_success** `boolean`
 @param file string
 @param content string
 ]]
