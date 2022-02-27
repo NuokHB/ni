@@ -49,7 +49,11 @@ if not ni.loaded then
       "objects.lua",
       "group.lua",
       "members.lua",
-      "ui.lua"
+      "totem.lua",
+      "profiles.lua",
+      "profile.lua",
+      "ui.lua",
+      "settings.lua"
    }
 
    -- Load each of the above files here
@@ -63,6 +67,15 @@ if not ni.loaded then
    ni.events.initialize()
    ni.update.initialize()
 
+   -- Load in the main settings file
+   do
+      local path = base_path .. "addon\\settings\\main_" .. ni.player.guid() .. ".json"
+      ni.settings.main_path = path
+      ni.settings.main = ni.settings.load(path)
+      ni.settings.save(ni.settings.main, path)
+   end
+
+   -- Load the window
    do
       local window_init = core_path.."components\\main_window\\init.lua"
       local func, err = ni.io.load_buffer(window_init, string.format("@%s", window_init))
@@ -72,7 +85,5 @@ if not ni.loaded then
          func(ni, core_path)
       end
    end
-   -- TODO: continue after loading files
-
    ni.loaded = true
 end
