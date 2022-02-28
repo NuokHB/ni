@@ -1,5 +1,7 @@
 local ni = ...
 
+local build = ni.client.build()
+
 ni.profiles = {}
 ni.profiles.class = {}
 ni.profiles.generic = {}
@@ -41,9 +43,37 @@ function ni.profiles.get_profiles()
                      version = tonumber(string.match(content, "--Version:%s*(%d[,.%d]*)"))
                   end
                )
-               ni.profiles.generic[entries[e].stem] = entries[e]
-               ni.profiles.generic[entries[e].stem].version = version
+               if entries[e].extension == ".lua" or entries[e].extension == ".enc" then
+                  ni.profiles.generic[entries[e].stem] =
+                  {
+                     version = version,
+                     stem = entries[e].stem,
+                     extension= entries[e].extension,
+                     filename = entries[e].filename,
+                     path = entries[e].path
+                  }
+               end
             end
+         end
+      end
+   end
+end
+
+function ni.profiles.load_all()
+   for k, v in ni.table.opairs(ni.profiles.class) do
+      if v.version == build then
+         local _, error = ni.io.load_entry(v)
+         if error then
+            ni.client.error(error)
+         end
+      end
+   end
+   for k, v in ni.table.opairs(ni.profiles.generic) do
+      if v.version == build then
+         ni.utilities.log(tostring(k))
+         local _, error = ni.io.load_entry(v)
+         if error then
+            ni.client.error(error)
          end
       end
    end
