@@ -2,6 +2,11 @@ local ni = ...
 
 ni.settings = {}
 
+local base_path = ni.backend.GetBaseFolder()
+
+ni.settings.path = base_path .. "addon\\settings\\"
+
+
 --[[--
 Saves the settings table to dest as a json file
  
@@ -14,7 +19,7 @@ Returns:
 @param file string
 @param content string
 ]]
-function ni.settings.save(table, file)
+function ni.settings.save(file, table)
    local json, jerror = ni.utilities.to_json(table)
    if jerror then
       ni.client.error(jerror)
@@ -38,12 +43,12 @@ Returns:
 function ni.settings.load(file)
    local content, cerr = ni.io.get_content(file)
    if cerr then
-      ni.backend.Error(cerr)
+      ni.client.error(cerr)
    end
    if content then
       local json, jerror = ni.utilities.from_json(content)
       if jerror then
-         ni.backend.Error(jerror)
+         ni.client.error(jerror)
       end
       return json
    end
