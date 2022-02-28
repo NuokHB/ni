@@ -45,27 +45,7 @@ dump_ni.Callback = function()
    ni.utilities.log(string_dump)
 end
 
-local dump_window = ni.ui.button(tab)
-dump_window.Text = "Ni Window"
-dump_window.Callback = function()
-   local string_dump = "Ni Window\n"
-   local window = ni.window
-   for index, value in ni.table.pairs(window) do
-      local b = "["..index.."] "
-      for i, v in ni.table.pairs(value) do
-         b = b .. tostring(v).. ", "
-         if type(v) == "table" then
-            b = b .. "\n --Table: "
-            for i2, v2 in ni.table.pairs(v) do
-               b = b .. tostring(v2).. ", "
-            end
-         end
-      end
-      b = b.."\n"
-      string_dump = string_dump..b
-   end
-   ni.utilities.log(string_dump)
-end
+ni.ui.separator(tab)
 
 local object_button = ni.ui.button(tab)
 object_button.Text = "Dump All"
@@ -141,7 +121,7 @@ party_button.Callback = function()
    ni.utilities.log(string_dump)
 end
 
-local s = ni.ui.separator(tab)
+ni.ui.separator(tab)
 
 local unit_flags = ni.ui.button(tab)
 unit_flags.Text = "UnitFlags Player"
@@ -187,7 +167,7 @@ UnitDynamicFlags.Callback = function()
    ni.utilities.log(string_dump)
 end
 
-local s = ni.ui.separator(tab)
+ni.ui.separator(tab)
 
 local player_auras = ni.ui.button(tab)
 player_auras.Text = "Player Buffs"
@@ -253,7 +233,7 @@ player_auras.Callback = function()
    ni.utilities.log(string_dump)
 end
 
-local s = ni.ui.separator(tab)
+ni.ui.separator(tab)
 
 local function stripname(name)
    name = string.gsub(name, "%s+", "")
