@@ -20,7 +20,7 @@ local GenerateUi = function(ui, parent)
       end
       for k, v in ni.table.ipairs(ui) do
          if type(v) == "table" then
-            if v.type == "title" then
+            if v.type == "label" then
                local label = ni.ui.label(parent)
                label.Text = v.text
 
