@@ -69,11 +69,19 @@ if not ni.loaded then
 
    -- Load in the main settings file
    do
-      local path = base_path .. "addon\\settings\\main_" .. ni.player.guid() .. ".json"
+      local path = ni.settings.path .. "main.json"
       ni.settings.main_path = path
-      ni.settings.main = ni.settings.load(path)
-      ni.settings.save(ni.settings.main, path)
+      local saved_settings = ni.settings.load(path)
+      if saved_settings then
+         ni.settings.main = saved_settings
+      else
+         ni.settings.save(path, ni.settings.main)
+      end
    end
+
+      --Load the profiles
+      ni.profiles.get_profiles()
+      ni.profiles.load_all()
 
    -- Load the window
    do
