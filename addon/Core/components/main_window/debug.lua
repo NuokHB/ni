@@ -177,7 +177,7 @@ player_auras.Callback = function()
    for index, value in ni.table.pairs(buffs) do
       local b = "["..index.."] "
       for i, v in ni.table.pairs(value) do
-         b = b .. tostring(v).. ", "
+         b = b .."["..i.."]".. tostring(v).. ", "
       end
       b = b.."\n"
       string_dump = string_dump..b
@@ -193,7 +193,7 @@ player_auras.Callback = function()
    for index, value in ni.table.pairs(buffs) do
       local b = "["..index.."] "
       for i, v in ni.table.pairs(value) do
-         b = b .. tostring(v).. ", "
+         b = b .."["..i.."]".. tostring(v).. ", "
       end
       b = b.."\n"
       string_dump = string_dump..b
@@ -209,7 +209,7 @@ player_auras.Callback = function()
    for index, value in ni.table.pairs(buffs) do
       local b = "["..index.."] "
       for i, v in ni.table.pairs(value) do
-         b = b .. tostring(v).. ", "
+         b = b .."["..i.."]".. tostring(v).. ", "
       end
       b = b.."\n"
       string_dump = string_dump..b
@@ -225,7 +225,7 @@ player_auras.Callback = function()
    for index, value in ni.table.pairs(buffs) do
       local b = "["..index.."] "
       for i, v in ni.table.pairs(value) do
-         b = b .. tostring(v).. ", "
+         b = b .."["..i.."]".. tostring(v).. ", "
       end
       b = b.."\n"
       string_dump = string_dump..b
@@ -259,10 +259,12 @@ spell_button.Callback = function()
          offspecID = GetSpellTabInfo(i)
       spell_string = spell_string .. string.format("--%s\n", tabname)
       local tabEnd = offset + numSpells
+      local dumped_names = {}
       for j = offset + 1, tabEnd do
          if build == 12340 then
             local spellName, rank = GetSpellName(j, BOOKTYPE_SPELL) --/dump GetSpellName(10, BOOKTYPE_SPELL)
-            if spellName then
+
+            if spellName and not dumped_names[spellName] then
                local spellId = ni.spell.id(spellName)
                if not spellId then
                   spell_string = spell_string .. string.format("  --Failed to get id for %s (%s)\n", spellName, rank)
@@ -273,6 +275,7 @@ spell_button.Callback = function()
                      spellId,
                      spellId
                   )
+                  dumped_names[spellName] = spellId
             end
          elseif build > 12340 then
             if offspecID == nil or offspecID == 0 then
