@@ -49,6 +49,7 @@ if not ni.loaded then
       "objects.lua",
       "group.lua",
       "members.lua",
+      "pet.lua",
       "totem.lua",
       "profiles.lua",
       "profile.lua",

@@ -249,6 +249,7 @@ spell_button.Text = "Dump Spell Book"
 spell_button.Callback = function()
    ni.utilities.log("Spells Dump")
    local spell_string = "--Version: " .. build .. "\n"
+   local pet_string = "--Pet\n"
    local tabs = GetNumSpellTabs()
    for i = 1, tabs do
       local tabname,
@@ -263,7 +264,7 @@ spell_button.Callback = function()
       for j = offset + 1, tabEnd do
          if build == 12340 then
             local spellName, rank = GetSpellName(j, BOOKTYPE_SPELL) --/dump GetSpellName(10, BOOKTYPE_SPELL)
-
+            local spellNamePet, rankPet = GetSpellName(j, BOOKTYPE_PET)
             if spellName and not dumped_names[spellName] then
                local spellId = ni.spell.id(spellName)
                if not spellId then
@@ -276,6 +277,19 @@ spell_button.Callback = function()
                      spellId
                   )
                   dumped_names[spellName] = spellId
+            end
+            if spellNamePet and not dumped_names[spellNamePet] then
+               local spellId = ni.spell.id(spellNamePet)
+               if not spellId then
+                  pet_string = pet_string .. string.format("  --Failed to get id for %s (%s)\n", spellNamePet, rankPet)
+               end
+               pet_string = pet_string .. string.format("  %s = {id = %s, name = ni.spell.info(%s)},\n",
+                     stripname(spellNamePet),
+                     spellId,
+                     spellId,
+                     spellId
+                  )
+                  dumped_names[spellNamePet] = spellId
             end
          elseif build > 12340 then
             if offspecID == nil or offspecID == 0 then
@@ -318,7 +332,11 @@ spell_button.Callback = function()
          end
       end
    end
+   if string.len(pet_string) > 6 then
+      spell_string = spell_string ..pet_string
+   end
    ni.utilities.log(spell_string)
+
 end
 
 local glyph_button = ni.ui.button(tab)
@@ -326,10 +344,15 @@ glyph_button.Text = "Dump Glyphs"
 glyph_button.Callback = function ()
    local glyph_string = "--Glyphs Dump\n"
    for slot = 1, GetNumGlyphSockets() do
-      local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(slot)
-      if glyphSpellID and glyphSpellID ~= 0 then
-         local name = ni.spell.info(glyphSpellID)
-         glyph_string = glyph_string .. string.format("[%s] name = %s, glyphSpellID = %s, enabled = %s\n", slot, name, glyphSpellID, tostring(enabled))
+      local enabled, glyph_type, glyph_id
+      if build >= 15595 then
+         enabled, _, _, glyph_id = GetGlyphSocketInfo(slot)
+      else
+         enabled, _, glyph_id = GetGlyphSocketInfo(slot)
+      end
+      if glyph_id and glyph_id ~= 0 then
+         local name = ni.spell.info(glyph_id)
+         glyph_string = glyph_string .. string.format("local %s = ni.player.has_glyph(%s) \n", stripname(name), glyph_id)
       end
    end
    ni.utilities.log(glyph_string)

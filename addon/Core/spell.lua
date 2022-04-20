@@ -305,7 +305,7 @@ Returns:
 @param spell
 ]]
 function ni.spell.available(spell)
-   local name, _, _, cost, _, power_type = ni.spell.info(spell)
+   local _, _, _, cost, _, power_type = ni.spell.info(spell)
 
    if not ni.spell.known(spell) then
       return false
@@ -368,7 +368,7 @@ function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
    if ni.spell.on_cooldown(spell) then
       return false
    end
-   if is_facing and not ni.player.facing(target) then
+   if is_facing and not ni.player.is_facing(target, 120) then
       return false
    end
    if line_of_sight and not ni.player.los(target) then
