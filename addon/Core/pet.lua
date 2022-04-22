@@ -66,7 +66,7 @@ function ni.pet.cast_action(...)
    local action, target = ...
    if type(action) == "string" then
       for i = 1, 10 do
-         local name = ni.pet.action_info(action)
+         local name = ni.pet.action_info(i)
          if (name == action) then
             return ni.client.call_protected("CastPetAction", action, target)
          end
