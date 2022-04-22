@@ -121,6 +121,26 @@ party_button.Callback = function()
    ni.utilities.log(string_dump)
 end
 
+local pet_button = ni.ui.button(tab)
+pet_button.Text = "Dump Pet"
+pet_button.Callback = function()
+   ni.objects.update()
+   local has_pet = ni.pet.exists()
+   local string_dump = "Pet Dump\n"
+   if not has_pet then
+      string_dump = string_dump.."No pet found"
+   else
+      string_dump = string_dump.."Pet found\n"
+      for i = 1, 10 do
+         local name = ni.pet.action_info(i)
+         if name then
+            string_dump = string_dump.."  ["..i.."] "..name.."\n"
+         end
+      end
+   end
+   ni.utilities.log(string_dump)
+end
+
 ni.ui.separator(tab)
 
 local unit_flags = ni.ui.button(tab)
