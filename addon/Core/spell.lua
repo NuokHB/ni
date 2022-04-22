@@ -270,7 +270,7 @@ Returns:
 @param spell
 ]]
 function ni.spell.is_usable(spell)
-   return IsUsableSpell(spell)
+   return IsUsableSpell(spell) == 1
 end
 
 --[[--
