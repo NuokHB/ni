@@ -1,76 +1,210 @@
 local ni = ...
+--[[ Backend functions:
+	MoveTo
+	ClickAt
+	RegisterCallback
+	Auras
+	GetMapInfo
+	BestLocation
+	CombatReach
+	ObjectExists
+	GetObjects
+	ObjectInfo
+	IsFacing
+	IsBehind
+	HasAura
+	Encrypt
+	Decrypt
+	ParseFile
+	LoadFile
+	LoadString
+	GetContent
+	SaveContent
+	GetBaseFolder
+	GetDistance
+	LookAt
+	ObjectCreator
+	StopMoving
+	UnitDynamicFlags
+	UnitFlags
+	CreatureType
+	GetSpellID
+	LoS
+	ObjectPointer
+	BaseAddress
+	ObjectTransport
+	ObjectFacing
+	ResetLastHardwareAction
+	CallProtected
+	GetDirectoryContents
+	GetPath
+	FreeMaps
+	ObjectDescriptor
+	SetCreatureTracking
+	SetResourceTracking
+	WebRequest
+	Read
+	Open
+	ToggleConsole
+	ProtectFrame
+	PacketCallback
+	GetHWID
+	GetFunction
+	Error
+	MessageBox
 
--- Prevent double loading (Shouldn't happen, but just to be safe)
+]] 
+
 if not ni.loaded then
-   local base_path = ni.backend.GetBaseFolder()
-   local core_path = base_path.."addon\\core\\"
-   local initial_files = {
-      "io.lua",
-      "client.lua",
-      "utilities.lua",
-      "table.lua"
-   }
 
-   -- Load the utilities table for use
-   for i = 1, #initial_files do
-      local file = initial_files[i]
-      local func, err = ni.backend.LoadFile(core_path..file, file)
-      if func then
-         func(ni)
-      else
-         ni.backend.Error(err)
-      end
-   end
+    local dir = ni.backend.GetBaseFolder()
+    local function LoadCoreFile(entry)
+	    local func, err = ni.backend.LoadFile(dir.."addon\\core\\"..entry, entry)
+  	  if err then
+    		ni.backend.Error(err)
+    	else
+    		func(ni)
+    	end
+    end
 
-   -- Seed the random number generator
-   ni.utilities.randomseed(ni.client.get_time())
+    LoadCoreFile("json.lua")
+    local vars = ni.backend.GetContent(dir.."addon\\settings\\"..UnitName("player")..".json")
+    if vars then
+	    ni.vars = ni.json.decode(vars)
+    else
+	    LoadCoreFile("vars.lua")
+    end
 
-   -- Setup the main frame for functions used later
-   ni.frame = ni.client.get_function("CreateFrame")("frame", nil, UIParent)
-   ni.frame:RegisterAllEvents()
-   ni.backend.ProtectFrame(ni.frame, UIParent)
+    ni.vars.profiles.enabled = false;
+    ni.vars.profiles.genericenabled = false;
+    ni.vars.profiles.delay = 0;
+	ni.vars.build = select(4, GetBuildInfo())
+    ni.backend.SaveContent(dir.."addon\\settings\\"..UnitName("player")..".json", ni.json.encode(ni.vars))
+	local corefiles = {"mwcrand.lua", "debug.lua", "memory.lua", "rotation.lua", "bootstrap.lua", "tables.lua", "drtracker.lua", "utils.lua", "frames.lua", "spell.lua", "power.lua", "rune.lua", "unit.lua", "player.lua", "healing.lua", "members.lua", "objectmanager.lua", "stopcastingtracker.lua", "timetodie.lua", "gui.lua", "mainui.lua",}
+	
+	for i = 1, #corefiles do
+	LoadCoreFile(corefiles[i])
+	end
+	
+   	ni.showstatus = function(str, enabled)
+		if enabled then
+			ni.frames.floatingtext:message("\124cff00ff00" .. str)
+		else
+			ni.frames.floatingtext:message("\124cffff0000" .. str)
+		end
+	end
+	ni.toggleprofile = function(str)
+		local unload = false;
+		if ni.vars.profiles.active == str then
+			ni.vars.profiles.enabled = not ni.vars.profiles.enabled;
+			if ni.vars.profiles.enabled == false then
+				unload = true;
+			end
+		else
+			unload = true;
+			ni.vars.profiles.enabled = true;
+			ni.vars.profiles.active = str;
+		end
+		if unload then
+			if ni.rotation.profile[ni.rotation.lastprofile] then
+				if ni.rotation.profile[ni.rotation.lastprofile].unload then
+					ni.rotation.profile[ni.rotation.lastprofile]:unload();
+				end
+				if ni.rotation.profile[ni.rotation.lastprofile].destroyGUI then
+					ni.rotation.profile[ni.rotation.lastprofile]:destroyGUI();
+				end
+			end
+		end
+		if ni.vars.profiles.enabled then
+			if ni.rotation.profile[str] then
+				if ni.rotation.profile[str].load then
+					ni.rotation.profile[str]:load();
+				end
+				if ni.rotation.profile[str].createGUI then
+					ni.rotation.profile[str]:createGUI();
+				end
+			end
+		end
+		if ni.rotation.lastprofile ~= str then
+			ni.rotation.lastprofile = str;
+		end
+		ni.showstatus(str, ni.vars.profiles.enabled);
+	end
 
-   -- As long as the files table isn't inserted to or removed from it'll stay in this order
-   local core_files = {
-      "input.lua",
-      "events.lua",
-      "world.lua",
-      "navigation.lua",
-      "item.lua",
-      "gear.lua",
-      "object.lua",
-      "power.lua",
-      "rune.lua",
-      "runes.lua",
-      "unit.lua",
-      "player.lua",
-      "spell.lua",
-      "update.lua",
-      "objects.lua",
-      "ui.lua"
-   }
+	ni.togglegeneric = function(str)
+		local unload = false;
+		if ni.vars.profiles.generic == str then
+			ni.vars.profiles.genericenabled = not ni.vars.profiles.genericenabled;
+			if ni.vars.profiles.genericenabled == false then
+				unload = true;
+			end
+		else
+			unload = true;
+			ni.vars.profiles.genericenabled = true;
+			ni.vars.profiles.generic = str;
+		end
+		if unload then
+			if ni.rotation.profile[ni.rotation.lastgeneric] then
+				if ni.rotation.profile[ni.rotation.lastgeneric].unload then
+					ni.rotation.profile[ni.rotation.lastgeneric]:unload();
+				end
+				if ni.rotation.profile[ni.rotation.lastgeneric].destroyGUI then
+					ni.rotation.profile[ni.rotation.lastgeneric]:destroyGUI();
+				end
+			end
+		end
+		if ni.vars.profiles.genericenabled then
+			if ni.rotation.profile[str] then
+				if ni.rotation.profile[str].load then
+					ni.rotation.profile[str]:load();
+				end
+				if ni.rotation.profile[str].createGUI then
+					ni.rotation.profile[str]:createGUI();
+				end
+			end
+		end
+		if ni.rotation.lastgeneric ~= str then
+			ni.rotation.lastgeneric = str;
+		end
+		ni.showstatus(str, ni.vars.profiles.genericenabled);
+	end
 
-   -- Load each of the above files here
-   for _, file in ni.table.pairs(core_files) do
-      local _, error = ni.io.load_file(core_path..file, file)
-      if error then
-         ni.backend.Error(error)
-      end
-   end
+	ni.showintstatus = function()
+		if ni.vars.profiles.interrupt then
+			ni.frames.floatingtext:message("Interrupts: \124cff00ff00Enabled")
+		else
+			ni.frames.floatingtext:message("Interrupts: \124cffff0000Disabled")
+		end
+	end
 
-   ni.events.initialize()
-   ni.update.initialize()
+	ni.updatefollow = function(enabled)
+		if enabled then
+			ni.frames.floatingtext:message("Auto follow: \124cff00ff00Enabled")
+		else
+			ni.frames.floatingtext:message("Auto follow: \124cffff0000Disabled")
+		end
+	end
 
-   do
-      local window_init = core_path.."components\\main_window\\init.lua"
-      local func, err = ni.io.load_buffer(window_init, string.format("@%s", window_init))
-      if err then
-         ni.backend.Error(err)
-      else
-         func(ni, core_path)
-      end
-   end
-   -- TODO: continue after loading files
+	ni.getspellidfromactionbar = function()
+		local focus = GetMouseFocus():GetName()
+		if string.match(focus, "Button") then
+			local button = _G[focus]
+			local slot =
+				ActionButton_GetPagedID(button) or ActionButton_CalculateAction(button) or button:GetAttribute("action") or 0
+			if HasAction(slot) then
+				local aType, aID, _, aMaxID = GetActionInfo(slot)
+				if aType == "spell" then
+					return aMaxID ~= nil and aMaxID or aID
+				end
+			end
+		end
+	end
+	ni.functionsregistered = function()
+		return ni.backend.ToggleConsole ~= nil
+	end
+	ni.frames.main:SetScript("OnUpdate", ni.frames.OnUpdate);
+	ni.frames.main:SetScript("OnEvent", ni.frames.OnEvent);
 
-   ni.loaded = true
+	ni.loaded = true
+
 end

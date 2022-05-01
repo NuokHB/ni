@@ -1,60 +1,55 @@
--------------------
--- Rune functions
 local ni = ...
 
-ni.rune = {}
+local GetRuneCooldown, GetRuneType, GetTime = GetRuneCooldown, GetRuneType, GetTime
 
--- Localizations
-local GetRuneCooldown = ni.client.get_function("GetRuneCooldown")
-local GetRuneType = ni.client.get_function("GetRuneType")
+ni.rune = {};
+ni.rune.available = function()
+	local runesavailable = 0
+	local cur_time = GetTime();
+	for i = 1, 6 do
+		local start, duration, ready = GetRuneCooldown(i);
+		if start == 0 or cur_time - start > duration then
+			runesavailable = runesavailable + 1
+		end
+	end
 
---[[--
-Returns the rune cooldown information for selected rune index.
- 
-Parameters:
-- **index** `number`
- 
-Returns:
-- **start** `number`
-- **duration** `number`
-- **enabled** `number`
-@param index number
-]]
-function ni.rune.cooldown(index)
-   return GetRuneCooldown(index)
+	return runesavailable
 end
-
---[[--
-Gets the rune type by index
- 
-Parameters:
-- **index** `number`
- 
-Returns:
-- **rune_type** `number`
-@param index number
-]]
-function ni.rune.type(index)
-   return GetRuneType(index)
+ni.rune.deathrunes = function()
+	local dr = 0;
+	for i = 1, 6 do
+		if GetRuneType(i) == 4 then
+			dr = dr + 1;
+		end
+	end
+	return dr;
 end
-
---[[--
-Checks if a rune index is currently on cooldown
- 
-Parameters:
-- **index** `number`
- 
-Returns:
-- **on_cooldown** `boolean`
-@param index number
-]]
-function ni.rune.on_cooldown(index)
-   local start, duration = ni.rune.cooldown(index)
-   if start == 0 then
-      return false
-   end
-   if ni.client.get_time() - start > duration then
-      return false
-   end
-   return true
+ni.rune.cd = function(r)
+	local runesoncd = 0
+	local runesoffcd = 0
+	local cur_time = GetTime();
+	
+	for i = 1, 6 do
+		local start, duration, ready = GetRuneCooldown(i);
+		if GetRuneType(i) == r then
+			if start ~= 0 and cur_time - start <= duration then
+				runesoncd = runesoncd + 1
+			else
+				runesoffcd = runesoffcd + 1
+			end
+		end
+	end
+	return runesoncd, runesoffcd
+end
+ni.rune.deathrunecd = function()
+	return ni.rune.cd(4)
+end
+ni.rune.frostrunecd = function()
+	return ni.rune.cd(3)
+end
+ni.rune.unholyrunecd = function()
+	return ni.rune.cd(2)
+end
+ni.rune.bloodrunecd = function()
+	return ni.rune.cd(1)
 end

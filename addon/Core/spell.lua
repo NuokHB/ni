@@ -1,339 +1,410 @@
--------------------
--- Spell functions for ni
 local ni = ...
 
+local GetSpellCooldown,
+	GetTime,
+	GetSpellInfo,
+	GetNetStats,
+	tonumber,
+	UnitIsDeadOrGhost,
+	UnitCanAttack,
+	IsSpellInRange,
+	IsSpellKnown,
+	UnitClass,
+	GetShapeshiftForm,
+	UnitCastingInfo,
+	UnitChannelInfo,
+	tContains,
+	random,
+	sin,
+	cos,
+	sqrt,
+	tremove,
+	tinsert,
+	StrafeLeftStart,
+	StrafeLeftStop,
+	IsPlayerSpell =
+	GetSpellCooldown,
+	GetTime,
+	GetSpellInfo,
+	GetNetStats,
+	tonumber,
+	UnitIsDeadOrGhost,
+	UnitCanAttack,
+	IsSpellInRange,
+	IsSpellKnown,
+	UnitClass,
+	GetShapeshiftForm,
+	UnitCastingInfo,
+	UnitChannelInfo,
+	tContains,
+	random,
+	sin,
+	cos,
+	sqrt,
+	tremove,
+	tinsert,
+	StrafeLeftStart,
+	StrafeLeftStop,
+	IsPlayerSpell
+
+local _, class = UnitClass("player")
+local casts = {}
+local los = ni.backend.LoS
+
+setmetatable(
+	casts,
+	{
+		__index = function(t, k)
+			rawset(t, k, {at = 0})
+			return t[k]
+		end
+	}
+)
 ni.spell = {}
+ni.spell.queue = {}
+ni.spell.id = function(s)
+	if s == nil then
+		return nil
+	end
+	local id = ni.backend.GetSpellID(s)
+	return (id ~= 0) and id or nil
+end
+ni.spell.cd = function(id)
+	local start, duration = GetSpellCooldown(id)
+	local start2 = GetSpellCooldown(61304)
 
--- Localizations to avoid hooks from servers
-local GetSpellCooldown = ni.client.get_function("GetSpellCooldown")
-local GetSpellInfo = ni.client.get_function("GetSpellInfo")
-local IsSpellInRange = ni.client.get_function("IsSpellInRange")
-local IsSpellKnown = ni.client.get_function("IsSpellKnown")
-local IsPlayerSpell = ni.client.get_function("IsPlayerSpell")
-local IsUsableSpell = ni.client.get_function("IsUsableSpell")
-local IsCurrentSpell = ni.client.get_function("IsCurrentSpell")
-local type = ni.client.get_function("type")
-local build = ni.client.build()
+	if start == nil then
+		return -1
+	end
 
---[[--
-Gets the spell information
- 
-Parameters:
-- **spell** `string or number`
- 
-Returns:
-- **...**
- 
-Notes:
-Wrapper for GetSpellInfo. See that for appropriate documentation.
-@param spell
-]]
-function ni.spell.info(spell)
-   return GetSpellInfo(spell)
+	if (start > 0 and duration > 0 and start ~= start2) then
+		return start + duration - GetTime()
+	else
+		return 0
+	end
 end
 
---[[--
-Checks if spell is in range to target
- 
-Parameters:
-- **spell** `string or number`
-- **target** `string`
- 
-Returns:
-- **in_range** `boolean`
-]]
-function ni.spell.in_range(spell, target)
-   if type(spell) == "number" then
-      spell = ni.spell.info(spell)
-   end
-   local in_range = IsSpellInRange(spell, target)
-   if not in_range then
-      return false
-   end
-   return in_range == 1
+ni.spell.gcd = function()
+	local _, d = GetSpellCooldown(61304)
+	return d ~= 0
 end
+ni.spell.isqueued = function()
+	if ni.vars.combat.spellqueueenabled then
+		local name, _, _, _, startTimeMS, endTimeMS = UnitCastingInfo("player")
 
---[[--
-Casts a spell by name or id
- 
-Parameters:
-- **spell** `string or number`
-- **target** `string`
-@param spell
-@param[opt] target string
-]]
-function ni.spell.cast(...)
-   local spell = ...
-   if type(spell) == "number" then
-      ni.client.call_protected("CastSpellById", ...)
-   else
-      ni.client.call_protected("CastSpellByName", ...)
-   end
+		if name then
+			local casttime = (endTimeMS - startTimeMS) / 1000
+			local finish = endTimeMS / 1000 - GetTime()
+			local spellqueuewindow = casttime - (casttime - ni.vars.combat.spellqueuems)
+			if spellqueuewindow <= finish then
+				ni.vars.combat.currentcastend = finish
+				return true
+			else
+				ni.vars.combat.queued = false
+				ni.vars.combat.currentcastend = finish
+				return false
+			end
+		else
+			ni.vars.combat.queued = false
+			ni.vars.combat.currentcastend = 0
+			return false
+		end
+
+		if ni.vars.combat.queued and name then
+			return true
+		end
+	else
+		if UnitCastingInfo("player") or ni.vars.combat.casting then
+			return true
+		end
+	end
+
+	return false
 end
+ni.spell.available = function(id, stutter)
+	if not stutter then
+		if ni.spell.gcd() or ni.spell.isqueued() then
+			return false
+		end
+	end
 
---[[--
-Casts a spell by name or id at the specified location.
- 
-Parameters:
-- **spell** `string or number`
-- **x** `number`
-- **y** `number`
-- **z** `number`
-- **offset** `number`
-@param spell
-@param x number
-@param y number
-@param z number
-@param[opt] offset number
-]]
-function ni.spell.cast_at(spell, x, y, z, offset)
-   x, y = ni.utilities.randomize_point(x, y, offset)
-   ni.spell.cast(spell)
-   ni.player.click_at(x, y, z)
+	if tonumber(id) == nil then
+		id = ni.spell.id(id)
+	end
+
+	local result = false
+
+	if id ~= nil and id ~= 0 and (IsSpellKnown(id) or (ni.vars.build >= 50400 and IsPlayerSpell(id))) then
+		local name, _, _, cost, _, powertype = GetSpellInfo(id)
+
+		if ni.stopcastingtracker.shouldstop(id) then
+			return false
+		end
+
+		if
+			name and
+				((powertype == -2 and ni.player.hpraw() >= cost) or (powertype >= 0 and ni.player.powerraw(powertype) >= cost)) and
+				ni.spell.cd(name) == 0
+		 then
+			result = true
+		end
+	end
+	return result
 end
-
---[[--
-Casts a spell by name or id on the specified target.
- 
-Parameters:
-- **spell** `string or number`
-- **target** `string`
-- **offset** `number`
-@param spell
-@param target string
-@param[opt] offset number
-]]
-function ni.spell.cast_on(spell, target, offset)
-   if target == "mouse" then
-      ni.spell.cast(spell)
-      ni.player.click_at(target)
-   else
-      local x, y, z = ni.unit.info(target)
-      ni.spell.cast_at(spell, x, y, z, offset)
-   end
+ni.spell.casttime = function(s)
+	return select(7, GetSpellInfo(s)) / 1000 + select(3, GetNetStats()) / 1000
 end
-
---[[--
-Gets the spell name from id
- 
-Parameters:
-- **name** `string`
-@param name string
-]]
-function ni.spell.id(name)
-   return ni.backend.GetSpellId(name)
+ni.spell.cast = function(...)
+	local i = ...
+	if i == nil then
+		return
+	end
+	if #{...} > 1 then
+		ni.debug.print(string.format("Casting %s on %s", ...))
+	else
+		ni.debug.print(string.format("Casting %s", ...))
+	end
+	ni.vars.combat.queued = true
+	if tonumber(i)
+	then
+	return ni.backend.CallProtected("CastSpellByID",...)
+	else
+	return ni.backend.CallProtected("CastSpellByName",...) 
+	end
 end
-
---[[--
-Check if the spell is known
- 
-Parameters:
-- **spell** `string or number`
-- **pet** `boolean`
- 
-Returns:
-- **known** `boolean`
-@param spell number
-@param[opt] pet boolean
-]]
-function ni.spell.known(spell, pet)
-   if type(spell) == "string" then
-      spell = ni.spell.id(spell)
-   end
-   if build >= 18414 and not pet then
-      return IsPlayerSpell(spell)
-   end
-   return IsSpellKnown(spell, pet)
+	
+ni.spell.delaycast = function(s, target, delay)
+	if delay then
+		if rawget(casts, s) ~= nil then
+			if GetTime() - casts[s].at < delay then
+				return false
+			end
+		end
+	end
+	ni.spell.cast(s, target);
+	casts[s].at = GetTime();
+	return true;
 end
+ni.spell.castspells = function(spells, t)
+	local items = ni.utils.splitstring(spells)
 
---[[--
-Gets a spells cooldown information
- 
-Parameters:
-- **spell** `string or number`
- 
-Returns:
-- **start** `number`
-- **duration** `number`
-- **enabled** `number`
-@param spell
-]]
-function ni.spell.cooldown(spell)
-   return GetSpellCooldown(spell)
+	for i = 0, #items do
+		local st = items[i]
+		if st ~= nil then
+			local id = tonumber(st)
+			if id ~= nil then
+				ni.spell.cast(id, t)
+			else
+				ni.spell.cast(st, t)
+			end
+		end
+	end
 end
-
---[[--
-Returns if we are are currently on Global Cooldown
- 
-Returns:
-- **start** `number`
-- **duration** `number`
-- **enabled** `number`
-]]
-function ni.spell.global_cooldown()
-   return ni.spell.cooldown(61304)
+ni.spell.castat = function(s, t, offset)
+	if s then
+		if t == "mouse" then
+			ni.spell.cast(s)
+			ni.player.clickat("mouse")
+		elseif ni.unit.exists(t) then
+			local offset = true and offset or random()
+			local x, y, z = ni.unit.info(t)
+			local r = offset * sqrt(random())
+			local theta = random() * 360
+			local tx = x + r * cos(theta)
+			local ty = y + r * sin(theta)
+			ni.spell.cast(s)
+			ni.player.clickat(tx, ty, z)
+		end
+	end
 end
-
---[[--
-Gets the remaining cooldown time
- 
-Parameters:
-- **spell** `string or number`
- 
-Returns:
-- **remaining** `number`
-@param spell
-]]
-function ni.spell.cooldown_remaining(spell)
-   local start, duration = ni.spell.cooldown(spell)
-   if not start then
-      return 0
-   end
-   local gcd_start = ni.spell.global_cooldown()
-   if (start > 0 and duration > 0 and start ~= gcd_start) then
-      return start + duration - ni.client.get_time()
-   else
-      return 0
-   end
+ni.spell.bestaoeloc = function(unit, distance, radius, friendly, minimumcount, inc, zindex_inc)
+	return ni.backend.BestLocation(unit, distance, radius, friendly, minimumcount, inc, zindex_inc);
 end
-
---[[--
-Returns if we are currently on global cooldown
- 
-Returns:
-- **on_gcd** `boolean`
-]]
-function ni.spell.on_global_cooldown()
-   local _, duration = ni.spell.global_cooldown()
-   return duration ~= 0
+ni.spell.casthelpfulatbest = function(s, unit, distance, radius, minimumcount, inc, zindex_inc)
+	local x, y, z = ni.spell.bestaoeloc(unit, distance, radius, true, minimumcount, inc, zindex_inc);
+	if x and y and z then
+		ni.spell.cast(s);
+		ni.player.clickat(x, y, z);
+	end
 end
-
---[[--
-Short hand for on_global_cooldown.
-
-See: [ni.spell.on_global_cooldown](#ni.spell.on_global_cooldown ())
-]]
-function ni.spell.on_gcd()
-   return ni.spell.on_global_cooldown()
+ni.spell.castharmfulatbest = function(s, unit, distance, radius, minimumcount, inc, zindex_inc)
+	local x, y, z = ni.spell.bestaoeloc(unit, distance, radius, false, minimumcount, inc, zindex_inc);
+	if x and y and z then
+		ni.spell.cast(s);
+		ni.player.clickat(x, y, z);
+	end
 end
-
---[[--
-Gets a spells cast time
- 
-Parameters:
-- **spell** `string or number`
- 
-Returns:
-- **duration** `number`
-@param spell
-]]
-function ni.spell.cast_time(spell)
-   local _, _, _, _, _, _, cast_time = ni.spell.info(spell)
-   return cast_time / 1000 + ni.client.get_net_stats() / 1000
+ni.spell.castqueue = function(...)
+	local id, tar = ...
+	if id == nil then
+		id = ni.getspellidfromactionbar()
+	end
+	if id == nil or id == 0 then
+		return
+	end
+	for k, v in pairs(ni.spell.queue) do
+		if tContains(v[2], id) then
+			ni.frames.spellqueue.update()
+			tremove(ni.spell.queue, k)
+			return
+		end
+	end
+	tinsert(ni.spell.queue, {ni.spell.cast, {id, tar}})
+	ni.frames.spellqueue.update(id, true)
 end
-
---[[--
-Returns true if the spell is instant cast
- 
-Parameters:
-- **spell** `string or number`
- 
-Returns:
-- **is_instant** `boolean`
-@param spell
-]]
-function ni.spell.is_instant(spell)
-   local _, _, _, _, _, _, cast_time = ni.spell.info(spell)
-   return cast_time == 0
+ni.spell.castatqueue = function(...)
+	local id, tar = ...
+	if id == nil then
+		id = ni.getspellidfromactionbar()
+		tar = "target"
+	end
+	if id == nil or id == 0 then
+		return
+	end
+	for k, v in pairs(ni.spell.queue) do
+		if tContains(v[2], id) then
+			ni.frames.spellqueue.update()
+			tremove(ni.spell.queue, k)
+			return
+		end
+	end
+	if tar ~= nil then
+		tinsert(ni.spell.queue, {ni.spell.castat, {id, tar}})
+		ni.frames.spellqueue.update(id, true)
+	end
 end
-
---[[--
-Determines whether a spell can be used by the player character
- 
-Parameters:
-- **spell** `string or number`
- 
-Returns:
-- **usable** `boolean`
-- **no_mana** `boolean`
-@param spell
-]]
-function ni.spell.is_usable(spell)
-   return IsUsableSpell(spell)
+ni.spell.stopcasting = function()
+	ni.backend.CallProtected("SpellStopCasting")   
 end
-
---[[--
-Determines if a spell is currently being cast or qued by the player
- 
-Parameters:
-- **spell** `string or number`
- 
-Returns:
-- **is_current** `boolean`
-@param spell
-]]
-function ni.spell.is_current(spell)
-   return IsCurrentSpell(spell)
+ni.spell.stopchanneling = function()
+	ni.backend.CallProtected("MoveForwardStart")
+    ni.backend.CallProtected("MoveForwardStop")
 end
+ni.spell.valid = function(t, spellid, facing, los, friendly)
+	friendly = true and friendly or false
+	los = true and los or false
+	facing = true and facing or false
 
---[[--
-Stops the current spellcasting. Doesn't work for channeled spells.
-]]
-function ni.spell.stop_casting()
-   return ni.client.call_protected("SpellStopCasting")
+	if tonumber(spellid) == nil then
+		spellid = ni.spell.id(spellid)
+		if spellid == 0 then
+			return false
+		end
+	end
+
+	local unitid = ni.unit.id(t)
+
+	if unitid then
+		if (ni.tables.whitelistedlosunits[unitid]) then
+			ni.debug.log(tostring(ni.player.isfacing(t)) .. " " .. tostring(ni.player.los(t)))
+			return true
+		end
+	end
+
+	local name, _, _, cost, _, powertype = GetSpellInfo(spellid)
+
+	if
+		ni.unit.exists(t) and ((not friendly and (not UnitIsDeadOrGhost(t) and UnitCanAttack("player", t) == 1)) or friendly) and
+			IsSpellInRange(name, t) == 1 and
+			(IsSpellKnown(spellid) or (ni.vars.build >= 50400 and IsPlayerSpell(spellid))) and
+			ni.player.powerraw(powertype) >= cost and
+			((facing and ni.player.isfacing(t)) or not facing) and
+			((los and ni.player.los(t)) or not los)
+	 then
+		return true
+	end
+
+	return false
 end
+ni.spell.getinterrupt = function()
+	local interruptSpell = 0
 
---[[--
-Checks if a spell is valid to be cast on a unit
- 
-Parameters:
-- **spell** `string or number`
-- **target** `string`
-- **is_facing** `boolean`
-- **line_of_sight** `boolean`
-- **is_friendly** `boolean`
- 
-Returns:
-- **valid** `boolean`
-@param spell
-@param target string
-@param[opt] is_facing boolean
-@param[opt] line_of_sight boolean
-@param[opt] is_friendly boolean
-]]
-function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
-   if not ni.unit.exists(target) then
-      return false
-   end
-   if not is_friendly then
-      if not ni.player.can_attack(target) then
-         return false
-      end
-      if ni.unit.is_dead_or_ghost(target) then
-         return false
-      end
-   end
-   local name, _, _, cost, _, power_type = ni.spell.info(spell)
-   if type(spell) == "string" then
-      spell = ni.spell.id(spell)
-      if spell == 0 then
-         return false
-      end
-   end
-   if not ni.spell.in_range(name, target) then
-      return false
-   end
-   if not ni.spell.known(spell) then
-      return false
-   end
-   if ni.player.power(power_type) < cost then
-      return false
-   end
-   if is_facing and not ni.player.facing(target) then
-      return false
-   end
-   if line_of_sight and not ni.player.los(target) then
-      return false
-   end
-   return true
+	if class == "SHAMAN" then
+		interruptSpell = 57994
+	elseif class == "WARRIOR" then
+		if ni.vars.build >= 40300 then
+			interruptSpell = 6552
+		else
+			if GetShapeshiftForm() == 3 then
+				interruptSpell = 6552
+			elseif GetShapeshiftForm() == 2 then
+				interruptSpell = 72
+			end
+		end
+	elseif class == "PRIEST" then
+		interruptSpell = 15487
+	elseif class == "DEATHKNIGHT" then
+		interruptSpell = 47528
+	elseif class == "ROGUE" then
+		interruptSpell = 1766
+	elseif class == "MAGE" then
+		interruptSpell = 2139
+	elseif class == "HUNTER" then
+		interruptSpell = 34490
+	elseif class == "MONK" then
+		interruptSpell = 116705
+	elseif class == "WARLOCK" and IsSpellKnown(19647, true) then
+			interruptSpell = 19647
+	end
+
+	return interruptSpell
+end
+ni.spell.castinterrupt = function(t)
+	local interruptSpell = ni.spell.getinterrupt()
+
+	if interruptSpell ~= 0 and ni.spell.cd(interruptSpell) == 0 then
+		ni.spell.stopcasting()
+		ni.spell.stopchanneling()
+		ni.spell.cast(interruptSpell, t)
+	end
+end
+ni.spell.getpercent = function()
+	return math.random(40, 60)
+end
+ni.spell.shouldinterrupt = function(t, p)
+	local InterruptPercent = p or ni.spell.getpercent()
+	local castName, _, _, _, castStartTime, castEndTime, _, _, castinterruptable = UnitCastingInfo(t)
+	local channelName, _, _, _, channelStartTime, channelEndTime, _, channelInterruptable = UnitChannelInfo(t)
+
+	if channelName ~= nil then
+		castName = channelName
+		castStartTime = channelStartTime
+		castEndTime = channelEndTime
+		castinterruptable = channelInterruptable
+	end
+
+	if castName ~= nil then
+		if castinterruptable then
+			return false
+		end
+
+		if UnitCanAttack("player", t) == nil then
+			return false
+		end
+		
+		local timeSinceStart = (GetTime() * 1000 - castStartTime) / 1000
+		local casttime = castEndTime - castStartTime - select(3, GetNetStats())
+		local currentpercent = timeSinceStart / casttime * 100000
+
+		if (currentpercent < InterruptPercent) then
+			return false
+		end
+
+		if ni.vars.interrupt == "wl" then
+			if tContains(ni.vars.interrupts.whitelisted, castName) then
+				return true
+			else
+				return false
+			end
+		else
+			if tContains(ni.vars.interrupts.blacklisted, castName) then
+				return false
+			end
+		end
+		return true
+	end
+	return false
+end
+ni.spell.isinstant = function(s)
+	return select(7, GetSpellInfo(s)) == 0
 end
