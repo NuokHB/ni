@@ -19,6 +19,7 @@ local UnitDebuff = ni.client.get_function("UnitDebuff")
 local UnitCanAssist = ni.client.get_function("UnitCanAssist")
 local UnitClass = ni.client.get_function("UnitClass")
 local UnitName = ni.client.get_function("UnitName")
+local UnitLevel = ni.client.get_function("UnitLevel")
 local GetUnitSpeed = ni.client.get_function("GetUnitSpeed")
 local select = ni.client.get_function("select")
 
@@ -344,6 +345,20 @@ Returns:
 ]]
 ni.unit.name = function(target)
    return UnitName(target)
+end
+
+--[[--
+Gets the the level of the unit
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **class_name** `string`
+@param target string
+]]
+ni.unit.level = function(target)
+   return UnitLevel(target)
 end
 
 --[[--

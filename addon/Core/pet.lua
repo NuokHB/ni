@@ -6,6 +6,7 @@ ni.pet = {}
 
 local GetPetActionInfo = ni.client.get_function("GetPetActionInfo")
 local GetPetActionCooldown = ni.client.get_function("GetPetActionCooldown")
+local GetPetHappiness = ni.client.get_function("GetPetHappiness")
 
 --[[--
 Get the pet action info on the bar by index
@@ -93,7 +94,23 @@ function ni.pet.current_target()
    return ni.unit.guid("playerpettarget")
 end
 
+--[[--
+Guid of your pet, nil if none
+ 
+Returns:
+- **guid ** `string`
+]]
 function ni.pet.guid()
    return ni.unit.guid("pet")
+end
+
+--[[--
+Happiness of your pet, nil if none
+ 
+Returns:
+- **happiness ** `int`
+]]
+function ni.pet.happiness()
+   return GetPetHappiness()
 end
 
