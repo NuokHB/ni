@@ -13,10 +13,23 @@ Table keys:
 ]]
 ni.members = {}
 
+local lastUpdate = 0
+local updating = false
+
 --[[--
 Updates the members table on call.
 ]]
 function ni.members.update()
+   if updating then
+      return
+   end
+   updating = true
+   local time = ni.client.get_time()
+   if time - lastUpdate < 1000 then
+      return
+   else
+      lastUpdate = time
+   end
    ni.table.owipe(ni.members)
    local group = ni.group.in_raid() and "raid" or "party"
    for i=1, ni.group.size() do
@@ -55,4 +68,5 @@ function ni.members.update()
          end
       })
    end
+   updating = false
 end
