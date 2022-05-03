@@ -1,166 +1,214 @@
+-------------------
+-- Player functions for ni
 local ni = ...
 
-local GetGlyphSocketInfo,
-	GetContainerNumSlots,
-	GetContainerItemID,
-	GetItemSpell,
-	GetInventoryItemID,
-	GetItemCooldown,
-	GetSpellCooldown,
-	GetTime,
-	IsFalling =
-	GetGlyphSocketInfo,
-	GetContainerNumSlots,
-	GetContainerItemID,
-	GetItemSpell,
-	GetInventoryItemID,
-	GetItemCooldown,
-	GetSpellCooldown,
-	GetTime,
-	IsFalling
-
-local CurrentMovingTime, CurrentStationaryTime, ResetMovementTime = 0, 0, 0.5;
-
 ni.player = {}
-ni.player.moveto = function(...) --target/x,y,z
-	ni.backend.MoveTo(...)
-end
-ni.player.clickat = function(...) --target/x,y,z/mouse
-	ni.backend.ClickAt(...)
-end
-ni.player.stopmoving = function()
-	ni.backend.CallProtected("StrafeLeftStop");
-	ni.backend.CallProtected("StrafeRightStop");
-	ni.backend.CallProtected("TurnLeftStop");
-	ni.backend.CallProtected("TurnRightStop");
-	ni.backend.StopMoving();
-end
-ni.player.lookat = function(target, inv) --inv true to look away
-	ni.backend.LookAt(target, inv)
-end
-ni.player.target = function(target)
-    ni.backend.CallProtected("TargetUnit", target)
-end
-ni.player.runtext = function(text)
-	ni.debug.print(string.format("Running: %s", text))
-	ni.backend.CallProtected("RunMacroText", text)
-end
-ni.player.useitem = function(...) --itemid/name[, target]
-	if #{...} > 1 then
-		ni.debug.print(string.format("Using item %s on %s", ...))
-	else
-		ni.debug.print(string.format("Using item %s", ...))
-	end
-	local item = ...
-	if tonumber(...) then
-		item = GetItemInfo(item)
-		if #{...} > 1 then
-			local _, tar = ...
-			ni.backend.CallProtected("UseItemByName", item, tar)
-		else
-			ni.backend.CallProtected("UseItemByName", item)
-		end
-	else
-		ni.backend.CallProtected("UseItemByName", ...)
-	end
-end
-ni.player.useinventoryitem = function(slotid)
-	ni.debug.print(string.format("Using Inventory Slot %s", slotid))
-	ni.backend.CallProtected("UseInventoryItem", slotid)
-end
-ni.player.interact = function(target)
-	ni.debug.print(string.format("Interacting with %s", target))
-	ni.backend.CallProtected("InteractUnit", UnitGUID(target))
-end
-ni.player.hasglyph = function(glyphid)
-	for i = 1, 6 do
-		if GetGlyphSocketInfo(i) then
-			if select(3, GetGlyphSocketInfo(i)) == glyphid then
-				return true
-			end
-		end
-	end
-	return false
-end
-ni.player.hasitem = function(itemid)
-	return GetItemCount(itemid, false, false) > 0
-end
-ni.player.hasitemequipped = function(id)
-	for i = 1, 19 do
-		if GetInventoryItemID("player", i) == id then
-			return true
-		end
-	end
-	return false
-end
-ni.player.slotcastable = function(slotnum)
-	return GetItemSpell(GetInventoryItemID("player", slotnum)) ~= nil
-end
-ni.player.slotcd = function(slotnum)
-	if not ni.player.slotcastable(slotnum) then
-		return 0
-	end
-	local start, duration, enable = GetItemCooldown(GetInventoryItemID("player", slotnum))
-	if (start > 0 and duration > 0) then
-		return start + duration - GetTime()
-	end
-	return 0
-end
-ni.player.itemcd = function(item)
-	local start, duration, enable = GetItemCooldown(item)
-	if (start > 0 and duration > 0) then
-		return start + duration - GetTime()
-	end
-	return 0
-end
-ni.player.petcd = function(spell)
-	local start, duration, enable = GetSpellCooldown(spell)
-	if (start > 0 and duration > 0) then
-		return start + duration - GetTime()
-	else
-		return 0
-	end
-end
-ni.player.registermovement = function(elapsed)
-	local speed = GetUnitSpeed("player");
-	if speed ~= 0 then
-		CurrentMovingTime = CurrentMovingTime + elapsed;
-		CurrentStationaryTime = 0;
-	else
-		if CurrentStationaryTime < ResetMovementTime then
-			CurrentStationaryTime = CurrentStationaryTime + elapsed;
-		elseif CurrentStationaryTime > ResetMovementTime then
-			CurrentMovingTime = 0;
-		end
-	end
-end
-ni.player.movingfor = function(duration)
-	local duration = duration or 1;
-	if CurrentMovingTime >= duration and not ni.unit.buff("player", 98767) then
-		return true;
-	end
-	return false;
-end
-ni.player.getmovingtime = function()
-	return CurrentMovingTime;
-end
-ni.player.ismoving = function()
-	if ni.unit.ismoving("player") or IsFalling() then
-		return true
-	end
-	return false
+
+-- Localized functions
+local setmetatable = ni.client.get_function("setmetatable")
+local rawset = ni.client.get_function("rawset")
+local GetGlyphSocketInfo = ni.client.get_function("GetGlyphSocketInfo")
+local GetNumGlyphSockets = ni.client.get_function("GetNumGlyphSockets")
+local GetShapeshiftFormID = ni.client.get_function("GetShapeshiftFormID")
+local IsMounted = ni.client.get_function("IsMounted")
+local build = ni.client.build()
+
+
+--[[--
+Moves the player to the token or coordinates.
+ 
+Parameters:
+- **target** `token|guid`
+ 
+Or
+- **x** `number`
+- **y** `number`
+- **z** `number`
+@param ...
+]]
+function ni.player.move_to(...)
+   return ni.backend.MoveTo(...)
 end
 
-setmetatable(
-	ni.player,
-	{
-		__index = function(t, k)
-			if ni.unit[k] then
-				rawset(t, k, function(...)
-					return ni.unit[k]("player", ...);
-				end);
-				return t[k];
-			end
-		end
-	}
-)
+--[[--
+Clicks at the location of the target, or coordinates.
+ 
+Parameters:
+- **target** `token|guid`
+ 
+Or
+- **x** `number`
+- **y** `number`
+- **z** `number`
+@param ...
+]]
+function ni.player.click_at(...)
+   return ni.backend.ClickAt(...)
+end
+
+--[[--
+Gets the current map information for the player.
+ 
+Returns:
+- **map_id** `number`
+- **tile_x** `number`
+- **tile_y** `number`
+]]
+function ni.player.get_map_info()
+   return ni.backend.GetMapInfo()
+end
+
+--[[--
+Turns the player to a target, or away from it.
+ 
+Parameters:
+- **target** `token|guid`
+- **away** `boolean`
+@param target string
+@param[opt] away boolean
+]]
+function ni.player.look_at(target, away)
+   return ni.backend.LookAt(target, away)
+end
+
+--[[--
+Stops the players movement.
+]]
+function ni.player.stop_moving()
+   return ni.backend.StopMoving()
+end
+
+--[[--
+Sets the player creature tracking value.
+ 
+Parameters:
+- **value** `number`
+@param value
+]]
+function ni.player.set_creature_tracking(value)
+   return ni.backend.SetCreatureTracking(value)
+end
+
+--[[--
+Gets the player creature tracking value.
+ 
+Returns:
+- **value** `number`
+]]
+function ni.player.get_creature_tracking()
+   return ni.backend.GetCreatureTracking()
+end
+
+--[[--
+Sets the player resource tracking value.
+ 
+Parameters:
+- **value** `number`
+@param value
+]]
+function ni.player.set_resource_tracking(value)
+   return ni.backend.SetResourceTracking(value)
+end
+
+--[[--
+Gets the player resource tracking value.
+ 
+Returns:
+- **value** `number`
+]]
+function ni.player.get_resource_tracking()
+   return ni.backend.GetResourceTracking()
+end
+
+--[[--
+Sets the players target to the token passed
+ 
+Parameters:
+- **target** `string`
+@param target string
+]]
+function ni.player.target(target)
+   return ni.client.call_protected("TargetUnit", target)
+end
+
+--[[--
+Interacts with the token passed
+ 
+Parameters:
+- **target** `string`
+@param target string
+]]
+function ni.player.interact(target)
+   return ni.client.call_protected("InteractUnit", target)
+end
+
+--[[--
+Checks if the player has the current glyph
+ 
+Parameters:
+- **id** `number`
+ 
+Returns:
+- **has_glyph** `boolean`
+@param id number
+]]
+function ni.player.has_glyph(id)
+   for slot = 1, GetNumGlyphSockets() do
+      local enabled, glyph_id
+      if build >= 15595 then
+         enabled, _, _, glyph_id = GetGlyphSocketInfo(slot)
+      else
+         enabled, _, glyph_id = GetGlyphSocketInfo(slot)
+      end
+      if enabled and glyph_id == id then
+         return true
+      end
+   end
+   return false
+end
+
+--[[--
+Gets the current shapeshift form id
+ 
+Returns:
+- **form_id** `number`
+@param id number
+]]
+function ni.player.shapeshift_form_id()
+    return GetShapeshiftFormID()
+end
+
+--[[--
+Returns if the player is mounted
+ 
+Returns:
+- **mounted** `boolean`
+]]
+function ni.player.mounted()
+   return IsMounted()
+end
+
+--[[--
+Canceles a specific buff on the player
+ 
+Parameters:
+- **spell** `string`
+- **filter** `string`
+@param spell string
+@param filter[opt] string
+]]
+function ni.player.cancel_buff(spell, filter)
+   return ni.client.call_protected("CancelUnitBuff", "player", spell, filter)
+end
+
+-- Set ni.players metatable to allow unit functions.
+setmetatable(ni.player, {
+   __index = function(table, key)
+      if ni.unit[key] then
+         rawset(table, key, function(...)
+            return ni.unit[key]("player", ...)
+         end)
+         return table[key]
+      end
+   end
+})

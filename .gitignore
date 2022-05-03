@@ -1,4 +1,9 @@
 ni.dll
 addon/Settings/*.json
+addon/Settings/*.ini
+Loader.exe
 settings.json
 ni.zip
+generate.bat
+logs
+logs/*
