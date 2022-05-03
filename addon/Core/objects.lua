@@ -28,10 +28,6 @@ local updating = false
 Updates the objects table on call.
 ]]
 function ni.objects.update()
-   if updating then
-      return
-   end
-   updating = true
    local time = ni.client.get_time()
    if time - lastUpdate < 200 then
       return
@@ -44,5 +40,4 @@ function ni.objects.update()
       end
    end
    ni.backend.GetObjects(enumerate)
-   updating = false
 end
