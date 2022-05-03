@@ -2,7 +2,7 @@ local ni = ...
 
 ni.profile = {}
 
-local GenerateUi = function(ui, parent)
+local GenerateUi = function(name, ui, parent)
    if ui == nil then
       return nil
    end
@@ -10,13 +10,18 @@ local GenerateUi = function(ui, parent)
       return nil
    end
    if ui.settingsfile then
+      ni.settings.profile[name] = {}
       local callback = ui.callback
+      --Retrive any settings file and use it witin the ui
       local settings = ni.settings.load(ni.settings.path .. ui.settingsfile)
       if settings ~= nil then
-         ui = settings
+         ni.settings.profile[name] = {}
+         for k, v in ni.table.pairs(settings) do
+            ni.settings.profile[name][k] = v
+         end
       end
       local save = function()
-         ni.settings.save(ni.settings.path .. ui.settingsfile, ui)
+         ni.settings.save(ni.settings.path .. ui.settingsfile, ni.settings.profile[name])
       end
       for k, v in ni.table.ipairs(ui) do
          if type(v) == "table" then
@@ -31,10 +36,14 @@ local GenerateUi = function(ui, parent)
                if v.enabled ~= nil then
                   local checkbox = ni.ui.checkbox(parent)
                   checkbox.Text = v.text
+                  if ni.settings.profile[name][v.key] ~= nil then
+                     v.enabled = ni.settings.profile[name][v.key]
+                  end
                   if callback then
                      checkbox.Callback = function(checked)
                         v.enabled = checked
                         callback(v.key, "enabled", v.enabled)
+                        ni.settings.profile[name][v.key] = checked
                         save()
                      end
                      callback(v.key, "enabled", v.enabled)
@@ -53,7 +62,10 @@ local GenerateUi = function(ui, parent)
                   elseif v2.value ~= nil then
                      combobox:Add(v2.value)
                   end
-                  if v2.selected then
+                  if ni.settings.profile[name][v.key] ~= nil then
+                     combobox.Selected = text
+                     selected = text
+                  elseif v2.selected then
                      combobox.Selected = text
                      selected = text
                   end
@@ -62,6 +74,7 @@ local GenerateUi = function(ui, parent)
                   combobox.Callback = function(s)
                      selected = s
                      callback(v.key, "menu", s)
+                     ni.settings.profile[name][v.key] = s
                      save()
                   end
                   callback(v.key, "menu", selected)
@@ -70,6 +83,9 @@ local GenerateUi = function(ui, parent)
             elseif v.type == "slider" then
                local slider = ni.ui.slider(parent)
                slider.Text = v.text
+               if ni.settings.profile[name][v.key] ~= nil then
+                  v.value = ni.settings.profile[name][v.key]
+               end
                slider.Value = v.value
                slider.Min = v.min
                slider.Max = v.max
@@ -77,6 +93,7 @@ local GenerateUi = function(ui, parent)
                   slider.Callback = function(value)
                      v.value = value
                      callback(v.key, "value", value)
+                     ni.settings.profile[name][v.key] = value
                      save()
                   end
                   callback(v.key, "value", v.value)
@@ -107,7 +124,7 @@ function ni.profile.new(name, queue, abilities, ui)
    end
    profile.has_ui = ui ~= nil
    function profile.ui(tab)
-      GenerateUi(ui, tab)
+      GenerateUi(name, ui, tab)
    end
    ni.profile[name] = profile
 end
