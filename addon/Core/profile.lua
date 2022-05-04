@@ -62,7 +62,7 @@ local GenerateUi = function(name, ui, parent)
                   elseif v2.value ~= nil then
                      combobox:Add(v2.value)
                   end
-                  if ni.settings.profile[name][v.key] ~= nil then
+                  if ni.settings.profile[name][v.key] == text then
                      combobox.Selected = text
                      selected = text
                   elseif v2.selected then
