@@ -290,7 +290,7 @@ spell_button.Callback = function()
                if not spellId then
                   spell_string = spell_string .. string.format("  --Failed to get id for %s (%s)\n", spellName, rank)
                end
-               spell_string = spell_string .. string.format("  %s = {id = %s, name = ni.spell.info(%s)},\n",
+               spell_string = spell_string .. string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n",
                      stripname(spellName),
                      spellId,
                      spellId,
@@ -303,7 +303,7 @@ spell_button.Callback = function()
                if not spellId then
                   pet_string = pet_string .. string.format("  --Failed to get id for %s (%s)\n", spellNamePet, rankPet)
                end
-               pet_string = pet_string .. string.format("  %s = {id = %s, name = ni.spell.info(%s)},\n",
+               pet_string = pet_string .. string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n",
                      stripname(spellNamePet),
                      spellId,
                      spellId,
@@ -325,7 +325,7 @@ spell_button.Callback = function()
                      spell_string =
                         spell_string ..
                         string.format(
-                           "  %s = {id = %s, name = ni.spell.info(%s)},\n",
+                           "   %s = {id = %s, name = ni.spell.info(%s)},\n",
                            stripname(flyoutname),
                            flyoutID,
                            flyoutID,
@@ -345,7 +345,7 @@ spell_button.Callback = function()
                      end
                      spell_string =
                         spell_string ..
-                        string.format("  %s = {id = %s, name = ni.spell.info(%s)},\n", stripname(spellname), id, id, id)
+                        string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n", stripname(spellname), id, id, id)
                   end
                end
             end
