@@ -20,7 +20,7 @@ Updates the members table on call.
 ]]
 function ni.members.update()
    local time = ni.client.get_time()
-   if time - lastUpdate < 1000 then
+   if time - lastUpdate < ni.settings.main.latency then
       return
    else
       lastUpdate = time

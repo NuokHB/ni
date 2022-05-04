@@ -22,14 +22,13 @@ local function enumerate(t, g, n)
 end
 
 local lastUpdate = 0
-local updating = false
 
 --[[--
 Updates the objects table on call.
 ]]
 function ni.objects.update()
    local time = ni.client.get_time()
-   if time - lastUpdate < 200 then
+   if time - lastUpdate < ni.settings.main.latency then
       return
    else
       lastUpdate = time
