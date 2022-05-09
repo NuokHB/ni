@@ -20,6 +20,7 @@ local UnitCanAssist = ni.client.get_function("UnitCanAssist")
 local UnitClass = ni.client.get_function("UnitClass")
 local UnitName = ni.client.get_function("UnitName")
 local UnitLevel = ni.client.get_function("UnitLevel")
+local UnitAffectingCombat = ni.client.get_function("UnitAffectingCombat")
 local GetUnitSpeed = ni.client.get_function("GetUnitSpeed")
 local select = ni.client.get_function("select")
 
@@ -169,7 +170,9 @@ Returns:
 @param target string
 ]]
 function ni.unit.guid(target)
-   return UnitGUID(target)
+   if ni.unit.exists(target) then
+      return UnitGUID(target)
+   end
 end
 
 --[[--
@@ -285,6 +288,20 @@ Returns:
 function ni.unit.target(target)
    local _, _, _, _, guid = ni.unit.info(target)
    return guid
+end
+
+--[[--
+Gets the units combat status
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **combat status** `boolean`
+@param target string
+]]
+function ni.unit.affecting_combat(target)
+   return UnitAffectingCombat(target)
 end
 
 --[[--

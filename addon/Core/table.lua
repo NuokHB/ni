@@ -5,6 +5,8 @@ local ni = ...
 ni.table = {}
 
 local type = ni.client.get_function("type")
+local tinsert = ni.client.get_function("tinsert", "insert")
+local tremove = ni.client.get_function("tremove", "remove")
 
 --[[--
 Gets the next key/value pair from a table.
@@ -163,4 +165,8 @@ function ni.table.owipe(table)
    for k, v in ni.table.opairs(table) do
       table[k] = nil
    end
+end
+
+function ni.table.insert(table, value)
+   tinsert(table, value)
 end

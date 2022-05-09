@@ -80,8 +80,8 @@ end
 --[[--
 Instruct your pet to attack your target.
 ]]
-function ni.pet.attack()
-   return ni.client.call_protected("PetAttack")
+function ni.pet.attack(target)
+   return ni.client.call_protected("PetAttack", target)
 end
 
 --[[--

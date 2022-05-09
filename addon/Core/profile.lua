@@ -32,9 +32,9 @@ local GenerateUi = function(ui, parent, name)
 
                 elseif v.type == "input" and v.key ~= nil then
                     local input = ni.ui.input(parent)
-                    input.Text = v.Text
                     input.Value = v.value
-                    local button = ni.ui.button(parent, true)
+                    input.Text = v.text
+                    local button = ni.ui.button(parent)
                     button.Text = "Set"
                     button.Callback = function()
                         v.value = input.Value
@@ -61,6 +61,7 @@ local GenerateUi = function(ui, parent, name)
                 elseif v.type == "combobox" and v.key ~= nil then
                     local combobox = ni.ui.combobox(parent)
                     combobox.Selected = v.selected
+                    combobox.Text = v.text
                     for _, v2 in ipairs(v.menu) do
                         local text
                         if v2.text ~= nil then
@@ -124,17 +125,17 @@ function ni.profile.new(name, queue, abilities, ui, events)
         GenerateUi(ui, tab, name)
     end
     function profile.get_setting(key)
-      for k, v in ipairs(ni.profile[name].ui) do
+        for k, v in ipairs(ni.profile[name].ui) do
             if v.type == "checkbox" and v.key ~= nil and v.key == key then
-               return v.enabled
+                return v.enabled
             end
             if v.type == "combobox" then
-               return v.selected
+                return v.selected
             end
             if v.type == "input" and v.key ~= nil and v.key == key then
-               return v.value
+                return v.value
             end
-      end
+        end
     end
 
     ni.profile[name] = profile
