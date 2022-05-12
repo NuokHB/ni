@@ -25,6 +25,7 @@ function ni.settings.save(file, table)
       ni.client.error(jerror)
    end
    if ni.io.save_content(file, json) then
+      ni.utilities.log("ni.settings.save "..file .. json)
       return true
    end
    return false
@@ -50,6 +51,11 @@ function ni.settings.load(file)
       if jerror then
          ni.client.error(jerror)
       end
+      local print_settings = "ni.settings.load ".. file .."\n"
+      for k, v in ni.table.pairs(json) do
+        print_settings = print_settings .. "["..k.."] = " .. tostring(v).."\n"
+      end
+      ni.utilities.log(print_settings)
       return json
    end
 end
@@ -81,3 +87,5 @@ ni.settings.main = {
       },
    }
 }
+
+ni.settings.profile = {}
