@@ -201,6 +201,17 @@ function ni.player.cancel_buff(spell, filter)
    return ni.client.call_protected("CancelUnitBuff", "player", spell, filter)
 end
 
+--[[--
+Starts autoattacking specified target
+ 
+Parameters:
+- **target** `string`
+@param target string
+]]
+function ni.player.start_attack(target)
+   return ni.client.call_protected("StartAttack", target)
+end
+
 -- Set ni.players metatable to allow unit functions.
 setmetatable(ni.player, {
    __index = function(table, key)

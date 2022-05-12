@@ -731,7 +731,7 @@ Returns:
 @param target string
 ]]
 function ni.unit.is_lootable(target)
-	return select(3, ni.unit.flags(target)) or false
+	return select(3, ni.unit.dynamic_flags(target)) or false
 end
 
 --[[--

@@ -359,6 +359,9 @@ function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
    if not ni.spell.in_range(name, target) then
       return false
    end
+   if not ni.spell.is_instant(spell) and ni.player.is_moving() then
+      return false
+   end
    if not ni.spell.known(spell) then
       return false
    end
@@ -366,6 +369,9 @@ function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
       return false
    end
    if ni.spell.on_cooldown(spell) then
+      return false
+   end
+   if ni.spell.on_gcd() then
       return false
    end
    if is_facing and not ni.player.is_facing(target, 120) then
