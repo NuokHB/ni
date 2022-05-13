@@ -147,9 +147,9 @@ local unit_flags = ni.ui.button(tab)
 unit_flags.Text = "UnitFlags Player"
 unit_flags.Callback = function()
    local string_dump = "UnitFlags Player\n"
-   for i = 1, 32 do
-      local flag = ni.backend.UnitFlags("player")
-      string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flag))
+   local flags = {ni.backend.UnitFlags("player")}
+   for k,v in pairs(flags) do
+      string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(v))
    end
    ni.utilities.log(string_dump)
 end
@@ -158,9 +158,9 @@ local unit_flags_target = ni.ui.button(tab)
 unit_flags_target.Text = "UnitFlags Target"
 unit_flags_target.Callback = function()
    local string_dump = "UnitFlags Target\n"
-   for i = 1, 32 do
-      local flag = ni.backend.UnitFlags("target")
-      string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flag))
+   local flags = {ni.backend.UnitFlags("target")}
+   for k,v in pairs(flags) do
+      string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(v))
    end
    ni.utilities.log(string_dump)
 end
@@ -169,9 +169,9 @@ local playerDynamicFlags = ni.ui.button(tab)
 playerDynamicFlags.Text = "UnitDynamicFlags Player"
 playerDynamicFlags.Callback = function()
    local string_dump = "UnitDynamicFlags Player\n"
-   for i = 1, 9 do
-      local flag = ni.backend.UnitDynamicFlags("player")
-      string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flag))
+   local flags = {ni.backend.UnitDynamicFlags("player")}
+   for k,v in pairs(flags) do
+      string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(v))
    end
    ni.utilities.log(string_dump)
 end
@@ -180,9 +180,9 @@ local UnitDynamicFlags = ni.ui.button(tab)
 UnitDynamicFlags.Text = "UnitDynamicFlags Target"
 UnitDynamicFlags.Callback = function()
    local string_dump = "UnitDynamicFlags Target\n"
-   for i = 1, 9 do
-      local flag = ni.backend.UnitDynamicFlags("Target")
-      string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flag))
+   local flags = {ni.backend.UnitDynamicFlags("player")}
+   for k,v in pairs(flags) do
+      string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(v))
    end
    ni.utilities.log(string_dump)
 end
