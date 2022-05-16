@@ -53,6 +53,7 @@ local GenerateUi = function(name, ui, parent)
 
             elseif v.type == "combobox" and v.key ~= nil then
                local combobox = ni.ui.combobox(parent)
+               combobox.Text = v.text
                local selected
                for _, v2 in ipairs(v.menu) do
                   local text
