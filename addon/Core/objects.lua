@@ -27,6 +27,10 @@ local lastUpdate = 0
 Updates the objects table on call.
 ]]
 function ni.objects.update()
+   if not ni.in_game then
+      ni.table.owipe(ni.objects)
+      return
+   end
    local time = ni.client.get_time()
    if time - lastUpdate < ni.settings.main.latency then
       return
