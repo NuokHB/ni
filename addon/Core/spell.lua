@@ -139,6 +139,9 @@ Returns:
 function ni.spell.known(spell, pet)
    if type(spell) == "string" then
       spell = ni.spell.id(spell)
+      if spell == 0 then
+         return false
+      end
    end
    if build >= 18414 and not pet then
       return IsPlayerSpell(spell)
