@@ -97,6 +97,10 @@ if not ni.loaded_init then
             func(ni, core_path)
          end
       end
+
+      --Start updating members and objects
+      ni.update.register_callback("OBJECTS", ni.objects.update)
+      ni.update.register_callback("MEMBERS", ni.members.update)
       ni.loaded = true
    end
 
@@ -113,7 +117,12 @@ if not ni.loaded_init then
       ni.utilities.log("PLAYER_LOGOUT")
       ni.in_game = false
    end
+   ni.PLAYER_LEAVING_WORLD = function(...)
+      ni.utilities.log("PLAYER_LEAVING_WORLD")
+      ni.in_game = false
+   end
    ni.events.register_callback("PLAYER_ENTERING_WORLD", ni.PLAYER_ENTERING_WORLD)
    ni.events.register_callback("PLAYER_LOGOUT", ni.PLAYER_LOGOUT)
+   ni.events.register_callback("PLAYER_LEAVING_WORLD", ni.PLAYER_LEAVING_WORLD)
    ni.loaded_init = true
 end

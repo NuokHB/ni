@@ -21,26 +21,25 @@ local function enumerate(t, g, n)
    ni.objects[g] = enumeration_table
 end
 
-local lastUpdate = 0
+local time_since_last = 0
 
 --[[--
 Updates the objects table on call.
 ]]
-function ni.objects.update()
+function ni.objects.update(elapsed)
+   time_since_last = time_since_last + elapsed
    if not ni.in_game then
       ni.table.owipe(ni.objects)
       return
    end
-   local time = ni.client.get_time()
-   if time - lastUpdate < ni.settings.main.latency then
-      return
-   else
-      lastUpdate = time
-   end
-   for k, v in ni.table.opairs(ni.objects) do
-      if not ni.object.exists(k) then
-         ni.objects[k] = nil
+
+   if time_since_last > (ni.settings.main.latency / 1000) then
+      for k, v in ni.table.opairs(ni.objects) do
+         if not ni.object.exists(k) then
+            ni.objects[k] = nil
+         end
       end
+      ni.backend.GetObjects(enumerate)
+      time_since_last = 0
    end
-   ni.backend.GetObjects(enumerate)
 end

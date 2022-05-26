@@ -13,21 +13,23 @@ Table keys:
 ]]
 ni.members = {}
 
-local lastUpdate = 0
+local time_since_last = 0
 
 --[[--
 Updates the members table on call.
 ]]
-function ni.members.update()
+function ni.members.update(elapsed)
    if not ni.in_game then
       ni.table.owipe(ni.members)
       return
    end
-   local time = ni.client.get_time()
-   if time - lastUpdate < ni.settings.main.latency then
+   time_since_last = time_since_last + elapsed
+   if not ni.in_game then
+      ni.table.owipe(ni.objects)
       return
-   else
-      lastUpdate = time
+   end
+   if time_since_last < ni.settings.main.latency then
+      return
    end
    ni.table.owipe(ni.members)
    local group = ni.group.in_raid() and "raid" or "party"
@@ -67,4 +69,5 @@ function ni.members.update()
          end
       })
    end
+   time_since_last = 0
 end
