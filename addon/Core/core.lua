@@ -104,8 +104,9 @@ if not ni.loaded_init then
       ni.loaded = true
    end
 
-   -- Setup loading in the core files to prevent some functions not being avalible
+   -- Event tracking for if we are in game or not
    ni.in_game = false
+   -- Fires when entering the game
    ni.PLAYER_ENTERING_WORLD = function(...)
       ni.utilities.log("PLAYER_ENTERING_WORLD")
       ni.in_game = true
@@ -113,14 +114,17 @@ if not ni.loaded_init then
          ni.load_core()
       end
    end
+   --Fires on logout or reload
    ni.PLAYER_LOGOUT = function(...)
       ni.utilities.log("PLAYER_LOGOUT")
       ni.in_game = false
    end
+   --Fires on map changes ect
    ni.PLAYER_LEAVING_WORLD = function(...)
       ni.utilities.log("PLAYER_LEAVING_WORLD")
       ni.in_game = false
    end
+   --Register the callbacks for all 3
    ni.events.register_callback("PLAYER_ENTERING_WORLD", ni.PLAYER_ENTERING_WORLD)
    ni.events.register_callback("PLAYER_LOGOUT", ni.PLAYER_LOGOUT)
    ni.events.register_callback("PLAYER_LEAVING_WORLD", ni.PLAYER_LEAVING_WORLD)

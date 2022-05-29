@@ -47,13 +47,36 @@ end
 
 ni.ui.separator(tab)
 
+local function object_type(type)
+   if type == 0 then
+      return "Object"
+   elseif type == 1 then
+      return "Item"
+   elseif type == 2 then
+      return "Container"
+   elseif type == 3 then
+      return "Unit"
+   elseif type == 4 then
+      return "Player"
+   elseif type == 5 then
+      return "GameObject"
+   elseif type == 6 then
+      return "DynamicObject"
+   elseif type == 7 then
+      return "Corpse"
+   elseif type == 8 then
+      return "AiGroup"
+   elseif type == 9 then
+      return "AreaTrigger"
+   end
+end
+
 local object_button = ni.ui.button(tab)
 object_button.Text = "Dump All"
 object_button.Callback = function()
-   ni.objects.update()
    local string_dump = "Objects Dump\n"
    for k, v in ni.table.opairs(ni.objects) do
-      string_dump = string_dump .. string.format("[%s] type = %s, guid = %s, name = %s\n", k, v.type, v.guid, v.name)
+      string_dump = string_dump .. string.format("[%s] type = %s, guid = %s, name = %s\n", k, object_type(v.type), v.guid, v.name)
    end
    ni.utilities.log(string_dump)
 end
@@ -61,7 +84,6 @@ end
 local enemies_button = ni.ui.button(tab)
 enemies_button.Text = "Dump Enemies Player 100"
 enemies_button.Callback = function()
-   ni.objects.update()
    local enemies = ni.unit.enemies_in_range("player", 100)
    local string_dump = "Enemies Dump\n"
    string_dump = string_dump .. string.format("Found %s targets \n", ni.table.length(enemies))
@@ -76,7 +98,6 @@ end
 local enemies_button_target = ni.ui.button(tab)
 enemies_button_target.Text = "Dump Enemies Target 20"
 enemies_button_target.Callback = function()
-   ni.objects.update()
    local enemies = ni.unit.enemies_in_range("target", 20)
    local string_dump = "Enemies Dump Target\n"
    string_dump = string_dump .. string.format("Found %s targets \n", ni.table.length(enemies))
@@ -91,7 +112,6 @@ end
 local friends_button = ni.ui.button(tab)
 friends_button.Text = "Dump Friends"
 friends_button.Callback = function()
-   ni.objects.update()
    local friends = ni.unit.friends_in_range("player", 100)
    local string_dump = "Friends Dump\n"
    for k, v in ni.table.opairs(friends) do
@@ -105,7 +125,6 @@ end
 local party_button = ni.ui.button(tab)
 party_button.Text = "Dump Party Members"
 party_button.Callback = function()
-   ni.members.update()
    local party = ni.members
    local string_dump = "Party Dump\n"
    for k, v in ni.table.opairs(party) do
@@ -124,7 +143,6 @@ end
 local pet_button = ni.ui.button(tab)
 pet_button.Text = "Dump Pet"
 pet_button.Callback = function()
-   ni.objects.update()
    local has_pet = ni.pet.exists()
    local string_dump = "Pet Dump\n"
    if not has_pet then
@@ -147,10 +165,16 @@ local unit_flags = ni.ui.button(tab)
 unit_flags.Text = "UnitFlags Player"
 unit_flags.Callback = function()
    local string_dump = "UnitFlags Player\n"
+   local flags = ni.backend.UnitFlags("player")
+   if flags then
+   string_dump = string_dump .. string_dump.format("type: %s\n", type(flags))
    for i = 1, 32 do
-      local flag = ni.backend.UnitFlags("player")
-      string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flag))
+      local flag = flags[i]
+      if flag then
+         string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flags[i]))
+      end
    end
+end
    ni.utilities.log(string_dump)
 end
 
@@ -158,9 +182,14 @@ local unit_flags_target = ni.ui.button(tab)
 unit_flags_target.Text = "UnitFlags Target"
 unit_flags_target.Callback = function()
    local string_dump = "UnitFlags Target\n"
-   for i = 1, 32 do
-      local flag = ni.backend.UnitFlags("target")
-      string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flag))
+   local flags = ni.backend.UnitFlags("target")
+   if flags then
+      for i = 1, 32 do
+         local flag = flags[i]
+         if flag then
+            string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flags[i]))
+         end
+      end
    end
    ni.utilities.log(string_dump)
 end
@@ -169,9 +198,14 @@ local playerDynamicFlags = ni.ui.button(tab)
 playerDynamicFlags.Text = "UnitDynamicFlags Player"
 playerDynamicFlags.Callback = function()
    local string_dump = "UnitDynamicFlags Player\n"
-   for i = 1, 9 do
-      local flag = ni.backend.UnitDynamicFlags("player")
-      string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flag))
+   local flags = ni.backend.UnitDynamicFlags("player")
+   if flags then
+      for i = 1, 9 do
+         local flag = flags[i]
+         if flag then
+            string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flags[i]))
+         end
+      end
    end
    ni.utilities.log(string_dump)
 end
@@ -180,9 +214,13 @@ local UnitDynamicFlags = ni.ui.button(tab)
 UnitDynamicFlags.Text = "UnitDynamicFlags Target"
 UnitDynamicFlags.Callback = function()
    local string_dump = "UnitDynamicFlags Target\n"
-   for i = 1, 9 do
-      local flag = ni.backend.UnitDynamicFlags("Target")
-      string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flag))
+   local flags = ni.backend.UnitDynamicFlags("Target")
+   if flags then
+      for i = 1, 9 do
+         local flag = flags[i]
+         if flag then
+            string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flags[i]))
+         end   end
    end
    ni.utilities.log(string_dump)
 end

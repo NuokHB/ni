@@ -118,17 +118,45 @@ function ni.object.is_dynamic_object(object)
 end
 
 --[[--
-Gets if the object is a dynamic object
+Gets if the object is a corpse object
  
 Parameters:
 - **object** `string`
  
 Returns:
-- **is_dynamic_object** `boolean`
+- **is_corpse** `boolean`
 @param object string
 ]]
 function ni.object.is_corpse(object)
    return ni.object.type(object) == 7
+end
+
+--[[--
+Gets if the object is a Ai Group
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_corpse** `boolean`
+@param object string
+]]
+function ni.object.is_ai_group(object)
+   return ni.object.type(object) == 8
+end
+
+--[[--
+Gets if the object is a Area Trigger
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_corpse** `boolean`
+@param object string
+]]
+function ni.object.is_area_trigger(object)
+   return ni.object.type(object) == 9
 end
 
 --[[--

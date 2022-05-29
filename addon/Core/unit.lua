@@ -413,6 +413,24 @@ function ni.unit.distance(target_a, target_b)
 end
 
 --[[--
+Gets the distance between two targets based on 3 vectors
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **distance** `number`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.distanceV3(target_a, target_b)
+   local x1, y1, z1 = ni.unit.location(target_a)
+   local x2, y2, z2 = ni.unit.location(target_b)
+   return math.sqrt((x2-x1)^2+(y2-y1)^2+(z2-z1)^2)
+end
+
+--[[--
 Gets the GUID of the units creator.
  
 Parameters:
@@ -443,6 +461,20 @@ I was being lazy, and didn't want to type out the 9 different returns.
 ]]
 function ni.unit.dynamic_flags(target)
    return ni.backend.UnitDynamicFlags(target)
+end
+
+--[[--
+Checks if the unit is not lootable
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_lootable** `boolean`
+@param target string
+]]
+function ni.unit.is_lootable(target)
+   return select(2, ni.unit.dynamic_flags(target)) or false
 end
 
 --[[--
@@ -1425,7 +1457,7 @@ local function in_range_helper(target, distance, func)
    end
    for k, v in ni.table.opairs(ni.objects) do
       if k ~= target and (v.type == 3 or v.type == 4) and func(k) and not ni.unit.is_dead_or_ghost(k) then
-         local d = ni.unit.distance(target, k)
+         local d = ni.unit.distanceV3(target, k)
          if d and d < distance then
             in_range[k] = {
                guid = k,
