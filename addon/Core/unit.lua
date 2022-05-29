@@ -1538,3 +1538,25 @@ function ni.unit.can_interupt(target, interupt_percent)
    end
    return false, nil
 end
+
+--[[
+Check if a unit cast is not interruptable
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **not_interruptable** `boolean`
+@param target string
+]]
+function ni.unit.cast_not_interruptable(target)
+   local cast_name, _, _, _, _, _, _, _, cast_not_interruptable = ni.unit.casting(target)
+	local channel_name, _, _, _, _, _, _, channel_not_interruptable = ni.unit.channel(target)
+   if cast_name ~= nil and cast_not_interruptable then
+      return true
+   end
+   if channel_name ~= nil and channel_not_interruptable then
+      return true
+   end
+   return false
+end
