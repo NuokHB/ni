@@ -8,8 +8,9 @@ if not ni.loaded_init then
       "io.lua",
       "client.lua",
       "utilities.lua",
+      "memory.lua",
       "table.lua",
-      "events.lua"
+      "events.lua",
    }
 
    -- Load the utilities table for use
