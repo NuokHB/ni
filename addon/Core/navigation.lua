@@ -11,7 +11,6 @@ Table keys:
 - **z** `number`
 @table xyz
 ]]
-
 --[[--
 Gets a path from start to end point with navigation mesh.
  
@@ -45,4 +44,23 @@ Frees the maps loaded in memory.
 ]]
 function ni.navigation.free_maps()
    return ni.backend.FreeMaps()
+end
+
+--[[--
+Moves the player to the given coordinates.
+ 
+Parameters:
+- **x** `number`
+- **y** `number`
+- **z** `number`
+@param x1 number
+@param y1 number
+@param z1 number
+]]
+function ni.navigation.move_to(x, y, z)
+   return ni.backend.MoveTo(x, y, z)
+end
+
+function ni.navigation.distanceV3(x1, y1, z1, x2, y2, z2)
+   return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2 + (z2 - z1) ^ 2)
 end

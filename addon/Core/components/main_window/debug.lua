@@ -14,7 +14,7 @@ if not GetSpellBookItemInfo and build > 12340 then
    ni.backend.Error("Unable to get GetSpellBookItemInfo")
 end
 local GetFlyoutInfo = ni.client.get_function("GetFlyoutInfo")
---local GetFlyoutSlotInfo = ni.client.get_function("GetFlyoutSlotInfo")
+local GetFlyoutSlotInfo = ni.client.get_function("GetFlyoutSlotInfo")
 
 local GetSpellName = ni.client.get_function("GetSpellName")
 if not GetSpellName and build == 12340 then
@@ -76,10 +76,33 @@ object_button.Text = "Dump All"
 object_button.Callback = function()
    local string_dump = "Objects Dump\n"
    for k, v in ni.table.opairs(ni.objects) do
-      string_dump = string_dump .. string.format("[%s] type = %s, guid = %s, name = %s\n", k, object_type(v.type), v.guid, v.name)
+      string_dump = string_dump .. string.format("[%s] type = %s, guid = %s, name = %s, display_id = %s\n", k, object_type(v.type), v.guid, v.name, ni.object.display_id(k))
    end
    ni.utilities.log(string_dump)
 end
+
+local game_objects = ni.ui.button(tab)
+game_objects.Text = "Dump Game Objects"
+game_objects.Callback = function()
+   local string_dump = "Objects Dump\n"
+   local objects = ni.objects
+   for k, v in ni.table.opairs(objects) do
+      local distance = ni.player.distanceV3(k)
+      if v.type == 5 and distance <= 100 then
+         string_dump = string_dump .. string.format("[%s] name = %s, display_id = %s, distance = %s\n", k, v.name, ni.object.display_id(k), distance)
+         for i = 1, 0x8 do
+            local d = ni.object.descriptor(k, i)
+            if d ~= nil then
+               string_dump = string_dump .. string.format("Descriptor %s: %s\n", i, d)
+            end
+         end
+         string_dump = string_dump .. "\n"
+      end
+   end
+   ni.utilities.log(string_dump)
+end
+
+ni.ui.separator(tab)
 
 local enemies_button = ni.ui.button(tab)
 enemies_button.Text = "Dump Enemies Player 100"
@@ -164,32 +187,22 @@ ni.ui.separator(tab)
 local unit_flags = ni.ui.button(tab)
 unit_flags.Text = "UnitFlags Player"
 unit_flags.Callback = function()
-   local string_dump = "UnitFlags Player\n"
-   local flags = ni.backend.UnitFlags("player")
-   if flags then
-   string_dump = string_dump .. string_dump.format("type: %s\n", type(flags))
-   for i = 1, 32 do
-      local flag = flags[i]
-      if flag then
-         string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flags[i]))
-      end
+   local string_dump = "ni.unit.flags Player\n"
+   local flags = {ni.unit.flags("player")}
+   for k, v in ni.table.pairs(flags) do
+      string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(flags[v]))
    end
-end
    ni.utilities.log(string_dump)
 end
 
 local unit_flags_target = ni.ui.button(tab)
 unit_flags_target.Text = "UnitFlags Target"
 unit_flags_target.Callback = function()
-   local string_dump = "UnitFlags Target\n"
-   local flags = ni.backend.UnitFlags("target")
-   if flags then
-      for i = 1, 32 do
-         local flag = flags[i]
-         if flag then
-            string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flags[i]))
-         end
-      end
+   local t = ni.unit.name("target")
+   local string_dump = string.format("ni.unit.flags %s\n", t)
+   local flags = {ni.unit.flags("target")}
+   for k, v in ni.table.pairs(flags) do
+      string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(flags[v]))
    end
    ni.utilities.log(string_dump)
 end
@@ -197,15 +210,10 @@ end
 local playerDynamicFlags = ni.ui.button(tab)
 playerDynamicFlags.Text = "UnitDynamicFlags Player"
 playerDynamicFlags.Callback = function()
-   local string_dump = "UnitDynamicFlags Player\n"
-   local flags = ni.backend.UnitDynamicFlags("player")
-   if flags then
-      for i = 1, 9 do
-         local flag = flags[i]
-         if flag then
-            string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flags[i]))
-         end
-      end
+   local string_dump = "ni.unit.dynamic_flags Player\n"
+   local flags = {ni.unit.dynamic_flags("player")}
+   for k, v in ni.table.pairs(flags) do
+      string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(flags[v]))
    end
    ni.utilities.log(string_dump)
 end
@@ -213,14 +221,25 @@ end
 local UnitDynamicFlags = ni.ui.button(tab)
 UnitDynamicFlags.Text = "UnitDynamicFlags Target"
 UnitDynamicFlags.Callback = function()
-   local string_dump = "UnitDynamicFlags Target\n"
-   local flags = ni.backend.UnitDynamicFlags("Target")
-   if flags then
-      for i = 1, 9 do
-         local flag = flags[i]
-         if flag then
-            string_dump = string_dump .. string.format("Flag %s: %s\n", i, tostring(flags[i]))
-         end   end
+   local t = ni.unit.name("target")
+   local string_dump = string.format("ni.unit.dynamic_flags %s\n", t)
+   local flags = {ni.unit.dynamic_flags("target")}
+   for k, v in ni.table.pairs(flags) do
+      string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(flags[v]))
+   end
+   ni.utilities.log(string_dump)
+end
+
+local descriptor = ni.ui.button(tab)
+descriptor.Text = "Descriptor Target"
+descriptor.Callback = function()
+   local t = ni.unit.name("target")
+   local string_dump = string.format("ni.object.descriptor %s\n", t)
+   for i = 1, 30 do
+      local d = ni.object.descriptor("target", i)
+      if d ~= nil then
+         string_dump = string_dump .. string.format("%s: %s\n", i, d)
+      end
    end
    ni.utilities.log(string_dump)
 end
@@ -414,4 +433,76 @@ glyph_button.Callback = function ()
       end
    end
    ni.utilities.log(glyph_string)
+end
+
+ni.ui.separator(tab)
+
+local Pointer = ni.ui.button(tab)
+Pointer.Text = "Memory Pointer Target"
+Pointer.Callback = function()
+   local t = ni.unit.name("target")
+   local string_dump = string.format("ni.memory.pointer %s\n", t)
+   local pointer, hex_pointer = ni.memory.pointer("target")
+   if pointer then
+      string_dump = string_dump .. string.format("point: %s hex_pointer: %s", pointer, hex_pointer)
+   end
+   ni.utilities.log(string_dump)
+end
+
+local type = ni.ui.combobox(tab)
+type.Text = "Type"
+local types ={
+   "bool", --true/false formatted
+   "byte", --number formatted
+   "string", --string formatted
+   "float", --number formatted
+   "double", --number formatted
+   "int16","short", --number formatted
+   "int32","int", --number formatted
+   "int64", --string formatted formatted
+   "uint16","ushort", --number formatted
+   "uint","uint32", --number formatted
+   "uint64","GUID" --string formatted
+}
+for key, value in pairs(types) do
+   type:Add(value)
+end
+
+local offset = ni.ui.input(tab)
+offset.Text = "Offset"
+
+local reader = ni.ui.button(tab)
+reader.Text = "Memory Read"
+reader.Callback = function()
+   local string_dump = string.format("ni.memory.read %s %s\n", type.Value, offset.Value)
+   local read = ni.memory.read(type.Value, offset.Value)
+   if read then
+      string_dump = string_dump .. tostring(read)
+   end
+   ni.utilities.log(string_dump)
+end
+
+ni.ui.separator(tab)
+
+local navigation_target = ni.ui.button(tab)
+navigation_target.Text = "navigation target"
+navigation_target.Callback = function()
+   local x1, y1, z1 = ni.player.location()
+   local x2, y2, z2 = ni.unit.location("target")
+   local start_x, start_y, start_z = x1, y1, z1
+   local path = ni.navigation.get_path(x1, y1, z1, x2, y2, z2)
+   local start_distance = ni.navigation.distanceV3(start_x, start_y, start_z, x2, y2, z2)
+   local string_dump = string.format("navigation.get_path %s Distance: %s\n", ni.unit.name("target"), start_distance)
+
+   for i, v in ni.table.pairs(path) do
+      local distance = ni.navigation.distanceV3(start_x, start_y, start_z, v.x, v.y, v.z)
+      string_dump = string_dump .. string.format("[%s]x: %s y: %s z: %s distance: %s\n", i, v.x, v.y, v.z, distance)
+      start_x = v.x
+      start_y = v.y
+      start_z = v.z
+   end
+
+   local end_distance = ni.navigation.distanceV3(start_x, start_y, start_z, x2, y2, z2)
+   string_dump = string_dump .. string.format("Distance from last to target %s\n", end_distance)
+   ni.utilities.log(string_dump)
 end
