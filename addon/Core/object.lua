@@ -236,3 +236,17 @@ Returns:
 function ni.object.descriptor(object, index)
    return ni.backend.ObjectDescriptor(object, index)
 end
+
+--[[--
+Gets the object display id
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **display_id** `number`
+@param object string
+]]
+function ni.object.display_id(object)
+   return ni.object.descriptor(object, 3)
+end
