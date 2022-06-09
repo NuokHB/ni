@@ -4,6 +4,9 @@ local ni = ...
 
 ni.object = {}
 
+local build = ni.client.build()
+
+
 --[[--
 Checks if the given object is within game memory
  
@@ -248,5 +251,11 @@ Returns:
 @param object string
 ]]
 function ni.object.display_id(object)
-   return ni.object.descriptor(object, 3)
+   if build == 12340 then
+      return ni.object.descriptor(object, 3)
+   end
+   if build >= 15595 then
+      return ni.object.descriptor(object, 5)
+   end
+   return -1
 end
