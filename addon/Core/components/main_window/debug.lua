@@ -14,7 +14,7 @@ if not GetSpellBookItemInfo and build > 12340 then
    ni.backend.Error("Unable to get GetSpellBookItemInfo")
 end
 local GetFlyoutInfo = ni.client.get_function("GetFlyoutInfo")
-local GetFlyoutSlotInfo = ni.client.get_function("GetFlyoutSlotInfo")
+--local GetFlyoutSlotInfo = ni.client.get_function("GetFlyoutSlotInfo") --Crashing WoW!
 
 local GetSpellName = ni.client.get_function("GetSpellName")
 if not GetSpellName and build == 12340 then
