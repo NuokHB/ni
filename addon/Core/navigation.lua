@@ -60,7 +60,7 @@ Parameters:
 function ni.navigation.move_to(x, y, z)
    return ni.backend.MoveTo(x, y, z)
 end
-   
+
 --[[--
 Calculates the distance between two 3D points
     
@@ -84,3 +84,23 @@ Returns:
 function ni.navigation.distanceV3(x1, y1, z1, x2, y2, z2)
    return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2 + (z2 - z1) ^ 2)
 end
+
+--[[--
+Calculates the distance between the player and a point
+    
+Parameters:
+- **x** `number`
+- **y** `number`
+- **z** `number`
+    
+Returns:
+- **distance** `number`
+@param x number
+@param y number
+@param z number
+]]
+function ni.navigation.distance_to_point(x, y, z)
+   local px, py, pz = ni.player.location()
+   return ni.navigation.distanceV3(px, py, pz, x, y, z)
+end
+
