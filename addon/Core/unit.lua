@@ -427,7 +427,7 @@ Returns:
 function ni.unit.distanceV3(target_a, target_b)
    local x1, y1, z1 = ni.unit.location(target_a)
    local x2, y2, z2 = ni.unit.location(target_b)
-   return math.sqrt((x2-x1)^2+(y2-y1)^2+(z2-z1)^2)
+   return ni.navigation.distanceV3(x1, y1, z1, x2, y2, z2)
 end
 
 --[[--
