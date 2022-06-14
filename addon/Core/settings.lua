@@ -57,6 +57,11 @@ function ni.settings.load(file)
         if type(v) == "table" then
             for k2, v2 in ni.table.pairs(v) do
                print_settings = print_settings .. "   ["..k2.."] = " .. tostring(v2).."\n"
+               if type(v2) == "table" then
+                  for k3, v3 in ni.table.pairs(v2) do
+                     print_settings = print_settings .. "      ["..k3.."] = " .. tostring(v3).."\n"
+                  end
+               end
             end
          end
       end
