@@ -72,7 +72,7 @@ if not ni.loaded_init then
 
       -- Load in the main settings file
       do
-         local path = ni.settings.path .. "main.json"
+         local path = ni.settings.path .. ni.player.guid() .. "_main.json"
          ni.settings.main_path = path
          local saved_settings = ni.settings.load(path)
          if saved_settings then
