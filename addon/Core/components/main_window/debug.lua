@@ -435,6 +435,19 @@ glyph_button.Callback = function ()
    ni.utilities.log(glyph_string)
 end
 
+local mounts_button = ni.ui.button(tab)
+mounts_button.Text = "Dump Mounts"
+mounts_button.Callback = function ()
+   local mounts_string = "--Mounts Dump\n"
+   local mounts = ni.mount.mounts()
+   for k, v in ni.table.pairs(mounts) do
+      mounts_string = mounts_string .. string.format("[%s] %s, summoned = %s,\n", k, v.name, tostring(v.summoned))
+   end
+   ni.utilities.log(mounts_string)
+end
+
+
+
 ni.ui.separator(tab)
 
 local Pointer = ni.ui.button(tab)
