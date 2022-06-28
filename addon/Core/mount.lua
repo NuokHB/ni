@@ -13,14 +13,14 @@ local mount = "MOUNT"
 --[[--
 Dismounts the player if the player was mounted.
 ]]
-ni.mount.dismount = function ()
+function ni.mount.dismount()
    return ni.client.call_protected("Dismount")
 end
 
 --[[--
 Summons the mount by slot
 ]]
-ni.mount.summon = function(slot)
+function ni.mount.summon (slot)
    return ni.client.call_protected("CallCompanion", mount, slot)
 end
 
@@ -30,7 +30,7 @@ Returns if the player is mounted
 Returns:
 - **is_mounted** `boolean`
 ]]
-ni.mount.is_mounted = function()
+function ni.mount.is_mounted()
    return IsMounted()
 end
 
@@ -40,7 +40,7 @@ Returns the number of mounts you have.
 Returns:
 - **mounts** `number`
 ]]
-ni.mount.count = function()
+function ni.mount.count()
    return GetNumCompanions(mount)
 end
 
@@ -58,7 +58,7 @@ Wrapper for GetCompanionInfo. See that for appropriate documentation.
 creatureID, creatureName, creatureSpellID, icon, issummoned, mountTypeID
 @param slot
 ]]
-ni.mount.info = function (slot)
+function ni.mount.info(slot)
    return GetCompanionInfo(mount, slot)
 end
 
