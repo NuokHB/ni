@@ -51,6 +51,7 @@ if not ni.loaded_init then
          "objects.lua",
          "group.lua",
          "members.lua",
+         "mount.lua",
          "pet.lua",
          "totem.lua",
          "profiles.lua",
