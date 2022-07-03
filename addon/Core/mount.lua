@@ -20,7 +20,7 @@ end
 --[[--
 Summons the mount by slot
 ]]
-function ni.mount.summon (slot)
+function ni.mount.summon(slot)
    return ni.client.call_protected("CallCompanion", mount, slot)
 end
 
@@ -92,4 +92,3 @@ function ni.mount.mounts()
    end
    return mounts
 end
-

@@ -424,10 +424,10 @@ Returns:
 @param target_a string
 @param target_b string
 ]]
-function ni.unit.distanceV3(target_a, target_b)
+function ni.unit.distance_3d(target_a, target_b)
    local x1, y1, z1 = ni.unit.location(target_a)
    local x2, y2, z2 = ni.unit.location(target_b)
-   return ni.navigation.distanceV3(x1, y1, z1, x2, y2, z2)
+   return ni.world.get_3d_distance(x1, y1, z1, x2, y2, z2)
 end
 
 --[[--
@@ -1457,7 +1457,7 @@ local function in_range_helper(target, distance, func)
    end
    for k, v in ni.table.opairs(ni.objects) do
       if k ~= target and (v.type == 3 or v.type == 4) and func(k) and not ni.unit.is_dead_or_ghost(k) then
-         local d = ni.unit.distanceV3(target, k)
+         local d = ni.unit.distance_3d(target, k)
          if d and d < distance then
             in_range[k] = {
                guid = k,

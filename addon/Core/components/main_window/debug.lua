@@ -504,18 +504,18 @@ navigation_target.Callback = function()
    local x2, y2, z2 = ni.unit.location("target")
    local start_x, start_y, start_z = x1, y1, z1
    local path = ni.navigation.get_path(x1, y1, z1, x2, y2, z2)
-   local start_distance = ni.navigation.distanceV3(start_x, start_y, start_z, x2, y2, z2)
+   local start_distance = ni.world.get_3d_distance(start_x, start_y, start_z, x2, y2, z2)
    local string_dump = string.format("navigation.get_path %s Distance: %s\n", ni.unit.name("target"), start_distance)
 
    for i, v in ni.table.pairs(path) do
-      local distance = ni.navigation.distanceV3(start_x, start_y, start_z, v.x, v.y, v.z)
+      local distance = ni.world.get_3d_distance(start_x, start_y, start_z, v.x, v.y, v.z)
       string_dump = string_dump .. string.format("[%s]x: %s y: %s z: %s distance: %s\n", i, v.x, v.y, v.z, distance)
       start_x = v.x
       start_y = v.y
       start_z = v.z
    end
 
-   local end_distance = ni.navigation.distanceV3(start_x, start_y, start_z, x2, y2, z2)
+   local end_distance = ni.world.get_3d_distance(start_x, start_y, start_z, x2, y2, z2)
    string_dump = string_dump .. string.format("Distance from last to target %s\n", end_distance)
    ni.utilities.log(string_dump)
 end
