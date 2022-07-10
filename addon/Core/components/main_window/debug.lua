@@ -23,6 +23,16 @@ end
 local GetGlyphSocketInfo = ni.client.get_function("GetGlyphSocketInfo")
 local GetNumGlyphSockets = ni.client.get_function("GetNumGlyphSockets")
 
+local function stripname(name)
+   name = string.gsub(name, "%s+", "")
+   name = string.gsub(name, "'", "")
+   name = string.gsub(name, "-", "")
+   name = string.gsub(name, ":", "")
+   name = string.gsub(name, ",", "")
+   return name
+end
+
+
 local dump_ni = ni.ui.button(tab)
 dump_ni.Text = "Ni Dump"
 dump_ni.Callback = function()
@@ -175,8 +185,9 @@ pet_button.Callback = function()
       for i = 1, 10 do
          local name = ni.pet.action_info(i)
          if name then
-            string_dump = string_dump.."  ["..i.."] "..name.."\n"
+            string_dump = string_dump.. string.format("local %s = %s", stripname(name), i)
          end
+         string_dump = string_dump .. "\n"
       end
    end
    ni.utilities.log(string_dump)
@@ -311,15 +322,6 @@ player_auras.Callback = function()
 end
 
 ni.ui.separator(tab)
-
-local function stripname(name)
-   name = string.gsub(name, "%s+", "")
-   name = string.gsub(name, "'", "")
-   name = string.gsub(name, "-", "")
-   name = string.gsub(name, ":", "")
-   name = string.gsub(name, ",", "")
-   return name
-end
 
 local spell_button = ni.ui.button(tab)
 spell_button.Text = "Dump Spell Book"

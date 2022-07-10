@@ -83,7 +83,7 @@ end
 -- Static variables when pathing
 local current_index = 1
 local last_ctm = 0
-local current_path
+local current_path = {}
 local path_length = 0
 
 --[[--

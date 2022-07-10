@@ -20,6 +20,8 @@ local UnitCanAssist = ni.client.get_function("UnitCanAssist")
 local UnitClass = ni.client.get_function("UnitClass")
 local UnitName = ni.client.get_function("UnitName")
 local GetUnitSpeed = ni.client.get_function("GetUnitSpeed")
+local UnitInVehicle = ni.client.get_function("UnitInVehicle")
+local GetComboPoints = ni.client.get_function("GetComboPoints")
 local select = ni.client.get_function("select")
 
 --[[--
@@ -788,6 +790,36 @@ Returns:
 ]]
 function ni.unit.is_undead(target)
    return ni.unit.type(target) == 6
+end
+
+--[[--
+Checks if the unit is in a vehicle
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **in_vehicle** `boolean`
+@param target string
+]]
+function ni.unit.in_vehicle(target)
+   return UnitInVehicle(target) == 1
+end
+
+--[[--
+Returns the amount of current combo points.
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **combo_points** `number`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.combo_points(target_a, target_b)
+   return GetComboPoints(target_a, target_b)
 end
 
 --[[--
