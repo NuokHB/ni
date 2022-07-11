@@ -15,6 +15,7 @@ if ni.window then
    local main_tab_manager = ni.ui.tab_manager(main_tab)
    local profile_tab = tab_manager:AddTab("Profile Settings")
    local profile_tab_manager = ni.ui.tab_manager(profile_tab)
+   local active_ui ={}
    do
       -- Setup the main window portion
       local selector_tab = main_tab_manager:AddTab("Selector")
@@ -31,9 +32,11 @@ if ni.window then
                if ni.settings.main.profiles.primary.name == k then
                   combo.Selected = k
                   if ni.profile[k].has_ui then
-                     if not ni.table.contains_key(profile_tab_manager, k) then
+                     ni.utilities.log(string.format("Init: %s (%s) has ui?%s", k, v.version, tostring(ni.profile[k].has_ui)))
+                     if ni.profile[k].has_ui then
                         local tab = profile_tab_manager:AddTab(k)
                         ni.profile[k].ui(tab)
+                        active_ui[k] = true
                      end
                   end
                end
@@ -44,9 +47,10 @@ if ni.window then
             ni.settings.main.profiles.primary.name = selected
             ni.settings.save(ni.settings.main_path, ni.settings.main)
             if selected ~= "None" and ni.profile[selected].has_ui  then
-               if not ni.table.contains_key(profile_tab_manager, selected) then
+               if not ni.table.contains_key(active_ui, selected) then
                   local tab = profile_tab_manager:AddTab(selected)
                   ni.profile[selected].ui(tab)
+                  active_ui[selected] = true
                end
             end
          end
@@ -65,17 +69,16 @@ if ni.window then
                   combo.Selected = k
                end
                combo:Add(k)
-               if ni.profile[k].has_ui then
-                  local tab = profile_tab_manager:AddTab(k)
-                  ni.profile[k].ui(tab)
-               end
             end
             combo.Callback = function(selected)
                ni.settings.main.profiles.secondary.name = selected
                ni.settings.save(ni.settings.main_path, ni.settings.main)
                if selected ~= "None" and ni.profile[selected].has_ui  then
-                  local tab = profile_tab_manager:AddTab(selected)
-                  ni.profile[selected].ui(tab)
+                  if not ni.table.contains_key(active_ui, selected) then
+                     local tab = profile_tab_manager:AddTab(selected)
+                     ni.profile[selected].ui(tab)
+                     active_ui[selected] = true
+                  end
                end
             end
          end
@@ -91,6 +94,14 @@ if ni.window then
                if v.version == build then
                   if ni.settings.main.profiles.generic.name == k then
                      combo.Selected = k
+                     if ni.profile[k].has_ui then
+                        ni.utilities.log(string.format("Init: %s (%s) has ui?%s", k, v.version, tostring(ni.profile[k].has_ui)))
+                        if ni.profile[k].has_ui then
+                           local tab = profile_tab_manager:AddTab(k)
+                           ni.profile[k].ui(tab)
+                           active_ui[k] = true
+                        end
+                     end
                   end
                   combo:Add(k)
                end
@@ -98,6 +109,13 @@ if ni.window then
             combo.Callback = function(selected)
                ni.settings.main.profiles.generic.name = selected
                ni.settings.save(ni.settings.main_path, ni.settings.main)
+               if selected ~= "None" and ni.profile[selected].has_ui  then
+                  if not ni.table.contains_key(active_ui, selected) then
+                     local tab = profile_tab_manager:AddTab(selected)
+                     ni.profile[selected].ui(tab)
+                     active_ui[selected] = true
+                  end
+               end
             end
          end
       end
