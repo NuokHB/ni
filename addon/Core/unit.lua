@@ -997,7 +997,7 @@ Returns:
 @param target string
 ]]
 function ni.unit.affecting_combat(target)
-   return UnitAffectingCombat(target) ~= 0
+   return UnitAffectingCombat(target) == 1
 end
 
 --[[--
