@@ -22,6 +22,7 @@ local UnitName = ni.client.get_function("UnitName")
 local GetUnitSpeed = ni.client.get_function("GetUnitSpeed")
 local UnitInVehicle = ni.client.get_function("UnitInVehicle")
 local GetComboPoints = ni.client.get_function("GetComboPoints")
+local UnitAffectingCombat = ni.client.get_function("UnitAffectingCombat")
 local select = ni.client.get_function("select")
 
 --[[--
@@ -983,6 +984,20 @@ Returns:
 ]]
 function ni.unit.is_moving(target)
    return GetUnitSpeed(target) ~= 0
+end
+
+--[[--
+Checks if unit is in combat
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **affecting_combat** `boolean`
+@param target string
+]]
+function ni.unit.affecting_combat(target)
+   return UnitAffectingCombat(target) ~= 0
 end
 
 --[[--
