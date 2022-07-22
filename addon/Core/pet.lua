@@ -7,6 +7,7 @@ ni.pet = {}
 local GetPetActionInfo = ni.client.get_function("GetPetActionInfo")
 local GetPetActionCooldown = ni.client.get_function("GetPetActionCooldown")
 local GetPetHappiness = ni.client.get_function("GetPetHappiness")
+local IsPetAttackActive = ni.client.get_function("IsPetAttackActive")
 
 --[[--
 Get the pet action info on the bar by index
@@ -112,5 +113,9 @@ Returns:
 ]]
 function ni.pet.happiness()
    return GetPetHappiness()
+end
+
+function ni.pet.is_attack_active()
+   return IsPetAttackActive()
 end
 

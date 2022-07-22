@@ -54,7 +54,8 @@ if not ni.loaded then
       "profiles.lua",
       "profile.lua",
       "ui.lua",
-      "settings.lua"
+      "settings.lua",
+      "tables\\spells.lua"
    }
 
    -- Load each of the above files here

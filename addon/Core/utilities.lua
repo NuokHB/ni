@@ -164,3 +164,10 @@ Can return nil if the string is improperly formed.
 function ni.utilities.from_json(json)
    return ni.backend.FromJson(json)
 end
+
+function ni.utilities.to_boolean(value)
+   if ( type(value) == string and value:lower() == "true" ) or value == 1 or value then
+      return true
+   end
+   return false
+end
