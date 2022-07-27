@@ -31,22 +31,13 @@ local GenerateUi = function(ui, parent, name)
                     ni.ui.separator(parent)
 
                 elseif v.type == "input" and v.key ~= nil then
-                    local input = ni.ui.input(parent)
+                    local input = ni.ui.input(parent, v.same_line)
                     input.Value = v.value
                     input.Text = v.text
-                    local button = ni.ui.button(parent)
-                    button.Text = "Set"
-                    button.Callback = function()
-                        v.value = input.Value
-                        if callback then
-                            callback(v.key, "value", v.value)
-                        end
-                        save()
-                    end
 
                 elseif v.type == "checkbox" and v.key ~= nil then
                     if v.enabled ~= nil then
-                        local checkbox = ni.ui.checkbox(parent)
+                        local checkbox = ni.ui.checkbox(parent, v.same_line)
                         checkbox.Text = v.text
                         checkbox.Checked = v.enabled
                         checkbox.Callback = function(checked)
@@ -59,7 +50,7 @@ local GenerateUi = function(ui, parent, name)
                     end
 
                 elseif v.type == "combobox" and v.key ~= nil then
-                    local combobox = ni.ui.combobox(parent)
+                    local combobox = ni.ui.combobox(parent, v.same_line)
                     combobox.Selected = v.selected
                     combobox.Text = v.text
                     for _, v2 in ipairs(v.menu) do
@@ -80,18 +71,18 @@ local GenerateUi = function(ui, parent, name)
                     end
 
                 elseif v.type == "slider" then
-                    local slider = ni.ui.slider(parent)
+                    local slider = ni.ui.slider(parent, v.same_line)
                     slider.Text = v.text
                     slider.Value = v.value
                     slider.Min = v.min
-                    slider.Max = v.ma
-                    slider.Callback = function(value)
-                        v.value = value
-                        if callback then
-                            callback(v.key, "value", value)
-                        end
-                        save()
-                    end
+                    slider.Max = v.max
+                  --   slider.Callback = function(value)
+                  --       v.value = value
+                  --       if callback then
+                  --           callback(v.key, "value", value)
+                  --       end
+                  --       save()
+                  --   end
                 end
             end
         end
@@ -103,6 +94,7 @@ function ni.profile.new(name, queue, abilities, ui, events)
     local profile = {}
     profile.loaded = true
     profile.name = name
+    profile.ui_created = false
     function profile.execute(self)
         local temp_queue
         if type(queue) == "function" then
@@ -123,6 +115,7 @@ function ni.profile.new(name, queue, abilities, ui, events)
     profile.has_ui = ui ~= nil
     function profile.create_ui(tab)
         GenerateUi(ui, tab, name)
+        profile.ui_created = true
     end
     function profile.get_setting(key)
         for k, v in ipairs(ni.profile[name].ui) do

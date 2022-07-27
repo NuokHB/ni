@@ -155,7 +155,7 @@ Returns:
 @param target string
 ]]
 function ni.unit.exists(target)
-    return UnitExists(target)
+    return ni.utilities.to_boolean(UnitExists(target))
 end
 
 --[[--
@@ -1527,7 +1527,7 @@ local function in_range_helper(target, distance, ...)
             end
             if arguments_checked == #functions then
                 local d = ni.unit.distance(target, k)
-                if d and d < distance then
+                if d and d <= distance then
                     in_range[k] = {
                         guid = k,
                         type = v.type,
