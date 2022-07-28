@@ -75,6 +75,17 @@ if not ni.loaded_init then
 
     ni.events.initialize()
     ni.update.initialize()
+    ni.loaded = true
+end
+
+-- Event tracking for if we are in game or not
+ni.in_game = false
+-- Fires when entering the game
+ni.PLAYER_ENTERING_WORLD = function(...)
+    ni.utilities.log("PLAYER_ENTERING_WORLD")
+
+    local base_path = ni.backend.GetBaseFolder()
+    local core_path = base_path .. "addon\\core\\"
 
     -- Load in the main settings file
     do
@@ -108,14 +119,6 @@ if not ni.loaded_init then
     -- Start updating members and objects
     ni.update.register_callback("OBJECTS", ni.objects.update)
     ni.update.register_callback("MEMBERS", ni.members.update)
-    ni.loaded = true
-end
-
--- Event tracking for if we are in game or not
-ni.in_game = false
--- Fires when entering the game
-ni.PLAYER_ENTERING_WORLD = function(...)
-    ni.utilities.log("PLAYER_ENTERING_WORLD")
     ni.in_game = true
     if not ni.loaded then
         ni.load_core()
