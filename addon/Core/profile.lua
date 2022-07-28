@@ -2,6 +2,9 @@ local ni = ...
 
 ni.profile = {}
 
+--[[--
+Used to generate a ui table for profiles
+]]
 local GenerateUi = function(name, ui, parent)
    if ui == nil then
       return nil
@@ -105,6 +108,22 @@ local GenerateUi = function(name, ui, parent)
    end
 end
 
+--[[-- 
+Generate the profile table
+ 
+Parameters:
+- **name** `string`
+- **queue** `table`
+- **abilities** `table`
+- **ui** `table`
+ 
+Returns:
+- **profile** `table`
+@param name string
+@param queue table
+@param abilities table
+@param[opt] ui table
+]]
 function ni.profile.new(name, queue, abilities, ui)
    local profile = {}
    profile.loaded = true

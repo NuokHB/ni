@@ -6,6 +6,9 @@ ni.profiles = {}
 ni.profiles.class = {}
 ni.profiles.generic = {}
 
+--[[
+Populates ni.profile.class and ni.profile.generic from the rotation directory
+]]
 function ni.profiles.get_profiles()
    local class = ni.player.class():lower()
    local contents = ni.io.get_folders("addon\\Rotations\\") or {}
@@ -59,6 +62,9 @@ function ni.profiles.get_profiles()
    end
 end
 
+--[[
+Loads all the profiles that match the current build version into memory
+]]
 function ni.profiles.load_all()
    for k, v in ni.table.opairs(ni.profiles.class) do
       if v.version == build then
