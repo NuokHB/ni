@@ -33,34 +33,35 @@ if not ni.loaded_init then
    ni.backend.ProtectFrame(ni.frame, UIParent)
    ni.events.initialize()
 
-   ni.load_core = function()
-      local core_files = {
-         "input.lua",
-         "world.lua",
-         "navigation.lua",
-         "item.lua",
-         "gear.lua",
-         "object.lua",
-         "power.lua",
-         "rune.lua",
-         "runes.lua",
-         "unit.lua",
-         "player.lua",
-         "spell.lua",
-         "update.lua",
-         "objects.lua",
-         "group.lua",
-         "members.lua",
-         "mount.lua",
-         "pet.lua",
-         "totem.lua",
-         "profiles.lua",
-         "profile.lua",
-         "ui.lua",
-         "settings.lua"
-      }
+   local core_files = {
+      "input.lua",
+      "world.lua",
+      "navigation.lua",
+      "item.lua",
+      "gear.lua",
+      "object.lua",
+      "power.lua",
+      "rune.lua",
+      "runes.lua",
+      "unit.lua",
+      "player.lua",
+      "spell.lua",
+      "update.lua",
+      "objects.lua",
+      "group.lua",
+      "members.lua",
+      "mount.lua",
+      "pet.lua",
+      "totem.lua",
+      "settings.lua",
+      "profiles.lua",
+      "profile.lua",
+      "ui.lua",
+   }
 
-      -- Load each of the above files here
+   -- We run this when in game so that all functions such as getting guid return valid results
+   ni.load_core = function()
+      -- Load each of the core files here
       for _, file in ni.table.pairs(core_files) do
          local _,
             error = ni.io.load_file(core_path .. file, file)
@@ -83,7 +84,7 @@ if not ni.loaded_init then
          end
       end
 
-      --Load the profiles
+      -- Load the profiles
       do
          ni.profiles.get_profiles()
          ni.profiles.load_all()
@@ -100,7 +101,7 @@ if not ni.loaded_init then
          end
       end
 
-      --Start updating members and objects
+      -- Start updating members and objects
       ni.update.register_callback("OBJECTS", ni.objects.update)
       ni.update.register_callback("MEMBERS", ni.members.update)
       ni.loaded = true
@@ -116,17 +117,17 @@ if not ni.loaded_init then
          ni.load_core()
       end
    end
-   --Fires on logout or reload
+   -- Fires on logout or reload
    ni.PLAYER_LOGOUT = function(...)
       ni.utilities.log("PLAYER_LOGOUT")
       ni.in_game = false
    end
-   --Fires on map changes ect
+   -- Fires on map changes ect
    ni.PLAYER_LEAVING_WORLD = function(...)
       ni.utilities.log("PLAYER_LEAVING_WORLD")
       ni.in_game = false
    end
-   --Register the callbacks for all 3
+   -- Register the callbacks for all 3
    ni.events.register_callback("PLAYER_ENTERING_WORLD", ni.PLAYER_ENTERING_WORLD)
    ni.events.register_callback("PLAYER_LOGOUT", ni.PLAYER_LOGOUT)
    ni.events.register_callback("PLAYER_LEAVING_WORLD", ni.PLAYER_LEAVING_WORLD)
