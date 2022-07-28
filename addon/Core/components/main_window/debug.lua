@@ -46,6 +46,12 @@ dump_ni.Callback = function()
             b = b .. "\n --Table: "
             for i2, v2 in ni.table.pairs(v) do
                b = b .. tostring(v2).. ", "
+               if type(v2) == "table" then
+                  b = b .. "\n   **Table: "
+                  for i3, v3 in ni.table.pairs(v2) do
+                     b = b .. tostring(v3).. ", "
+                  end
+               end
             end
          end
       end
@@ -447,8 +453,6 @@ mounts_button.Callback = function ()
    end
    ni.utilities.log(mounts_string)
 end
-
-
 
 ni.ui.separator(tab)
 
