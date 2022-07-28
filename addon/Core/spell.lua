@@ -14,6 +14,7 @@ local IsUsableSpell = ni.client.get_function("IsUsableSpell")
 local IsCurrentSpell = ni.client.get_function("IsCurrentSpell")
 local type = ni.client.get_function("type")
 local build = ni.client.build()
+local delayed_casts = {}
 
 --[[--
 Gets the spell information
@@ -114,6 +115,28 @@ function ni.spell.cast_on(spell, target, offset)
 end
 
 --[[--
+Casts a spell by name or id on the specified target with a delay factor
+ 
+Parameters:
+- **spell** `string or number`
+- **target** `string`
+- **delay** `number`
+@param spell
+@param target string
+@param delay number
+]]
+function ni.spell.delay_cast(spell, target, delay)
+   if rawget(delayed_casts, spell) then
+      if ni.client.get_time() - delayed_casts[spell] < delay then
+         return false
+      end
+   end
+   ni.spell.cast(spell, target)
+	delayed_casts[spell] = ni.client.get_time()
+	return true
+end
+
+--[[--
 Gets the spell name from id
  
 Parameters:
@@ -139,6 +162,9 @@ Returns:
 function ni.spell.known(spell, pet)
    if type(spell) == "string" then
       spell = ni.spell.id(spell)
+      if spell == 0 then
+         return false
+      end
    end
    if build >= 18414 and not pet then
       return IsPlayerSpell(spell)

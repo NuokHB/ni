@@ -21,6 +21,9 @@ local UnitClass = ni.client.get_function("UnitClass")
 local UnitName = ni.client.get_function("UnitName")
 local UnitLevel = ni.client.get_function("UnitLevel")
 local GetUnitSpeed = ni.client.get_function("GetUnitSpeed")
+local UnitInVehicle = ni.client.get_function("UnitInVehicle")
+local GetComboPoints = ni.client.get_function("GetComboPoints")
+local UnitAffectingCombat = ni.client.get_function("UnitAffectingCombat")
 local select = ni.client.get_function("select")
 
 --[[--
@@ -430,6 +433,24 @@ function ni.unit.distance(target_a, target_b)
 end
 
 --[[--
+Gets the distance between two targets based on 3 vectors
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **distance** `number`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.distance_3d(target_a, target_b)
+   local x1, y1, z1 = ni.unit.location(target_a)
+   local x2, y2, z2 = ni.unit.location(target_b)
+   return ni.world.get_3d_distance(x1, y1, z1, x2, y2, z2)
+end
+
+--[[--
 Gets the GUID of the units creator.
 
 Parameters:
@@ -460,6 +481,20 @@ I was being lazy, and didn't want to type out the 9 different returns.
 ]]
 function ni.unit.dynamic_flags(target)
     return ni.backend.UnitDynamicFlags(target)
+end
+
+--[[--
+Checks if the unit is not lootable
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **is_lootable** `boolean`
+@param target string
+]]
+function ni.unit.is_lootable(target)
+   return select(2, ni.unit.dynamic_flags(target)) or false
 end
 
 --[[--
@@ -820,6 +855,36 @@ function ni.unit.is_undead(target)
 end
 
 --[[--
+Checks if the unit is in a vehicle
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **in_vehicle** `boolean`
+@param target string
+]]
+function ni.unit.in_vehicle(target)
+   return UnitInVehicle(target) == 1
+end
+
+--[[--
+Returns the amount of current combo points.
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **combo_points** `number`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.combo_points(target_a, target_b)
+   return GetComboPoints(target_a, target_b)
+end
+
+--[[--
 Checks if the unit is a demon
 
 Parameters:
@@ -980,6 +1045,20 @@ Returns:
 ]]
 function ni.unit.is_moving(target)
     return GetUnitSpeed(target) ~= 0
+end
+
+--[[--
+Checks if unit is in combat
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **affecting_combat** `boolean`
+@param target string
+]]
+function ni.unit.affecting_combat(target)
+   return UnitAffectingCombat(target) == 1
 end
 
 --[[--
@@ -1635,24 +1714,46 @@ Returns:
 @param interupt_percent number
 ]]
 function ni.unit.can_interupt(target, interupt_percent)
-    if not ni.player.can_attack(target) then
-        return false, nil
-    end
-    local cast_name, _, _, _, cast_start, cast_end, _, _, cast_not_interruptable = ni.unit.casting(target)
-    local channel_name, _, _, _, channel_start, channel_end, _, channel_not_interruptable = ni.unit.channel(target)
-    if cast_name ~= nil and not cast_not_interruptable then
-        local completed_percent = calculate_percentage(cast_start, cast_end)
-        if completed_percent > interupt_percent then
-            return true, cast_name
-        end
-        return false, cast_name
-    end
-    if channel_name ~= nil and not channel_not_interruptable then
-        local completed_percent = calculate_percentage(channel_start, channel_end)
-        if completed_percent > interupt_percent then
-            return true, channel_name
-        end
-        return false, channel_name
-    end
-    return false, nil
+   if not ni.player.can_attack(target) then
+      return false, nil
+   end
+   local cast_name, _, _, _, cast_start, cast_end, _, _, cast_not_interruptable = ni.unit.casting(target)
+	local channel_name, _, _, _, channel_start, channel_end, _, channel_not_interruptable = ni.unit.channel(target)
+   if cast_name ~= nil and not cast_not_interruptable then
+      local completed_percent = calculate_percentage(cast_start, cast_end)
+      if completed_percent > interupt_percent then
+         return true, cast_name
+      end
+      return false, cast_name
+   end
+   if channel_name ~= nil and not channel_not_interruptable then
+      local completed_percent = calculate_percentage(channel_start, channel_end)
+      if completed_percent > interupt_percent then
+         return true, channel_name
+      end
+      return false, channel_name
+   end
+   return false, nil
+end
+
+--[[
+Check if a unit cast is not interruptable
+ 
+Parameters:
+- **target** `string`
+ 
+Returns:
+- **not_interruptable** `boolean`
+@param target string
+]]
+function ni.unit.cast_not_interruptable(target)
+   local cast_name, _, _, _, _, _, _, _, cast_not_interruptable = ni.unit.casting(target)
+	local channel_name, _, _, _, _, _, _, channel_not_interruptable = ni.unit.channel(target)
+   if cast_name ~= nil and cast_not_interruptable then
+      return true
+   end
+   if channel_name ~= nil and channel_not_interruptable then
+      return true
+   end
+   return false
 end

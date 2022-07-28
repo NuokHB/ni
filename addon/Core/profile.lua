@@ -50,9 +50,9 @@ local GenerateUi = function(ui, parent, name)
                     end
 
                 elseif v.type == "combobox" and v.key ~= nil then
-                    local combobox = ni.ui.combobox(parent, v.same_line)
-                    combobox.Selected = v.selected
+                    local combobox = ni.ui.combobox(parent)
                     combobox.Text = v.text
+                    local selected
                     for _, v2 in ipairs(v.menu) do
                         local text
                         if v2.text ~= nil then
@@ -61,28 +61,42 @@ local GenerateUi = function(ui, parent, name)
                         elseif v2.value ~= nil then
                             combobox:Add(v2.value)
                         end
-                    end
-                    combobox.Callback = function(s)
-                        v.selected = combobox.Selected
-                        if callback then
-                            callback(v.key, "menu", s)
+                        if ni.settings.profile[name][v.key] == text then
+                            combobox.Selected = text
+                            selected = text
+                        elseif v2.selected then
+                            combobox.Selected = text
+                            selected = text
                         end
-                        save()
+                    end
+                    if callback then
+                        combobox.Callback = function(s)
+                            selected = s
+                            callback(v.key, "menu", s)
+                            ni.settings.profile[name][v.key] = s
+                            save()
+                        end
+                        callback(v.key, "menu", selected)
                     end
 
                 elseif v.type == "slider" then
-                    local slider = ni.ui.slider(parent, v.same_line)
+                    local slider = ni.ui.slider(parent)
                     slider.Text = v.text
+                    if ni.settings.profile[name][v.key] ~= nil then
+                        v.value = ni.settings.profile[name][v.key]
+                    end
                     slider.Value = v.value
                     slider.Min = v.min
                     slider.Max = v.max
-                  --   slider.Callback = function(value)
-                  --       v.value = value
-                  --       if callback then
-                  --           callback(v.key, "value", value)
-                  --       end
-                  --       save()
-                  --   end
+                    if callback then
+                        slider.Callback = function(value)
+                            v.value = value
+                            callback(v.key, "value", value)
+                            ni.settings.profile[name][v.key] = value
+                            save()
+                        end
+                        callback(v.key, "value", v.value)
+                    end
                 end
             end
         end

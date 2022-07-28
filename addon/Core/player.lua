@@ -10,7 +10,8 @@ local rawset = ni.client.get_function("rawset")
 local GetGlyphSocketInfo = ni.client.get_function("GetGlyphSocketInfo")
 local GetNumGlyphSockets = ni.client.get_function("GetNumGlyphSockets")
 local GetShapeshiftFormID = ni.client.get_function("GetShapeshiftFormID")
-local IsMounted = ni.client.get_function("IsMounted")
+local IsOutdoors = ni.client.get_function("IsOutdoors")
+local IsFlyableArea = ni.client.get_function("IsFlyableArea")
 local build = ni.client.build()
 
 
@@ -179,13 +180,23 @@ function ni.player.shapeshift_form_id()
 end
 
 --[[--
-Returns if the player is mounted
+Returns whether the player's character is currently outdoors.
  
 Returns:
-- **mounted** `boolean`
+- **is_outdoors** `boolean`
 ]]
-function ni.player.mounted()
-   return IsMounted()
+function ni.player.is_outdoors()
+   return IsOutdoors() == 1
+end
+
+--[[--
+Checks whether the player's current location is classified as being a flyable area.
+ 
+Returns:
+- **in_flyable_area** `boolean`
+]]
+function ni.player.in_flyable_area()
+   return IsFlyableArea() == 1
 end
 
 --[[--

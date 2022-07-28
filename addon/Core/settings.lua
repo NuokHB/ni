@@ -54,6 +54,16 @@ function ni.settings.load(file)
       local print_settings = "ni.settings.load ".. file .."\n"
       for k, v in ni.table.pairs(json) do
         print_settings = print_settings .. "["..k.."] = " .. tostring(v).."\n"
+        if type(v) == "table" then
+            for k2, v2 in ni.table.pairs(v) do
+               print_settings = print_settings .. "   ["..k2.."] = " .. tostring(v2).."\n"
+               if type(v2) == "table" then
+                  for k3, v3 in ni.table.pairs(v2) do
+                     print_settings = print_settings .. "      ["..k3.."] = " .. tostring(v3).."\n"
+                  end
+               end
+            end
+         end
       end
       ni.utilities.log(print_settings)
       return json

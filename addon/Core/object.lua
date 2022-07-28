@@ -4,6 +4,9 @@ local ni = ...
 
 ni.object = {}
 
+local build = ni.client.build()
+
+
 --[[--
 Checks if the given object is within game memory
  
@@ -118,17 +121,45 @@ function ni.object.is_dynamic_object(object)
 end
 
 --[[--
-Gets if the object is a dynamic object
+Gets if the object is a corpse object
  
 Parameters:
 - **object** `string`
  
 Returns:
-- **is_dynamic_object** `boolean`
+- **is_corpse** `boolean`
 @param object string
 ]]
 function ni.object.is_corpse(object)
    return ni.object.type(object) == 7
+end
+
+--[[--
+Gets if the object is a Ai Group
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_corpse** `boolean`
+@param object string
+]]
+function ni.object.is_ai_group(object)
+   return ni.object.type(object) == 8
+end
+
+--[[--
+Gets if the object is a Area Trigger
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **is_corpse** `boolean`
+@param object string
+]]
+function ni.object.is_area_trigger(object)
+   return ni.object.type(object) == 9
 end
 
 --[[--
@@ -207,4 +238,24 @@ Returns:
 ]]
 function ni.object.descriptor(object, index)
    return ni.backend.ObjectDescriptor(object, index)
+end
+
+--[[--
+Gets the object display id
+ 
+Parameters:
+- **object** `string`
+ 
+Returns:
+- **display_id** `number`
+@param object string
+]]
+function ni.object.display_id(object)
+   if build == 12340 then
+      return ni.object.descriptor(object, 3)
+   end
+   if build >= 15595 then
+      return ni.object.descriptor(object, 5)
+   end
+   return -1
 end

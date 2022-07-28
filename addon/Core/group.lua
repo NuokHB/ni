@@ -81,7 +81,7 @@ Returns:
 ]]
 ni.group.in_raid = function ()
    if build == 18414 then
-      return IsInRaid
+      return IsInRaid()
    end
    return GetNumRaidMembers() > 0
 end
