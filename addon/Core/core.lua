@@ -101,9 +101,6 @@ if not ni.loaded_init then
          end
       end
 
-      -- Start updating members and objects
-      ni.update.register_callback("OBJECTS", ni.objects.update)
-      ni.update.register_callback("MEMBERS", ni.members.update)
       ni.loaded = true
    end
 
@@ -116,16 +113,24 @@ if not ni.loaded_init then
       if not ni.loaded then
          ni.load_core()
       end
+      -- Start updating members and objects
+      ni.update.register_callback("OBJECTS", ni.objects.update)
+      ni.update.register_callback("MEMBERS", ni.members.update)
    end
    -- Fires on logout or reload
    ni.PLAYER_LOGOUT = function(...)
       ni.utilities.log("PLAYER_LOGOUT")
       ni.in_game = false
+      ni.update.unregister_callback("OBJECTS")
+      ni.update.unregister_callback("MEMBERS")
    end
    -- Fires on map changes ect
    ni.PLAYER_LEAVING_WORLD = function(...)
       ni.utilities.log("PLAYER_LEAVING_WORLD")
       ni.in_game = false
+      -- Start updating members and objects
+      ni.update.unregister_callback("OBJECTS")
+      ni.update.unregister_callback("MEMBERS")
    end
    -- Register the callbacks for all 3
    ni.events.register_callback("PLAYER_ENTERING_WORLD", ni.PLAYER_ENTERING_WORLD)
