@@ -128,7 +128,6 @@ if not ni.loaded_init then
    ni.PLAYER_LEAVING_WORLD = function(...)
       ni.utilities.log("PLAYER_LEAVING_WORLD")
       ni.in_game = false
-      -- Start updating members and objects
       ni.update.unregister_callback("OBJECTS")
       ni.update.unregister_callback("MEMBERS")
    end

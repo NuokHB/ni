@@ -23,6 +23,7 @@ local GetUnitSpeed = ni.client.get_function("GetUnitSpeed")
 local UnitInVehicle = ni.client.get_function("UnitInVehicle")
 local GetComboPoints = ni.client.get_function("GetComboPoints")
 local UnitAffectingCombat = ni.client.get_function("UnitAffectingCombat")
+local UnitIsUnit = ni.client.get_function("UnitIsUnit")
 local select = ni.client.get_function("select")
 
 --[[--
@@ -998,6 +999,22 @@ Returns:
 ]]
 function ni.unit.affecting_combat(target)
    return UnitAffectingCombat(target) == 1
+end
+
+--[[
+True if the specified units are the same unit.
+ 
+Parameters:
+- **target_a** `string`
+- **target_b** `string`
+ 
+Returns:
+- **is_same** `boolean`
+@param target_a string
+@param target_b string
+]]
+function ni.unit.unit_is_unit(target_a, target_b)
+   return UnitIsUnit(target_a, target_b) == 1
 end
 
 --[[--
