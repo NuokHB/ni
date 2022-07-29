@@ -1,5 +1,4 @@
-local ni,
-   core = ...
+local ni, core = ...
 
 -- Localize string creation for main folder as it'll be used a few times
 local window_folder = core .. "components\\main_window\\"
@@ -32,7 +31,6 @@ if ni.window then
                if ni.settings.main.profiles.primary.name == k then
                   combo.Selected = k
                   if ni.profile[k].has_ui then
-                     ni.utilities.log(string.format("Init: %s (%s) has ui?%s", k, v.version, tostring(ni.profile[k].has_ui)))
                      if ni.profile[k].has_ui then
                         local tab = profile_tab_manager:AddTab(k)
                         ni.profile[k].ui(tab)
@@ -95,7 +93,6 @@ if ni.window then
                   if ni.settings.main.profiles.generic.name == k then
                      combo.Selected = k
                      if ni.profile[k].has_ui then
-                        ni.utilities.log(string.format("Init: %s (%s) has ui?%s", k, v.version, tostring(ni.profile[k].has_ui)))
                         if ni.profile[k].has_ui then
                            local tab = profile_tab_manager:AddTab(k)
                            ni.profile[k].ui(tab)
@@ -261,8 +258,10 @@ if ni.window then
                         ni.settings.main.profiles.primary.name,
                         ni.profile[ni.settings.main.profiles.primary.name].execute
                      )
+                     ni.utilities.log(ni.settings.main.profiles.primary.name.. " Started")
                   else
                      ni.update.unregister_callback(ni.settings.main.profiles.primary.name)
+                     ni.utilities.log(ni.settings.main.profiles.primary.name.. " Stopped")
                   end
                   return true
                end
@@ -278,8 +277,10 @@ if ni.window then
                         ni.settings.main.profiles.secondary.name,
                         ni.profile[ni.settings.main.profiles.secondary.name].execute
                      )
+                     ni.utilities.log(ni.settings.main.profiles.secondary.name.. " Started")
                   else
                      ni.update.unregister_callback(ni.settings.main.profiles.secondary.name)
+                     ni.utilities.log(ni.settings.main.profiles.secondary.name.. " Stopped")
                   end
                   return true
                end
@@ -292,8 +293,10 @@ if ni.window then
                         ni.settings.main.profiles.generic.name,
                         ni.profile[ni.settings.main.profiles.generic.name].execute
                      )
+                     ni.utilities.log(ni.settings.main.profiles.generic.name.. " Started")
                   else
                      ni.update.unregister_callback(ni.settings.main.profiles.generic.name)
+                     ni.utilities.log(ni.settings.main.profiles.generic.name.. " Stopped")
                   end
                   return true
                end
