@@ -4,21 +4,6 @@ local ni, core = ...
 local window_folder = core .. "components\\main_window\\"
 local build = ni.client.build()
 
-local function dump(o)
-    if type(o) == 'table' then
-        local s = '{ '
-        for k, v in pairs(o) do
-            if type(k) ~= 'number' then
-                k = '"' .. k .. '"'
-            end
-            s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
-        end
-        return s .. '} '
-    else
-        return tostring(o)
-    end
-end
-
 ni.window = ni.ui.window("ni", false)
 if ni.window then
     local label = ni.ui.label(ni.window)

@@ -364,6 +364,9 @@ Returns:
 @param[opt] is_friendly boolean
 ]]
 function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
+   if spell == 0 then
+      return false
+   end
    if not ni.unit.exists(target) then
       return false
    end
