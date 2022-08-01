@@ -255,7 +255,7 @@ See [ni.unit.health_percent](#ni.unit.health_percent (target))
 @param target string
 ]]
 function ni.unit.hp(target)
-    return ni.unit.health_percent(target)
+   return ni.unit.health_percent(target)
 end
 
 --[[--
@@ -445,9 +445,9 @@ Returns:
 @param target_b string
 ]]
 function ni.unit.distance_3d(target_a, target_b)
-   local x1, y1, z1 = ni.unit.location(target_a)
-   local x2, y2, z2 = ni.unit.location(target_b)
-   return ni.world.get_3d_distance(x1, y1, z1, x2, y2, z2)
+    local x1, y1, z1 = ni.unit.location(target_a)
+    local x2, y2, z2 = ni.unit.location(target_b)
+    return ni.world.get_3d_distance(x1, y1, z1, x2, y2, z2)
 end
 
 --[[--
@@ -494,7 +494,7 @@ Returns:
 @param target string
 ]]
 function ni.unit.is_lootable(target)
-   return select(2, ni.unit.dynamic_flags(target)) or false
+    return select(2, ni.unit.dynamic_flags(target)) or false
 end
 
 --[[--
@@ -865,7 +865,7 @@ Returns:
 @param target string
 ]]
 function ni.unit.in_vehicle(target)
-   return UnitInVehicle(target) == 1
+    return UnitInVehicle(target) == 1
 end
 
 --[[--
@@ -881,7 +881,7 @@ Returns:
 @param target_b string
 ]]
 function ni.unit.combo_points(target_a, target_b)
-   return GetComboPoints(target_a, target_b)
+    return GetComboPoints(target_a, target_b)
 end
 
 --[[--
@@ -1058,7 +1058,7 @@ Returns:
 @param target string
 ]]
 function ni.unit.affecting_combat(target)
-   return UnitAffectingCombat(target) == 1
+    return UnitAffectingCombat(target) == 1
 end
 
 --[[--
@@ -1714,26 +1714,26 @@ Returns:
 @param interupt_percent number
 ]]
 function ni.unit.can_interupt(target, interupt_percent)
-   if not ni.player.can_attack(target) then
-      return false, nil
-   end
-   local cast_name, _, _, _, cast_start, cast_end, _, _, cast_not_interruptable = ni.unit.casting(target)
-	local channel_name, _, _, _, channel_start, channel_end, _, channel_not_interruptable = ni.unit.channel(target)
-   if cast_name ~= nil and not cast_not_interruptable then
-      local completed_percent = calculate_percentage(cast_start, cast_end)
-      if completed_percent > interupt_percent then
-         return true, cast_name
-      end
-      return false, cast_name
-   end
-   if channel_name ~= nil and not channel_not_interruptable then
-      local completed_percent = calculate_percentage(channel_start, channel_end)
-      if completed_percent > interupt_percent then
-         return true, channel_name
-      end
-      return false, channel_name
-   end
-   return false, nil
+    if not ni.player.can_attack(target) then
+        return false, nil
+    end
+    local cast_name, _, _, _, cast_start, cast_end, _, _, cast_not_interruptable = ni.unit.casting(target)
+    local channel_name, _, _, _, channel_start, channel_end, _, channel_not_interruptable = ni.unit.channel(target)
+    if cast_name ~= nil and not cast_not_interruptable then
+        local completed_percent = calculate_percentage(cast_start, cast_end)
+        if completed_percent > interupt_percent then
+            return true, cast_name
+        end
+        return false, cast_name
+    end
+    if channel_name ~= nil and not channel_not_interruptable then
+        local completed_percent = calculate_percentage(channel_start, channel_end)
+        if completed_percent > interupt_percent then
+            return true, channel_name
+        end
+        return false, channel_name
+    end
+    return false, nil
 end
 
 --[[
@@ -1747,13 +1747,13 @@ Returns:
 @param target string
 ]]
 function ni.unit.cast_not_interruptable(target)
-   local cast_name, _, _, _, _, _, _, _, cast_not_interruptable = ni.unit.casting(target)
-	local channel_name, _, _, _, _, _, _, channel_not_interruptable = ni.unit.channel(target)
-   if cast_name ~= nil and cast_not_interruptable then
-      return true
-   end
-   if channel_name ~= nil and channel_not_interruptable then
-      return true
-   end
-   return false
+    local cast_name, _, _, _, _, _, _, _, cast_not_interruptable = ni.unit.casting(target)
+    local channel_name, _, _, _, _, _, _, channel_not_interruptable = ni.unit.channel(target)
+    if cast_name ~= nil and cast_not_interruptable then
+        return true
+    end
+    if channel_name ~= nil and channel_not_interruptable then
+        return true
+    end
+    return false
 end
