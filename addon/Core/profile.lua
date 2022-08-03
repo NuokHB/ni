@@ -5,7 +5,7 @@ ni.profile = {}
 --[[--
 Used to generate a ui table for profiles
 ]]
-local GenerateUi = function(name, ui, parent)
+local generate_ui = function(name, ui, parent)
    if ui == nil then
       return nil
    end
@@ -143,8 +143,8 @@ function ni.profile.new(name, queue, abilities, ui)
       end
    end
    profile.has_ui = ui ~= nil
-   function profile.ui(tab)
-      GenerateUi(name, ui, tab)
+   function profile.generate_ui(tab)
+      generate_ui(name, ui, tab)
    end
    ni.profile[name] = profile
 end

@@ -33,7 +33,7 @@ if ni.window then
                   if ni.profile[k].has_ui then
                      if ni.profile[k].has_ui then
                         local tab = profile_tab_manager:AddTab(k)
-                        ni.profile[k].ui(tab)
+                        ni.profile[k].generate_ui(tab)
                         active_ui[k] = true
                      end
                   end
@@ -95,7 +95,7 @@ if ni.window then
                      if ni.profile[k].has_ui then
                         if ni.profile[k].has_ui then
                            local tab = profile_tab_manager:AddTab(k)
-                           ni.profile[k].ui(tab)
+                           ni.profile[k].generate_ui(tab)
                            active_ui[k] = true
                         end
                      end
