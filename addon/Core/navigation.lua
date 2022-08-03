@@ -83,7 +83,7 @@ end
 -- Static variables when pathing
 local current_index = 1
 local last_ctm = 0
-local current_path = {}
+local current_path_concat = ""
 local path_length = 0
 
 --[[--
@@ -95,8 +95,8 @@ Parameters:
 function ni.navigation.follow_path(path)
    --Compare the current table to the one being passes to see if we need to reset the index
    local concat = table.concat(path)
-   if concat ~= current_path then
-      current_path = concat
+   if concat ~= current_path_concat then
+      current_path_concat = concat
       current_index = 1
       path_length = ni.table.length(path)
    end
