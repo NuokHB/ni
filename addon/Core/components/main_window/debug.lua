@@ -170,10 +170,9 @@ party_button.Callback = function()
       string_dump =
          string_dump ..
          string.format(
-            "[%s] %s, unit_id = %s, health_percent = %s\n",
+            "[%s] %s, health_percent = %s\n",
             k,
             v.name(),
-            v.unit_id,
             v.health_percent())
    end
    ni.utilities.log(string_dump)
