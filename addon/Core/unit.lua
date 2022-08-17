@@ -24,6 +24,7 @@ local UnitInVehicle = ni.client.get_function("UnitInVehicle")
 local GetComboPoints = ni.client.get_function("GetComboPoints")
 local UnitAffectingCombat = ni.client.get_function("UnitAffectingCombat")
 local UnitIsUnit = ni.client.get_function("UnitIsUnit")
+local UnitClassification = ni.client.get_function("UnitClassification")
 local select = ni.client.get_function("select")
 
 --[[--
@@ -985,6 +986,35 @@ Returns:
 ]]
 function ni.unit.is_moving(target)
    return GetUnitSpeed(target) ~= 0
+end
+
+--[[--
+Returns the classification of the specified unit (e.g., "elite" or "worldboss")
+
+Parameters: 
+- **target** `string`
+ 
+Returns:
+- **classification** `string`
+@param target string
+]]
+function ni.unit.classification(target)
+   return UnitClassification(target)
+end
+
+
+--[[--
+Checks if the target is a raid boss
+
+Parameters: 
+- **target** `string`
+ 
+Returns:
+- **is_boss** `boolean`
+@param target string
+]]
+function ni.unit.is_boss(target)
+   return ni.unit.classification(target) == "worldboss"
 end
 
 --[[--
