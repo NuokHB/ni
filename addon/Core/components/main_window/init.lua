@@ -47,7 +47,7 @@ if ni.window then
             if selected ~= "None" and ni.profile[selected].has_ui  then
                if not ni.table.contains_key(active_ui, selected) then
                   local tab = profile_tab_manager:AddTab(selected)
-                  ni.profile[selected].ui(tab)
+                  ni.profile[selected].generate_ui(tab)
                   active_ui[selected] = true
                end
             end
@@ -74,7 +74,7 @@ if ni.window then
                if selected ~= "None" and ni.profile[selected].has_ui  then
                   if not ni.table.contains_key(active_ui, selected) then
                      local tab = profile_tab_manager:AddTab(selected)
-                     ni.profile[selected].ui(tab)
+                     ni.profile[selected].generate_ui(tab)
                      active_ui[selected] = true
                   end
                end
@@ -109,7 +109,7 @@ if ni.window then
                if selected ~= "None" and ni.profile[selected].has_ui  then
                   if not ni.table.contains_key(active_ui, selected) then
                      local tab = profile_tab_manager:AddTab(selected)
-                     ni.profile[selected].ui(tab)
+                     ni.profile[selected].generate_ui(tab)
                      active_ui[selected] = true
                   end
                end
